@@ -2,8 +2,14 @@
 <resources>
 
     <string name="hello">Hello World, FibonacciActivity!</string>
-    <string name="app_name">Fibonacci</string>
+    <string name="app_name">Fibonacci Series</string>
     <string name="series_activity_name">Series</string>
     <string name="sunflower_activity_name">Sunflower</string>
+    <string name="menu_info">About</string>
+    <string name="about_description">Fibonacci Series is an open source application to help new Android developers learn the basics.</string>
+    <string name="about_blog">Blog: turbomanage.wordpress.com</string>
+    <string name="about_source">Source code: drfibonacci.googlecode.com</string>
+    <string name="about_publisher">Author: David M. Chandler</string>
+    <string name="app_version">2.1</string>
 
 </resources>
