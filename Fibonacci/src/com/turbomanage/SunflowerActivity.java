@@ -24,9 +24,11 @@ public class SunflowerActivity extends Activity implements OnSeekBarChangeListen
 		
         slider = (SeekBar) findViewById(R.id.seekBar2);
         slider.setOnSeekBarChangeListener(this);
+//        int width = getResources().getDisplayMetrics().widthPixels;
+//        slider.setLayoutParams(new LinearLayout.LayoutParams((int) (0.6 * width), LayoutParams.WRAP_CONTENT));
         slider.setMax(100);
 	}
-
+	
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress,
 			boolean fromUser) {
