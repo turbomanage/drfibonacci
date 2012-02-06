@@ -25,6 +25,7 @@ public class SunflowerView extends View {
 
 	public SunflowerView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		// Weird that there isn't a constructor with these
 		ORANGE_FILL.setColor(0xFFF87306);
 		ORANGE_FILL.setStyle(Style.FILL_AND_STROKE);
 	}
@@ -36,6 +37,16 @@ public class SunflowerView extends View {
 		onLayoutChange();
 	}
 	
+	void onLayoutChange() {
+		height = this.getHeight();
+		width = this.getWidth();
+		maxR = Math.min(height, width) / 2;
+		int range = (maxR - SEED_RADIUS) / SCALE_FACTOR;
+		maxSeeds = range * range;
+		xc = width / 2;
+		yc = height / 2;
+	}
+
 	/**
 	 * Draw the complete figure for the current number of seeds
 	 */
@@ -50,16 +61,6 @@ public class SunflowerView extends View {
 			int y = (int) Math.round(yc - r * Math.sin(theta));
 			drawSeed(x, y, canvas);
 		}
-	}
-
-	void onLayoutChange() {
-		height = this.getHeight();
-		width = this.getWidth();
-		maxR = Math.min(height, width) / 2;
-		int range = (maxR - SEED_RADIUS) / SCALE_FACTOR;
-		maxSeeds = range * range;
-		xc = width / 2;
-		yc = height / 2;
 	}
 
 	void setPercent(int percent) {
