@@ -6,14 +6,15 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 public class SunflowerView extends View {
 
 	public static final int ORANGE = 0xfff87306;
 	public static final Paint ORANGE_FILL = new Paint(Paint.ANTI_ALIAS_FLAG);
-	private static final int SEED_RADIUS = 5;
-	private static final int SCALE_FACTOR = 7;
+	private static int SEED_RADIUS;
+	private static int SCALE_FACTOR;
 	public static final double TAU = Math.PI * 2;
 	public static final double PHI = (Math.sqrt(5) + 1) / 2;
 	private int percent, maxSeeds;
@@ -40,9 +41,13 @@ public class SunflowerView extends View {
 	void onLayoutChange() {
 		height = this.getHeight();
 		width = this.getWidth();
+		SEED_RADIUS = getResources().getInteger(R.integer.SEED_RADIUS);
+		SCALE_FACTOR = getResources().getInteger(R.integer.SCALE_FACTOR);
 		maxR = Math.min(height, width) / 2;
+		Log.i(VIEW_LOG_TAG, "radius " + maxR); 
 		int range = (maxR - SEED_RADIUS) / SCALE_FACTOR;
 		maxSeeds = range * range;
+		Log.i(VIEW_LOG_TAG, "max " + maxSeeds); 
 		xc = width / 2;
 		yc = height / 2;
 	}
