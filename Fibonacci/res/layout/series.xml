@@ -3,48 +3,90 @@
     android:id="@+id/fibtext"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:gravity="center"
     android:layout_gravity="center_vertical"
-    android:orientation="vertical">
+    android:gravity="center"
+    android:orientation="vertical"
+    android:keepScreenOn="true" >
 
-	<TextView
-	    android:id="@+id/textView0"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:textStyle="italic"
-	    android:textSize="20dp" />
-
-	<TextView
-	    android:id="@+id/sumEq"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:textSize="30dp" />
-		
-	<TextView
-	    android:id="@+id/textView1"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:textSize="70dp" />
-	
     <LinearLayout
-        android:layout_height="wrap_content"
+        android:id="@+id/textContainer"
         android:layout_width="fill_parent"
-        android:orientation="horizontal">
-	    <View 
-	           android:layout_height="20dp" 
-	           android:layout_width="fill_parent" 
-	           android:layout_weight="4" />
-	    <SeekBar
-	        android:id="@+id/seekBar1"
-	        android:layout_height="wrap_content"
-	        android:layout_width="fill_parent"
-	        android:layout_gravity="center_horizontal"
-	        android:layout_weight="1" />
-	    
-	    <View 
-	           android:layout_height="20dp" 
-	           android:layout_width="fill_parent" 
-	           android:layout_weight="4" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/sumEq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="70dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="20dp"
+            android:layout_weight="4" />
+
+        <SeekBar
+            android:id="@+id/seekBar1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="20dp"
+            android:layout_weight="4" />
+    </LinearLayout>
+
+    <!-- accessibility buttons -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/decButton"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp"
+            android:onClick="decrement"
+            android:textSize="36dp"
+            android:text="-" 
+            android:contentDescription="@string/minus"/>
+
+        <Button
+            android:id="@+id/incButton"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:onClick="increment"
+            android:textSize="36dp"
+            android:text="+" />
+
     </LinearLayout>
     
+    
+
 </LinearLayout>

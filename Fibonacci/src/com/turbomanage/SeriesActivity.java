@@ -1,15 +1,16 @@
 package com.turbomanage;
 
-import java.text.NumberFormat;
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+
+import java.text.NumberFormat;
 
 public class SeriesActivity extends Activity implements OnSeekBarChangeListener {
 	/** Called when the activity is first created. */
@@ -85,7 +86,7 @@ public class SeriesActivity extends Activity implements OnSeekBarChangeListener 
 		NumberFormat fmt = NumberFormat.getInstance();
 		textView.setText(fmt.format(fib[n]));
 		if (n > 1) {
-			sumText.setText(fmt.format(fib[n - 2]) + " + "
+		    sumText.setText(fmt.format(fib[n - 2]) + " + "
 					+ fmt.format(fib[n - 1]));
 		} else {
 			sumText.setText(null);
@@ -113,4 +114,30 @@ public class SeriesActivity extends Activity implements OnSeekBarChangeListener 
 	public void onStopTrackingTouch(SeekBar seekBar) {
 		// TODO Auto-generated method stub
 	}
+	
+	/**
+	 * Click handler for plus button.
+	 * 
+	 * @param view
+	 */
+	public void increment(View view) {
+	    int curPosition = slider.getProgress();
+	    if (curPosition < maxFib)
+	    {
+	        slider.setProgress(curPosition + 1);
+	    } 
+	}
+	
+	/**
+	 * Click handler for minus button.
+	 * 
+	 * @param view
+	 */
+	public void decrement(View view) {
+	    int curPosition = slider.getProgress();
+	    if (curPosition > 0) {
+	        slider.setProgress(curPosition - 1);
+	    }
+    }
+	
 }
