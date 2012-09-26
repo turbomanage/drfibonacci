@@ -1,0 +1,5 @@
+<factorypath>
+    <factorypathentry kind="EXTJAR" id="/Users/drfibonacci/code/lib/freemarker-2.3.6.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="WKSPJAR" id="/storm-api/storm-api.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="WKSPJAR" id="/storm-impl/storm-apt.jar" enabled="true" runInBatchMode="false"/>
+</factorypath>
