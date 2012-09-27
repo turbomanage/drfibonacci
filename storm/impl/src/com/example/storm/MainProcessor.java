@@ -20,7 +20,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-@SupportedAnnotationTypes({ "com.example.storm.Entity" })
+@SupportedAnnotationTypes({ "com.example.storm.Entity","com.example.storm.Database" })
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class MainProcessor extends AbstractProcessor {
 	private ProcessorLogger logger;
