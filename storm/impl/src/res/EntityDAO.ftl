@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import java.util.Map;
+import java.util.HashMap;
 <#list imports as import>
 import ${import};
 </#list>
@@ -57,6 +59,16 @@ public class ${className} extends ${baseDaoClass}<${entityName}>{
 		</#if>
 		</#list>	
 		return cv;
+	}
+	
+	public Cursor queryByExample(${entityName} obj) {
+		Map<String,String> queryMap = new HashMap<String,String>(); 
+		<#list fields as field>
+		if (obj.${field.getter}() != null) {
+			queryMap.put("${field.colName}", obj.${field.getter}().toString());
+		}
+		</#list>
+		return queryByMap(queryMap);	
 	}
 	
 }

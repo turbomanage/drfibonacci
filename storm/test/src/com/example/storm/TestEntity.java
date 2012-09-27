@@ -5,7 +5,7 @@ public class TestEntity extends ModelBase {
 	
 	private int privateField;
 	transient int transientField;
-	int intField;
+	Integer intField;
 	String stringField;
 	
 	public TestEntity() {
@@ -29,10 +29,10 @@ public class TestEntity extends ModelBase {
 	public void setTransientField(int transientField) {
 		this.transientField = transientField;
 	}
-	public int getIntField() {
+	public Integer getIntField() {
 		return intField;
 	}
-	public void setIntField(int intField) {
+	public void setIntField(Integer intField) {
 		this.intField = intField;
 	}
 	public String getStringField() {
