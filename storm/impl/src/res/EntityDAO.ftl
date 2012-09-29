@@ -10,13 +10,13 @@ import java.util.HashMap;
 import ${import};
 </#list>
 
-public class ${className} extends ${baseDaoClass}<${entityName}>{
+public class ${className} extends ${baseDao}<${entityName}>{
 
 	public static void onCreate(SQLiteDatabase db) {
 		String sqlStmt = 
 			"CREATE TABLE ${tableName}(" +
 				<#list fields as field>
-				"${field.colName} ${field.sqlType}<#if field_has_next>,</#if>" +
+				"${field.colName} ${field.sqlType}<#if field.primitive> NOT NULL</#if><#if field_has_next>,</#if>" +
 				</#list>
 			")";
 		db.execSQL(sqlStmt);
@@ -63,9 +63,16 @@ public class ${className} extends ${baseDaoClass}<${entityName}>{
 	
 	public Cursor queryByExample(${entityName} obj) {
 		Map<String,String> queryMap = new HashMap<String,String>(); 
+		${entityName} defaultObj = new ${entityName}();
+		// Include fields in query if they differ from the default object
 		<#list fields as field>
-		if (obj.${field.getter}() != null) {
-			queryMap.put("${field.colName}", obj.${field.getter}().toString());
+		if (obj.${field.getter}() != defaultObj.${field.getter}()) {
+			<#if field.primitive>
+			String value = new ${field.wrapperType}(obj.${field.getter}()).toString();
+			<#else>
+			String value = obj.${field.getter}().toString();
+			</#if>
+			queryMap.put("${field.colName}", value);
 		}
 		</#list>
 		return queryByMap(queryMap);	

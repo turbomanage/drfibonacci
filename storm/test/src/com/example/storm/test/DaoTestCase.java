@@ -25,13 +25,17 @@ public class DaoTestCase extends AndroidTestCase {
 
 		dao = new TestEntityDao(ctx);
 		// Insert some sample data
-		TestEntity te1 = new TestEntity(13, "abc");
+		TestEntity te1 = new TestEntity();
+		te1.setIntField(13);
+		te1.setwStringField("abc");
 		long id1 = dao.put(te1);
 		// Verify that we started clean
 		assertEquals(1, id1);
 		// Verify obj id field is updated with the auto id
 		assertEquals(id1, te1.getId().longValue());
-		TestEntity te2 = new TestEntity(21, "abc");
+		TestEntity te2 = new TestEntity();
+		te2.setIntField(21);
+		te2.setwStringField("abc");
 		long id2 = dao.put(te2);
 		assertEquals(2, id2);
 	}
@@ -46,20 +50,20 @@ public class DaoTestCase extends AndroidTestCase {
 
 	public void testGetById() {
 		TestEntity obj = dao.getById(1l);
-		assertEquals(13, obj.getIntField().intValue());
-		assertEquals("abc", obj.getStringField());
+		assertEquals(13, obj.getIntField());
+		assertEquals("abc", obj.getwStringField());
 	}
 	
 	public void testGetByExample() {
 		TestEntity exampleObj = new TestEntity();
 		exampleObj.setIntField(21);
 		TestEntity resultObj = dao.getByExample(exampleObj);
-		assertEquals("abc", resultObj.getStringField());
+		assertEquals("abc", resultObj.getwStringField());
 	}
 	
 	public void testGetByExampleWithTooManyResults() {
 		TestEntity exampleObj = new TestEntity();
-		exampleObj.setStringField("abc");
+		exampleObj.setwStringField("abc");
 		try {
 			TestEntity resultObj = dao.getByExample(exampleObj);
 			fail();
@@ -75,7 +79,7 @@ public class DaoTestCase extends AndroidTestCase {
 
 	public void testListByExample() {
 		TestEntity exampleObj = new TestEntity();
-		exampleObj.setStringField("abc");
+		exampleObj.setwStringField("abc");
 		List<TestEntity> resultList = dao.listByExample(exampleObj);
 		assertEquals(2, resultList.size());
 	}

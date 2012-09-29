@@ -1,7 +1,5 @@
 package com.example.storm;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -13,12 +11,9 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
-import javax.tools.JavaFileObject;
 
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 
 @SupportedAnnotationTypes({ "com.example.storm.Entity","com.example.storm.Database" })
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
@@ -38,41 +33,21 @@ public class MainProcessor extends AbstractProcessor {
 //		for (TypeElement annotationType : annotations) {}
 		
 		for (Element element : roundEnv.getElementsAnnotatedWith(Entity.class)) {
-			Entity annotation = element.getAnnotation(Entity.class);
-			EntityModel em = new EntityModel(element);
-			processTemplateForModel(em);
-			// retain for DatabaseHelper class 
-			entities.add(em);
+			EntityProcessor eproc = new EntityProcessor(element, logger);
+			eproc.populateModel();
+			eproc.processTemplate(processingEnv, cfg);
+			// retain each entity to add to DatabaseModel 
+			entities.add(eproc.getModel());
 		}
 		
 		for (Element element : roundEnv.getElementsAnnotatedWith(Database.class)) {
-			Database dbAnno = element.getAnnotation(Database.class);
-			DatabaseModel dm = new DatabaseModel(element, dbAnno.name(), dbAnno.version());
-			// Add entity DAOs
-			for (EntityModel em : entities) {
-				dm.addDaoClass(em.getQualifiedClassName());
-			}
-			processTemplateForModel(dm);
+			DatabaseProcessor dproc = new DatabaseProcessor(element, logger);
+			dproc.populateModel();
+			dproc.addEntities(entities);
+			dproc.processTemplate(processingEnv, cfg);
 		}
 		
 		return true;
 	}
 
-	private void processTemplateForModel(ClassModel model) {
-		JavaFileObject file;
-		try {
-			file = processingEnv.getFiler().createSourceFile(model.getQualifiedClassName());
-			logger.info("Creating file  " + file.getName());
-			Writer out = file.openWriter();
-			Template t = cfg.getTemplate(model.getTemplatePath());
-			logger.info("Processing template " + t.getName());
-			t.process(model, out);
-			out.flush();
-			out.close();
-		} catch (IOException e) {
-			logger.error("EntityProcessor error", e, model.getElement());
-		} catch (TemplateException e) {
-			logger.error("EntityProcessor error", e, model.getElement());
-		}
-	}
 }

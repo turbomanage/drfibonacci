@@ -1,7 +1,5 @@
 package com.example.storm;
 
-import com.example.storm.Database;
-
 import android.app.Activity;
 
 /**

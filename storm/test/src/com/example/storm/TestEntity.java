@@ -5,17 +5,23 @@ public class TestEntity extends ModelBase {
 	
 	private int privateField;
 	transient int transientField;
-	Integer intField;
-	String stringField;
-	
-	public TestEntity() {
-		// TODO Auto-generated constructor stub
-	}
-	
-	public TestEntity(int intValue, String strValue) {
-		this.intField = intValue;
-		this.stringField = strValue;
-	}
+	boolean booleanField;
+	byte byteField;
+	char charField;
+	short tinyField;
+	int intField;
+	long longField;
+	float floatField;
+	double doubleField;
+	Boolean wBooleanField;
+	Byte wByteField;
+	Character wCharacterField;
+	Short wShortField;
+	Integer wIntegerField;
+	Long wLongField;
+	Float wFloatField;
+	Double wDoubleField;
+	String wStringField;
 	
 	public int getPrivateField() {
 		return privateField;
@@ -29,17 +35,107 @@ public class TestEntity extends ModelBase {
 	public void setTransientField(int transientField) {
 		this.transientField = transientField;
 	}
-	public Integer getIntField() {
+	public boolean isBooleanField() {
+		return booleanField;
+	}
+	public void setBooleanField(boolean booleanField) {
+		this.booleanField = booleanField;
+	}
+	public byte getByteField() {
+		return byteField;
+	}
+	public void setByteField(byte byteField) {
+		this.byteField = byteField;
+	}
+	public char getCharField() {
+		return charField;
+	}
+	public void setCharField(char charField) {
+		this.charField = charField;
+	}
+	public short getTinyField() {
+		return tinyField;
+	}
+	public void setTinyField(short tinyField) {
+		this.tinyField = tinyField;
+	}
+	public int getIntField() {
 		return intField;
 	}
-	public void setIntField(Integer intField) {
+	public void setIntField(int intField) {
 		this.intField = intField;
 	}
-	public String getStringField() {
-		return stringField;
+	public long getLongField() {
+		return longField;
 	}
-	public void setStringField(String stringField) {
-		this.stringField = stringField;
+	public void setLongField(long longField) {
+		this.longField = longField;
+	}
+	public float getFloatField() {
+		return floatField;
+	}
+	public void setFloatField(float floatField) {
+		this.floatField = floatField;
+	}
+	public double getDoubleField() {
+		return doubleField;
+	}
+	public void setDoubleField(double doubleField) {
+		this.doubleField = doubleField;
+	}
+	public Boolean getwBooleanField() {
+		return wBooleanField;
+	}
+	public void setwBooleanField(Boolean wBooleanField) {
+		this.wBooleanField = wBooleanField;
+	}
+	public Byte getwByteField() {
+		return wByteField;
+	}
+	public void setwByteField(Byte wByteField) {
+		this.wByteField = wByteField;
+	}
+	public Character getwCharacterField() {
+		return wCharacterField;
+	}
+	public void setwCharacterField(Character wCharacterField) {
+		this.wCharacterField = wCharacterField;
+	}
+	public Short getwShortField() {
+		return wShortField;
+	}
+	public void setwShortField(Short wShortField) {
+		this.wShortField = wShortField;
+	}
+	public Integer getwIntegerField() {
+		return wIntegerField;
+	}
+	public void setwIntegerField(Integer wIntegerField) {
+		this.wIntegerField = wIntegerField;
+	}
+	public Long getwLongField() {
+		return wLongField;
+	}
+	public void setwLongField(Long wLongField) {
+		this.wLongField = wLongField;
+	}
+	public Float getwFloatField() {
+		return wFloatField;
+	}
+	public void setwFloatField(Float wFloatField) {
+		this.wFloatField = wFloatField;
+	}
+	public Double getwDoubleField() {
+		return wDoubleField;
+	}
+	public void setwDoubleField(Double wDoubleField) {
+		this.wDoubleField = wDoubleField;
+	}
+	public String getwStringField() {
+		return wStringField;
+	}
+	public void setwStringField(String wStringField) {
+		this.wStringField = wStringField;
 	}
 	
 }

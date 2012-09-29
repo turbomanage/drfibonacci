@@ -5,18 +5,22 @@ import java.util.Map;
 
 public class TypeMapper {
 
-		private static Map<String, String> map = new HashMap<String,String>();
+	private static Map<String, SqlType> map = new HashMap<String, SqlType>();
+
+	static {
+		map.put("int", SqlType.INTEGER);
+		map.put("long", SqlType.INTEGER);
+		map.put("java.lang.Integer", SqlType.INTEGER);
+		map.put("java.lang.Long", SqlType.INTEGER);
+		map.put("java.lang.String", SqlType.TEXT);
+	}
+
+	static String getSqlType(String javaType) {
 		
-		static {
-			// TODO Auto-generated constructor stub
-			map.put("int", SqlType.INTEGER);
-			map.put("long", SqlType.INTEGER);
-			map.put("java.lang.Integer", SqlType.INTEGER);
-			map.put("java.lang.Long", SqlType.INTEGER);
-			map.put("java.lang.String", SqlType.TEXT);
+		SqlType sqlType = map.get(javaType);
+		if (sqlType != null) {
+			return sqlType.name();
 		}
-		
-		static String getSqlType(String javaType) {
-			return map.get(javaType);
-		}
+		throw new IllegalArgumentException("Fields of type " + javaType + " are not supported.");
+	}
 }
