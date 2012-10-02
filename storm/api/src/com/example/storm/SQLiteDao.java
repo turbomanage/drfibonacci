@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.storm.exception.TooManyResultsException;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -64,11 +66,18 @@ public abstract class SQLiteDao<T extends ModelBase> {
 	}
 	
 	public long put(T obj) {
-		// Remove id from CV in case of insert
 		ContentValues cv = getEditableValues(obj);
-		long id = db.insertOrThrow(this.getTableName(), null, cv);
-		obj.setId(id);
-		return id;
+		if (cv.containsKey("_id")) {
+			// update
+			Long id = cv.getAsLong("_id");
+			db.update(this.getTableName(), cv, "id=?", new String[]{id.toString()});
+			return id.longValue();
+		} else {
+			// insert
+			long id = db.insertOrThrow(this.getTableName(), null, cv);
+			obj.setId(id);
+			return id;
+		}
 	}
 
 	public Cursor queryAll() {
@@ -118,6 +127,45 @@ public abstract class SQLiteDao<T extends ModelBase> {
 	
 	public Map<String,String> newQueryMap() {
 		return new HashMap<String,String>();
+	}
+	
+	/*
+	 * Methods to wrap Cursor get methods
+	 */
+	
+	protected byte[] getBlobOrNull(Cursor c, String colName) {
+		int col = c.getColumnIndexOrThrow(colName);
+		return c.isNull(col) ? null : c.getBlob(col);
+	}
+	
+	protected Double getDoubleOrNull(Cursor c, String colName) {
+		int col = c.getColumnIndexOrThrow(colName);
+		return c.isNull(col) ? null : c.getDouble(col);
+	}
+
+	protected Float getFloatOrNull(Cursor c, String colName) {
+		int col = c.getColumnIndexOrThrow(colName);
+		return c.isNull(col) ? null : c.getFloat(col);
+	}
+
+	protected Integer getIntOrNull(Cursor c, String colName) {
+		int col = c.getColumnIndexOrThrow(colName);
+		return c.isNull(col) ? null : c.getInt(col);
+	}
+	
+	protected Long getLongOrNull(Cursor c, String colName) {
+		int col = c.getColumnIndexOrThrow(colName);
+		return c.isNull(col) ? null : c.getLong(col);
+	}
+
+	protected Short getShortOrNull(Cursor c, String colName) {
+		int col = c.getColumnIndexOrThrow(colName);
+		return c.isNull(col) ? null : c.getShort(col);
+	}
+
+	protected String getStringOrNull(Cursor c, String colName) {
+		int col = c.getColumnIndexOrThrow(colName);
+		return c.isNull(col) ? null : c.getString(col);
 	}
 	
 }

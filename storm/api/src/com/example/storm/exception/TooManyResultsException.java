@@ -1,4 +1,4 @@
-package com.example.storm;
+package com.example.storm.exception;
 
 public class TooManyResultsException extends RuntimeException {
 

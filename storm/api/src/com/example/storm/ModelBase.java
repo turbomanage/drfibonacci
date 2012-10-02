@@ -4,44 +4,44 @@ package com.example.storm;
 
 public abstract class ModelBase {
 
-    public Long id;
-    public Integer version;
-    public Long lastMod; // ms since epoch
-    public Long lastSync; // ms since epoch
+    public long id;
+    public int version;
+    public long lastMod; // ms since epoch
+    public long lastSync; // ms since epoch
 
     public ModelBase() {
-        // Empty ctor for Jackson
-    }
+	    // Empty ctor for Jackson
+	}
 
-	public Long getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
-	public Integer getVersion() {
+	public int getVersion() {
 		return version;
 	}
 
-	public void setVersion(Integer version) {
+	public void setVersion(int version) {
 		this.version = version;
 	}
 
-	public Long getLastMod() {
+	public long getLastMod() {
 		return lastMod;
 	}
 
-	public void setLastMod(Long lastMod) {
+	public void setLastMod(long lastMod) {
 		this.lastMod = lastMod;
 	}
 
-	public Long getLastSync() {
+	public long getLastSync() {
 		return lastSync;
 	}
 
-	public void setLastSync(Long lastSync) {
+	public void setLastSync(long lastSync) {
 		this.lastSync = lastSync;
 	}
 
