@@ -13,6 +13,7 @@ import com.example.storm.types.java.BlobConverter;
 import com.example.storm.types.java.BooleanConverter;
 import com.example.storm.types.java.ByteConverter;
 import com.example.storm.types.java.CharConverter;
+import com.example.storm.types.java.DateConverter;
 import com.example.storm.types.java.DoubleConverter;
 import com.example.storm.types.java.FloatConverter;
 import com.example.storm.types.java.IntegerConverter;
@@ -21,6 +22,10 @@ import com.example.storm.types.java.ShortConverter;
 import com.example.storm.types.java.StringConverter;
 import com.example.storm.types.java.TypeConverter;
 
+/**
+ * @author drfibonacci
+ *
+ */
 public class TypeMapper {
 
 	private static Map<String, String> map = new HashMap<String, String>();
@@ -30,6 +35,7 @@ public class TypeMapper {
 		register(new BooleanConverter());
 		register(new ByteConverter());
 		register(new CharConverter());
+		register(new DateConverter());
 		register(new DoubleConverter());
 		register(new FloatConverter());
 		register(new IntegerConverter());
@@ -38,10 +44,22 @@ public class TypeMapper {
 		register(new StringConverter());
 	}
 	
-	public static void main(String[] args) {	}
+	/**
+	 * For testing only. Run this class to see a list of all built-in
+	 * converters.
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		dumpConverters();
+	}
 
 	public static String getSqlType(String javaType) throws TypeNotSupportedException {
-		return getConverter(javaType).getSqlType().name();
+		TypeConverter converter = getConverter(javaType);
+		if (converter != null) {
+			return converter.getSqlType().name();
+		}
+		throw new TypeNotSupportedException("Could not find converter for type " + javaType);
 	}
 
 	/**
@@ -66,18 +84,6 @@ public class TypeMapper {
 	 * @param logger
 	 * @param typeElement
 	 */
-//	static void registerConverter(ConverterModel cm, ProcessorLogger logger, TypeElement typeElement) {
-//		for (String type : cm.getConvertForTypes()) {
-//			if (cm != null) {
-//				if (map.containsKey(type)) 
-//					logger.error("Converter already registered for type " + type, typeElement);
-//				else {
-//					map.put(type, cm.getQualifiedClassName());
-//					logger.info("registered " + cm.getClassName() + " for " + type);
-//				}
-//			}
-//		}
-//	}
 	static boolean registerConverter(String converterClass, String type) {
 		if (map.containsKey(type))
 			return false;
@@ -96,30 +102,31 @@ public class TypeMapper {
 	 * @param javaType
 	 * @return
 	 */
-	public static TypeConverter getConverter(String javaType) {
+	public static TypeConverter getConverter(String javaType) throws TypeNotSupportedException {
 		String cType = map.get(javaType);
+		if (cType == null) {
+			throw new TypeNotSupportedException("Fields of type " + javaType + " are not supported. Consider adding your own TypeConverter.");
+		}
 		TypeConverter converter;
 		try {
+			
 			converter = (TypeConverter) Class.forName(cType).newInstance();
 			if (converter != null) {
 				return converter;
 			}
 		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new TypeNotSupportedException("Could not instantiate " + cType + " due to " + e.getClass().getCanonicalName());
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new TypeNotSupportedException("Could not instantiate " + cType + " due to " + e.getClass().getCanonicalName());
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new TypeNotSupportedException("Could not instantiate " + cType + " due to " + e.getClass().getCanonicalName());
 		}
-		throw new TypeNotSupportedException("Fields of type " + javaType + " are not supported.");
+		throw new TypeNotSupportedException("Fields of type " + javaType + " are not supported. Consider adding your own TypeConverter.");
 	}
 	
-	public static void dumpConverters(ProcessorLogger logger) {
+	public static void dumpConverters() {
 		for (String type : map.keySet()) {
-			logger.info(String.format("%s for %s", type, map.get(type)));
+			System.out.println(String.format("%s for %s", type, map.get(type)));
 		}
 	}
 }

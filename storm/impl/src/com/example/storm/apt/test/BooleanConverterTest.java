@@ -6,7 +6,7 @@ import com.example.storm.types.java.IntegerConverter;
 
 import junit.framework.TestCase;
 
-public class TypeMapperTest extends TestCase {
+public class BooleanConverterTest extends TestCase {
 	
 	public void testBooleanConversions() {
 		BooleanConverter conv = new BooleanConverter();

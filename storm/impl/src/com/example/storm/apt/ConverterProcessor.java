@@ -35,25 +35,19 @@ public class ConverterProcessor extends ClassProcessor {
 
 	@Override
 	protected void populateModel() {
-//		PackageElement pkg = (PackageElement) this.typeElement.getEnclosingElement();
-//		String converterPkg = pkg.getQualifiedName().toString();
 		String converterClass = this.typeElement.getQualifiedName().toString();
 		List<? extends AnnotationMirror> annoMirrors = this.typeElement.getAnnotationMirrors();
-		String types = null;
 		for (AnnotationMirror anno : annoMirrors) {
 			Map<? extends ExecutableElement, ? extends AnnotationValue> annoValues = anno.getElementValues();
 			for (AnnotationValue val : annoValues.values()) {
-				types = val.accept(new ConverterTypeAnnotationValuesVisitor(), logger);
+				String[] types = val.accept(new ConverterTypeAnnotationValuesVisitor(), logger);
+				for (String type : types) {
+					if (TypeMapper.registerConverter(converterClass, type))
+						logger.info(converterClass + " registered for type " + type);
+					else
+						logger.error("Converter already registered for type " + type, this.typeElement);
 			}
 		}
-//		this.cm = new ConverterModel(converterClass, converterPkg, types.split(","));
-		for (String type : types.split(",")) {
-			while (type != null) {
-				if (TypeMapper.registerConverter(converterClass, type))
-					logger.info(converterClass + " registered for type " + type);
-				else
-					logger.error("Converter already registered for type " + type, typeElement);
-			}
 		}
 	}
 

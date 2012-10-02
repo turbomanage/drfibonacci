@@ -98,6 +98,7 @@ public class DaoTestCase extends AndroidTestCase {
 		newEntity.setwBooleanField(Boolean.TRUE);
 		newEntity.setwByteField(new Byte((byte) 89));
 		newEntity.setwCharacterField('X');
+		newEntity.setwDateField(new Date());
 		newEntity.setwDoubleField((1-Math.sqrt(5))/2);
 		newEntity.setwFloatField((float) ((1-Math.sqrt(5))/2));
 		newEntity.setwIntegerField(1836311903);
@@ -138,6 +139,7 @@ public class DaoTestCase extends AndroidTestCase {
 			assertEquals(a.getwBooleanField(), b.getwBooleanField());
 			assertEquals(a.getwByteField(), b.getwByteField());
 			assertEquals(a.getwCharacterField(), b.getwCharacterField());
+			assertEquals(a.getwDateField(), b.getwDateField());
 			assertEquals(a.getwDoubleField(), b.getwDoubleField());
 			assertEquals(a.getwFloatField(), b.getwFloatField());
 			assertEquals(a.getwIntegerField(), b.getwIntegerField());

@@ -1,5 +1,7 @@
 package com.example.storm;
 
+import java.util.Date;
+
 import com.example.storm.api.Entity;
 
 @Entity
@@ -19,6 +21,7 @@ public class TestEntity extends ModelBase {
 	Boolean wBooleanField;
 	Byte wByteField;
 	Character wCharacterField;
+	Date wDateField;
 	Short wShortField;
 	Integer wIntegerField;
 	Long wLongField;
@@ -109,6 +112,12 @@ public class TestEntity extends ModelBase {
 	}
 	public void setwCharacterField(Character wCharacterField) {
 		this.wCharacterField = wCharacterField;
+	}
+	public Date getwDateField() {
+		return wDateField;
+	}
+	public void setwDateField(Date wDateField) {
+		this.wDateField = wDateField;
 	}
 	public Short getwShortField() {
 		return wShortField;
