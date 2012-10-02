@@ -38,6 +38,10 @@ public class ${className} extends ${baseDao}<${entityName}>{
 		return "${entityName}";
 	}
 	
+	public String getIdCol() {
+		return "_id";
+	}
+	
 	public ${entityName} newInstance(Cursor c) {
 		${entityName} obj = new ${entityName}();
 		<#list fields as field>
@@ -49,9 +53,7 @@ public class ${className} extends ${baseDao}<${entityName}>{
 	public ContentValues getEditableValues(${entityName} obj) {
 		ContentValues cv = new ContentValues();
 		<#list fields as field>
-		<#if "_id" != field.colName>
 		cv.put("${field.colName}", new ${field.converterType}().toSql(obj.${field.getter}()));
-		</#if>
 		</#list>	
 		return cv;
 	}

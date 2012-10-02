@@ -34,6 +34,7 @@ public abstract class SQLiteDao<T extends ModelBase> {
 	}
 
 	public abstract String getEntityName();
+	public abstract String getIdCol();
 	public abstract T newInstance(Cursor c);
 	public abstract ContentValues getEditableValues(T obj);
 	public abstract Cursor queryByExample(T exampleObj);
@@ -64,20 +65,30 @@ public abstract class SQLiteDao<T extends ModelBase> {
 	public List<T> listByMap(Map<String,String> queryMap) {
 		return asList(queryByMap(queryMap));
 	}
-	
+
+	/**
+	 * Insert or update, depending on whether the ID column is set to
+	 * a non-default value.
+	 * 
+	 * @param obj
+	 * @return
+	 */
 	public long put(T obj) {
 		ContentValues cv = getEditableValues(obj);
-		if (cv.containsKey("_id")) {
-			// update
-			Long id = cv.getAsLong("_id");
-			db.update(this.getTableName(), cv, "id=?", new String[]{id.toString()});
-			return id.longValue();
-		} else {
-			// insert
-			long id = db.insertOrThrow(this.getTableName(), null, cv);
-			obj.setId(id);
-			return id;
+		if (cv.containsKey(getIdCol())) {
+			Long id = cv.getAsLong(getIdCol());
+			if (id == null || id==0) {
+				// insert
+				cv.remove(getIdCol());
+				id = db.insertOrThrow(this.getTableName(), null, cv);
+				obj.setId(id);
+				return id;
+			} else {
+				int numRowsUpdated = db.update(this.getTableName(), cv, getIdCol() + "=?", new String[]{id.toString()});
+				return numRowsUpdated;
+			}
 		}
+		return 0;
 	}
 
 	public Cursor queryAll() {

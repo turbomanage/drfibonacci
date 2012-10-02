@@ -41,7 +41,7 @@ public class DaoTestCase extends AndroidTestCase {
 		long id2 = dao.put(te2);
 		assertEquals(2, id2);
 	}
-	
+
 	private void openDatabase() {
 		SQLiteOpenHelper dbHelper = DatabaseFactory.getDatabaseHelper(ctx);
 		SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -55,14 +55,14 @@ public class DaoTestCase extends AndroidTestCase {
 		assertEquals(13, obj.getIntField());
 		assertEquals("abc", obj.getwStringField());
 	}
-	
+
 	public void testGetByExample() {
 		TestEntity exampleObj = new TestEntity();
 		exampleObj.setIntField(21);
 		TestEntity resultObj = dao.getByExample(exampleObj);
 		assertEquals("abc", resultObj.getwStringField());
 	}
-	
+
 	public void testGetByExampleWithTooManyResults() {
 		TestEntity exampleObj = new TestEntity();
 		exampleObj.setwStringField("abc");
@@ -73,7 +73,7 @@ public class DaoTestCase extends AndroidTestCase {
 			// passed
 		}
 	}
-	
+
 	public void testInsertAndRetrieveAllFields() {
 		TestEntity newEntity = new TestEntity();
 		long id = dao.put(newEntity);
@@ -81,32 +81,22 @@ public class DaoTestCase extends AndroidTestCase {
 		TestEntity retrievedEntity = dao.getById(id);
 		assertAllFieldsMatch(newEntity, retrievedEntity);
 	}
-	
+
 	public void testInsertAndRetrieveAllFieldsWithValues() {
 		TestEntity newEntity = new TestEntity();
-		newEntity.setBlobField(new byte[]{0x0C,0x15,0x22});
-		newEntity.setBlobField("CAFEBABE".getBytes());
-		newEntity.setBooleanField(true);
-		newEntity.setCharField('z');
-		newEntity.setDoubleField((1+Math.sqrt(5))/2);
-		newEntity.setFloatField((float) ((1+Math.sqrt(5))/2));
-		newEntity.setIntField(75025);
-		newEntity.setLastMod(new Date().getTime());
-		newEntity.setLastSync(new Date().getTime());
-		newEntity.setLongField(12586269025L);
-		newEntity.setShortField((short) 28657);
-		newEntity.setwBooleanField(Boolean.TRUE);
-		newEntity.setwByteField(new Byte((byte) 89));
-		newEntity.setwCharacterField('X');
-		newEntity.setwDateField(new Date());
-		newEntity.setwDoubleField((1-Math.sqrt(5))/2);
-		newEntity.setwFloatField((float) ((1-Math.sqrt(5))/2));
-		newEntity.setwIntegerField(1836311903);
-		newEntity.setwLongField(86267571272L);
-		newEntity.setwShortField((short) 17711);
-		newEntity.setwStringField("Hello, world!");
+		populateEntity(newEntity);
 		long id = dao.put(newEntity);
 		assertTrue(id > 0);
+		TestEntity retrievedEntity = dao.getById(id);
+		assertAllFieldsMatch(newEntity, retrievedEntity);
+	}
+	
+	public void testUpdateAndRetrieveAllFields() {
+		TestEntity newEntity = new TestEntity();
+		long id = dao.put(newEntity);
+		populateEntity(newEntity);
+		long numRowsUpdated = dao.put(newEntity);
+		assertEquals(1, numRowsUpdated);
 		TestEntity retrievedEntity = dao.getById(id);
 		assertAllFieldsMatch(newEntity, retrievedEntity);
 	}
@@ -124,27 +114,51 @@ public class DaoTestCase extends AndroidTestCase {
 	}
 
 	private void assertAllFieldsMatch(TestEntity a, TestEntity b) {
-			assertEquals(a.getByteField(), b.getByteField());
-			assertTrue(Arrays.equals(a.getBlobField(), b.getBlobField()));
-			assertEquals(a.getCharField(), b.getCharField());
-			assertEquals(a.getDoubleField(), b.getDoubleField());
-			assertEquals(a.getFloatField(), b.getFloatField());
-			assertEquals(a.getIntField(), b.getIntField());
-			assertEquals(a.getLastMod(), b.getLastMod());
-			assertEquals(a.getLastSync(), b.getLastSync());
-			assertEquals(a.getLongField(), b.getLongField());
-			assertEquals(a.getShortField(), b.getShortField());
-			assertEquals(a.getVersion(), b.getVersion());
-			assertEquals(a.getwStringField(), b.getwStringField());
-			assertEquals(a.getwBooleanField(), b.getwBooleanField());
-			assertEquals(a.getwByteField(), b.getwByteField());
-			assertEquals(a.getwCharacterField(), b.getwCharacterField());
-			assertEquals(a.getwDateField(), b.getwDateField());
-			assertEquals(a.getwDoubleField(), b.getwDoubleField());
-			assertEquals(a.getwFloatField(), b.getwFloatField());
-			assertEquals(a.getwIntegerField(), b.getwIntegerField());
-			assertEquals(a.getwLongField(), b.getwLongField());
-			assertEquals(a.getwShortField(), b.getwShortField());
-		}
+		assertEquals(a.getId(), b.getId());
+		assertEquals(a.getByteField(), b.getByteField());
+		assertTrue(Arrays.equals(a.getBlobField(), b.getBlobField()));
+		assertEquals(a.getCharField(), b.getCharField());
+		assertEquals(a.getDoubleField(), b.getDoubleField());
+		assertEquals(a.getFloatField(), b.getFloatField());
+		assertEquals(a.getIntField(), b.getIntField());
+		assertEquals(a.getLastMod(), b.getLastMod());
+		assertEquals(a.getLastSync(), b.getLastSync());
+		assertEquals(a.getLongField(), b.getLongField());
+		assertEquals(a.getShortField(), b.getShortField());
+		assertEquals(a.getVersion(), b.getVersion());
+		assertEquals(a.getwStringField(), b.getwStringField());
+		assertEquals(a.getwBooleanField(), b.getwBooleanField());
+		assertEquals(a.getwByteField(), b.getwByteField());
+		assertEquals(a.getwCharacterField(), b.getwCharacterField());
+		assertEquals(a.getwDateField(), b.getwDateField());
+		assertEquals(a.getwDoubleField(), b.getwDoubleField());
+		assertEquals(a.getwFloatField(), b.getwFloatField());
+		assertEquals(a.getwIntegerField(), b.getwIntegerField());
+		assertEquals(a.getwLongField(), b.getwLongField());
+		assertEquals(a.getwShortField(), b.getwShortField());
+	}
+
+	private void populateEntity(TestEntity e) {
+		e.setBlobField("CAFEBABE".getBytes());
+		e.setBooleanField(true);
+		e.setCharField('z');
+		e.setDoubleField((1 + Math.sqrt(5)) / 2);
+		e.setFloatField((float) ((1 + Math.sqrt(5)) / 2));
+		e.setIntField(75025);
+		e.setLastMod(new Date().getTime());
+		e.setLastSync(new Date().getTime());
+		e.setLongField(12586269025L);
+		e.setShortField((short) 28657);
+		e.setwBooleanField(Boolean.TRUE);
+		e.setwByteField(new Byte((byte) 89));
+		e.setwCharacterField('X');
+		e.setwDateField(new Date());
+		e.setwDoubleField((1 - Math.sqrt(5)) / 2);
+		e.setwFloatField((float) ((1 - Math.sqrt(5)) / 2));
+		e.setwIntegerField(1836311903);
+		e.setwLongField(86267571272L);
+		e.setwShortField((short) 17711);
+		e.setwStringField("Hello, world!");
+	}
 
 }
