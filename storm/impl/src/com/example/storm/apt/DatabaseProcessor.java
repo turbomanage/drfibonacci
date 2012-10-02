@@ -1,9 +1,11 @@
-package com.example.storm;
+package com.example.storm.apt;
 
 import java.util.List;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
+
+import com.example.storm.api.Database;
 
 public class DatabaseProcessor extends ClassProcessor {
 

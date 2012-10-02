@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import java.util.Map;
 import java.util.HashMap;
+import com.example.storm.types.java.*;
 <#list imports as import>
 import ${import};
 </#list>
@@ -16,7 +17,7 @@ public class ${className} extends ${baseDao}<${entityName}>{
 		String sqlStmt = 
 			"CREATE TABLE ${tableName}(" +
 				<#list fields as field>
-				"${field.colName} ${field.sqlType}<#if field.primitive> NOT NULL</#if><#if field_has_next>,</#if>" +
+				"${field.colName} ${field.sqlType}<#if !field.nullable> NOT NULL</#if><#if field_has_next>,</#if>" +
 				</#list>
 			")";
 		db.execSQL(sqlStmt);
@@ -40,13 +41,7 @@ public class ${className} extends ${baseDao}<${entityName}>{
 	public ${entityName} newInstance(Cursor c) {
 		${entityName} obj = new ${entityName}();
 		<#list fields as field>
-		<#if field.javaType = "int" || field.javaType = "java.lang.Integer">
-		obj.${field.setter}(c.getInt(c.getColumnIndexOrThrow("${field.colName}")));
-		<#elseif field.javaType = "long" || field.javaType = "java.lang.Long">
-		obj.${field.setter}(c.getLong(c.getColumnIndexOrThrow("${field.colName}")));
-		<#elseif field.javaType = "java.lang.String">
-		obj.${field.setter}(c.getString(c.getColumnIndexOrThrow("${field.colName}")));
-		</#if>
+		obj.${field.setter}(new ${field.converterType}().fromSql(${field.cursorMethod}OrNull(c, "${field.colName}")));
 		</#list>
 		return obj;
 	}
@@ -55,7 +50,7 @@ public class ${className} extends ${baseDao}<${entityName}>{
 		ContentValues cv = new ContentValues();
 		<#list fields as field>
 		<#if "_id" != field.colName>
-		cv.put("${field.colName}", obj.${field.getter}());
+		cv.put("${field.colName}", new ${field.converterType}().toSql(obj.${field.getter}()));
 		</#if>
 		</#list>	
 		return cv;
@@ -66,14 +61,8 @@ public class ${className} extends ${baseDao}<${entityName}>{
 		${entityName} defaultObj = new ${entityName}();
 		// Include fields in query if they differ from the default object
 		<#list fields as field>
-		if (obj.${field.getter}() != defaultObj.${field.getter}()) {
-			<#if field.primitive>
-			String value = new ${field.wrapperType}(obj.${field.getter}()).toString();
-			<#else>
-			String value = obj.${field.getter}().toString();
-			</#if>
-			queryMap.put("${field.colName}", value);
-		}
+		if (obj.${field.getter}() != defaultObj.${field.getter}())
+			queryMap.put("${field.colName}", "" + new ${field.converterType}().toSql(obj.${field.getter}()));
 		</#list>
 		return queryByMap(queryMap);	
 	}

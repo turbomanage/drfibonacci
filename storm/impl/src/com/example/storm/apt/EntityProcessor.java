@@ -1,4 +1,4 @@
-package com.example.storm;
+package com.example.storm.apt;
 
 import java.util.Set;
 
@@ -7,8 +7,11 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.VariableElement;
 
+import com.example.storm.exception.TypeNotSupportedException;
+
 public class EntityProcessor extends ClassProcessor {
 
+	private static final String TAG = EntityProcessor.class.getName();
 	private static final String TEMPLATE_PATH = "EntityDAO.ftl";
 	protected EntityModel entityModel;
 	
@@ -35,6 +38,19 @@ public class EntityProcessor extends ClassProcessor {
 		entityModel.className = entityModel.entityName + "Dao";
 		entityModel.addImport(entityModel.entityPackageName + "." + entityModel.entityName);
 		readFields(typeElement);
+		verifyIdField();
+	}
+
+	private void verifyIdField() {
+		// Ensure that there is a field named 'id' of type int or long
+		for (FieldModel field : entityModel.getFields()) {
+			if ("id".equals(field.getFieldName())) { 
+				if ("int".equals(field.getJavaType()) || "long".equals(field.getJavaType())) {
+					return;
+				}
+			}
+		}
+		logger.error(TAG + ": entity must contain an id field of type int or long", typeElement);
 	}
 
 	@Override
@@ -45,10 +61,12 @@ public class EntityProcessor extends ClassProcessor {
 			String javaType = getFieldType(field);
 			try {
 				String sqlType = TypeMapper.getSqlType(javaType);
-			} catch (IllegalArgumentException e) {
-				logger.error("Type " + javaType + " is not supported.", e, field);
+				entityModel.addField(field.getSimpleName().toString(), javaType);
+			} catch (TypeNotSupportedException e) {
+				logger.error(TAG, e, field);
+			} catch (Exception e) {
+				logger.error(TAG, e, field);
 			}
-			entityModel.addField(field.getSimpleName().toString(), javaType);
 		}
 	}
 

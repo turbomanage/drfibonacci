@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.storm;
+package com.example.storm.apt;
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
