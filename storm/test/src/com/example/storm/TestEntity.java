@@ -1,5 +1,7 @@
 package com.example.storm;
 
+import com.example.storm.api.Entity;
+
 @Entity
 public class TestEntity extends ModelBase {
 	
@@ -7,8 +9,9 @@ public class TestEntity extends ModelBase {
 	transient int transientField;
 	boolean booleanField;
 	byte byteField;
+	byte[] blobField;
 	char charField;
-	short tinyField;
+	short shortField;
 	int intField;
 	long longField;
 	float floatField;
@@ -47,17 +50,23 @@ public class TestEntity extends ModelBase {
 	public void setByteField(byte byteField) {
 		this.byteField = byteField;
 	}
+	public byte[] getBlobField() {
+		return blobField;
+	}
+	public void setBlobField(byte[] blobField) {
+		this.blobField = blobField;
+	}
 	public char getCharField() {
 		return charField;
 	}
 	public void setCharField(char charField) {
 		this.charField = charField;
 	}
-	public short getTinyField() {
-		return tinyField;
+	public short getShortField() {
+		return shortField;
 	}
-	public void setTinyField(short tinyField) {
-		this.tinyField = tinyField;
+	public void setShortField(short tinyField) {
+		this.shortField = tinyField;
 	}
 	public int getIntField() {
 		return intField;

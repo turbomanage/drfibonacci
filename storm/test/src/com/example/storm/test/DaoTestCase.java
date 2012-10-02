@@ -1,5 +1,7 @@
 package com.example.storm.test;
 
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
@@ -10,8 +12,8 @@ import android.test.AndroidTestCase;
 import com.example.storm.DatabaseFactory;
 import com.example.storm.TestActivity;
 import com.example.storm.TestEntity;
-import com.example.storm.TooManyResultsException;
 import com.example.storm.dao.TestEntityDao;
+import com.example.storm.exception.TooManyResultsException;
 
 public class DaoTestCase extends AndroidTestCase {
 	private Context ctx;
@@ -32,7 +34,7 @@ public class DaoTestCase extends AndroidTestCase {
 		// Verify that we started clean
 		assertEquals(1, id1);
 		// Verify obj id field is updated with the auto id
-		assertEquals(id1, te1.getId().longValue());
+		assertEquals(id1, te1.getId());
 		TestEntity te2 = new TestEntity();
 		te2.setIntField(21);
 		te2.setwStringField("abc");
@@ -72,6 +74,42 @@ public class DaoTestCase extends AndroidTestCase {
 		}
 	}
 	
+	public void testInsertAndRetrieveAllFields() {
+		TestEntity newEntity = new TestEntity();
+		long id = dao.put(newEntity);
+		assertTrue(id > 0);
+		TestEntity retrievedEntity = dao.getById(id);
+		assertAllFieldsMatch(newEntity, retrievedEntity);
+	}
+	
+	public void testInsertAndRetrieveAllFieldsWithValues() {
+		TestEntity newEntity = new TestEntity();
+		newEntity.setBlobField(new byte[]{0x0C,0x15,0x22});
+		newEntity.setBlobField("CAFEBABE".getBytes());
+		newEntity.setBooleanField(true);
+		newEntity.setCharField('z');
+		newEntity.setDoubleField((1+Math.sqrt(5))/2);
+		newEntity.setFloatField((float) ((1+Math.sqrt(5))/2));
+		newEntity.setIntField(75025);
+		newEntity.setLastMod(new Date().getTime());
+		newEntity.setLastSync(new Date().getTime());
+		newEntity.setLongField(12586269025L);
+		newEntity.setShortField((short) 28657);
+		newEntity.setwBooleanField(Boolean.TRUE);
+		newEntity.setwByteField(new Byte((byte) 89));
+		newEntity.setwCharacterField('X');
+		newEntity.setwDoubleField((1-Math.sqrt(5))/2);
+		newEntity.setwFloatField((float) ((1-Math.sqrt(5))/2));
+		newEntity.setwIntegerField(1836311903);
+		newEntity.setwLongField(86267571272L);
+		newEntity.setwShortField((short) 17711);
+		newEntity.setwStringField("Hello, world!");
+		long id = dao.put(newEntity);
+		assertTrue(id > 0);
+		TestEntity retrievedEntity = dao.getById(id);
+		assertAllFieldsMatch(newEntity, retrievedEntity);
+	}
+
 	public void testListAll() {
 		List<TestEntity> all = dao.listAll();
 		assertEquals(2, all.size());
@@ -83,5 +121,28 @@ public class DaoTestCase extends AndroidTestCase {
 		List<TestEntity> resultList = dao.listByExample(exampleObj);
 		assertEquals(2, resultList.size());
 	}
+
+	private void assertAllFieldsMatch(TestEntity a, TestEntity b) {
+			assertEquals(a.getByteField(), b.getByteField());
+			assertTrue(Arrays.equals(a.getBlobField(), b.getBlobField()));
+			assertEquals(a.getCharField(), b.getCharField());
+			assertEquals(a.getDoubleField(), b.getDoubleField());
+			assertEquals(a.getFloatField(), b.getFloatField());
+			assertEquals(a.getIntField(), b.getIntField());
+			assertEquals(a.getLastMod(), b.getLastMod());
+			assertEquals(a.getLastSync(), b.getLastSync());
+			assertEquals(a.getLongField(), b.getLongField());
+			assertEquals(a.getShortField(), b.getShortField());
+			assertEquals(a.getVersion(), b.getVersion());
+			assertEquals(a.getwStringField(), b.getwStringField());
+			assertEquals(a.getwBooleanField(), b.getwBooleanField());
+			assertEquals(a.getwByteField(), b.getwByteField());
+			assertEquals(a.getwCharacterField(), b.getwCharacterField());
+			assertEquals(a.getwDoubleField(), b.getwDoubleField());
+			assertEquals(a.getwFloatField(), b.getwFloatField());
+			assertEquals(a.getwIntegerField(), b.getwIntegerField());
+			assertEquals(a.getwLongField(), b.getwLongField());
+			assertEquals(a.getwShortField(), b.getwShortField());
+		}
 
 }
