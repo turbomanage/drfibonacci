@@ -39,11 +39,22 @@ public abstract class SQLiteDao<T extends ModelBase> {
 	public abstract ContentValues getEditableValues(T obj);
 	public abstract Cursor queryByExample(T exampleObj);
 
+	public int delete(Long id) {
+		if (id != null) {
+			return db.delete(getTableName(), getIdCol() + "=?", new String[]{id.toString()});
+		}
+		return 0;
+	}
+	
+	public int deleteAll() {
+		return db.delete(getTableName(), null, null);
+	}
+	
 	protected String getTableName() {
 		return getEntityName();
 	}
 
-	public T getById(Long id) {
+	public T get(Long id) {
 		Map<String, String> queryMap = newQueryMap();
 		queryMap.put("_id", id.toString());
 		Cursor c = queryByMap(queryMap);
@@ -132,6 +143,8 @@ public abstract class SQLiteDao<T extends ModelBase> {
 	public T asObject(Cursor c) {
 		if (c.getCount() > 1)
 			throw new TooManyResultsException("Cursor returned " + c.getCount() + " rows");
+		if (c.getCount() < 1)
+			return null;
 		c.moveToFirst();
 		return newInstance(c);
 	}

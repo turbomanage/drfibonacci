@@ -41,17 +41,26 @@ public class DaoTestCase extends AndroidTestCase {
 		long id2 = dao.put(te2);
 		assertEquals(2, id2);
 	}
-
-	private void openDatabase() {
-		SQLiteOpenHelper dbHelper = DatabaseFactory.getDatabaseHelper(ctx);
-		SQLiteDatabase db = dbHelper.getReadableDatabase();
-		assertEquals(TestActivity.DB_VERSION, db.getVersion());
-		// wipe database
-		dbHelper.onUpgrade(db, TestActivity.DB_VERSION, TestActivity.DB_VERSION);
+	
+	@Override
+	protected void tearDown() throws Exception {
+		int numRowsDeleted = dao.deleteAll();
+		assertTrue(numRowsDeleted > 0);
+		List<TestEntity> listAll = dao.listAll();
+		assertEquals(0, listAll.size());
+		super.tearDown();
 	}
 
+	public void testDelete() {
+		TestEntity newEntity = new TestEntity();
+		long id = dao.put(newEntity);
+		int numRowsDeleted = dao.delete(id);
+		assertEquals(1, numRowsDeleted);
+		assertNull(dao.get(id));
+	}
+	
 	public void testGetById() {
-		TestEntity obj = dao.getById(1l);
+		TestEntity obj = dao.get(1l);
 		assertEquals(13, obj.getIntField());
 		assertEquals("abc", obj.getwStringField());
 	}
@@ -78,7 +87,7 @@ public class DaoTestCase extends AndroidTestCase {
 		TestEntity newEntity = new TestEntity();
 		long id = dao.put(newEntity);
 		assertTrue(id > 0);
-		TestEntity retrievedEntity = dao.getById(id);
+		TestEntity retrievedEntity = dao.get(id);
 		assertAllFieldsMatch(newEntity, retrievedEntity);
 	}
 
@@ -87,7 +96,7 @@ public class DaoTestCase extends AndroidTestCase {
 		populateEntity(newEntity);
 		long id = dao.put(newEntity);
 		assertTrue(id > 0);
-		TestEntity retrievedEntity = dao.getById(id);
+		TestEntity retrievedEntity = dao.get(id);
 		assertAllFieldsMatch(newEntity, retrievedEntity);
 	}
 	
@@ -97,7 +106,7 @@ public class DaoTestCase extends AndroidTestCase {
 		populateEntity(newEntity);
 		long numRowsUpdated = dao.put(newEntity);
 		assertEquals(1, numRowsUpdated);
-		TestEntity retrievedEntity = dao.getById(id);
+		TestEntity retrievedEntity = dao.get(id);
 		assertAllFieldsMatch(newEntity, retrievedEntity);
 	}
 
@@ -136,6 +145,14 @@ public class DaoTestCase extends AndroidTestCase {
 		assertEquals(a.getwIntegerField(), b.getwIntegerField());
 		assertEquals(a.getwLongField(), b.getwLongField());
 		assertEquals(a.getwShortField(), b.getwShortField());
+	}
+
+	private void openDatabase() {
+		SQLiteOpenHelper dbHelper = DatabaseFactory.getDatabaseHelper(ctx);
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
+		assertEquals(TestActivity.DB_VERSION, db.getVersion());
+		// wipe database
+		dbHelper.onUpgrade(db, TestActivity.DB_VERSION, TestActivity.DB_VERSION);
 	}
 
 	private void populateEntity(TestEntity e) {
