@@ -141,12 +141,13 @@ public abstract class SQLiteDao<T extends ModelBase> {
 	 * @return Object
 	 */
 	public T asObject(Cursor c) {
-		if (c.getCount() > 1)
+		if (c.getCount() == 1) {
+			c.moveToFirst();
+			return newInstance(c);
+		} else if (c.getCount() > 1) {
 			throw new TooManyResultsException("Cursor returned " + c.getCount() + " rows");
-		if (c.getCount() < 1)
-			return null;
-		c.moveToFirst();
-		return newInstance(c);
+		}
+		return null;
 	}
 	
 	public Map<String,String> newQueryMap() {

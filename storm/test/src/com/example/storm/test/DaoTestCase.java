@@ -3,6 +3,7 @@ package com.example.storm.test;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -24,57 +25,42 @@ public class DaoTestCase extends AndroidTestCase {
 		super.setUp();
 		ctx = getContext();
 		openDatabase();
-
 		dao = new TestEntityDao(ctx);
-		// Insert some sample data
-		TestEntity te1 = new TestEntity();
-		te1.setIntField(13);
-		te1.setwStringField("abc");
-		long id1 = dao.put(te1);
+		long id = dao.put(new TestEntity());
 		// Verify that we started clean
-		assertEquals(1, id1);
-		// Verify obj id field is updated with the auto id
-		assertEquals(id1, te1.getId());
-		TestEntity te2 = new TestEntity();
-		te2.setIntField(21);
-		te2.setwStringField("abc");
-		long id2 = dao.put(te2);
-		assertEquals(2, id2);
+		assertEquals(1, id);
 	}
 	
-	@Override
-	protected void tearDown() throws Exception {
-		int numRowsDeleted = dao.deleteAll();
-		assertTrue(numRowsDeleted > 0);
-		List<TestEntity> listAll = dao.listAll();
-		assertEquals(0, listAll.size());
-		super.tearDown();
-	}
-
 	public void testDelete() {
-		TestEntity newEntity = new TestEntity();
-		long id = dao.put(newEntity);
+		long id = dao.put(new TestEntity());
 		int numRowsDeleted = dao.delete(id);
 		assertEquals(1, numRowsDeleted);
 		assertNull(dao.get(id));
 	}
 	
-	public void testGetById() {
-		TestEntity obj = dao.get(1l);
-		assertEquals(13, obj.getIntField());
-		assertEquals("abc", obj.getwStringField());
+	public void testDeleteAll() {
+		persistRandomEntities(5);
+		int numRowsDeleted = dao.deleteAll();
+		assertTrue(numRowsDeleted > 5);
+		List<TestEntity> listAll = dao.listAll();
+		assertEquals(0, listAll.size());
 	}
 
 	public void testGetByExample() {
+		TestEntity newEntity = new TestEntity();
+		newEntity.setIntField(21);
+		long id = dao.put(newEntity);
 		TestEntity exampleObj = new TestEntity();
 		exampleObj.setIntField(21);
-		TestEntity resultObj = dao.getByExample(exampleObj);
-		assertEquals("abc", resultObj.getwStringField());
+		TestEntity resultEntity = dao.getByExample(exampleObj);
+		assertEquals(id, resultEntity.getId());
 	}
 
 	public void testGetByExampleWithTooManyResults() {
+		String testName = "testGetByExampleWithTooManyResults";
+		persistTwoEntitiesHavingAnIdenticalStringField(testName);
 		TestEntity exampleObj = new TestEntity();
-		exampleObj.setwStringField("abc");
+		exampleObj.setwStringField(testName);
 		try {
 			TestEntity resultObj = dao.getByExample(exampleObj);
 			fail();
@@ -83,27 +69,28 @@ public class DaoTestCase extends AndroidTestCase {
 		}
 	}
 
-	public void testInsertAndRetrieveAllFields() {
+	public void testInsert() {
 		TestEntity newEntity = new TestEntity();
 		long id = dao.put(newEntity);
 		assertTrue(id > 0);
+		assertEquals(id, newEntity.getId());
 		TestEntity retrievedEntity = dao.get(id);
 		assertAllFieldsMatch(newEntity, retrievedEntity);
 	}
 
-	public void testInsertAndRetrieveAllFieldsWithValues() {
+	public void testInsertWithNonDefaultValues() {
 		TestEntity newEntity = new TestEntity();
-		populateEntity(newEntity);
+		populateTestEntity(newEntity);
 		long id = dao.put(newEntity);
 		assertTrue(id > 0);
 		TestEntity retrievedEntity = dao.get(id);
 		assertAllFieldsMatch(newEntity, retrievedEntity);
 	}
 	
-	public void testUpdateAndRetrieveAllFields() {
+	public void testUpdate() {
 		TestEntity newEntity = new TestEntity();
 		long id = dao.put(newEntity);
-		populateEntity(newEntity);
+		populateTestEntity(newEntity);
 		long numRowsUpdated = dao.put(newEntity);
 		assertEquals(1, numRowsUpdated);
 		TestEntity retrievedEntity = dao.get(id);
@@ -111,13 +98,17 @@ public class DaoTestCase extends AndroidTestCase {
 	}
 
 	public void testListAll() {
-		List<TestEntity> all = dao.listAll();
-		assertEquals(2, all.size());
+		List<TestEntity> before = dao.listAll();
+		persistRandomEntities(5);
+		List<TestEntity> after = dao.listAll();
+		assertEquals(5, after.size() - before.size());
 	}
 
 	public void testListByExample() {
+		String testName = "testListByExample";
+		persistTwoEntitiesHavingAnIdenticalStringField(testName);
 		TestEntity exampleObj = new TestEntity();
-		exampleObj.setwStringField("abc");
+		exampleObj.setwStringField(testName);
 		List<TestEntity> resultList = dao.listByExample(exampleObj);
 		assertEquals(2, resultList.size());
 	}
@@ -155,7 +146,24 @@ public class DaoTestCase extends AndroidTestCase {
 		dbHelper.onUpgrade(db, TestActivity.DB_VERSION, TestActivity.DB_VERSION);
 	}
 
-	private void populateEntity(TestEntity e) {
+	private void persistRandomEntities(int n) {
+		for (int i = 0; i < n; i++) {
+			TestEntity randomEntity = new TestEntity();
+			randomEntity.setLongField(new Random().nextLong());
+			dao.put(randomEntity);
+		}
+	}
+
+	private void persistTwoEntitiesHavingAnIdenticalStringField(String strInCommon) {
+		TestEntity e1 = new TestEntity();
+		e1.setwStringField(strInCommon);
+		dao.put(e1);
+		TestEntity e2 = new TestEntity();
+		e2.setwStringField(strInCommon);
+		dao.put(e2);
+	}
+
+	private void populateTestEntity(TestEntity e) {
 		e.setBlobField("CAFEBABE".getBytes());
 		e.setBooleanField(true);
 		e.setCharField('z');
