@@ -19,7 +19,13 @@ public abstract class ClassModel {
 	}
 
 	protected void addField(String fieldName, String javaType) {
-		fields.add(new FieldModel(fieldName, javaType));
+		FieldModel field = new FieldModel(fieldName, javaType);
+		fields.add(field);
+		// add import for converter if needed
+		String converterType = field.getQualifiedConverterClass();
+		if (!imports.contains(converterType)) {
+			imports.add(converterType);
+		}
 	}
 
 	protected void addImport(String importPath) {

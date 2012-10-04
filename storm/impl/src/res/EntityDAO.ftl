@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import java.util.Map;
 import java.util.HashMap;
-import com.example.storm.types.java.*;
 <#list imports as import>
 import ${import};
 </#list>
@@ -45,7 +44,7 @@ public class ${className} extends ${baseDao}<${entityName}>{
 	public ${entityName} newInstance(Cursor c) {
 		${entityName} obj = new ${entityName}();
 		<#list fields as field>
-		obj.${field.setter}(new ${field.converterType}().fromSql(${field.cursorMethod}OrNull(c, "${field.colName}")));
+		obj.${field.setter}(new ${field.converterName}().fromSql(${field.cursorMethod}OrNull(c, "${field.colName}")));
 		</#list>
 		return obj;
 	}
@@ -53,7 +52,7 @@ public class ${className} extends ${baseDao}<${entityName}>{
 	public ContentValues getEditableValues(${entityName} obj) {
 		ContentValues cv = new ContentValues();
 		<#list fields as field>
-		cv.put("${field.colName}", new ${field.converterType}().toSql(obj.${field.getter}()));
+		cv.put("${field.colName}", new ${field.converterName}().toSql(obj.${field.getter}()));
 		</#list>	
 		return cv;
 	}
@@ -64,7 +63,7 @@ public class ${className} extends ${baseDao}<${entityName}>{
 		// Include fields in query if they differ from the default object
 		<#list fields as field>
 		if (obj.${field.getter}() != defaultObj.${field.getter}())
-			queryMap.put("${field.colName}", "" + new ${field.converterType}().toSql(obj.${field.getter}()));
+			queryMap.put("${field.colName}", "" + new ${field.converterName}().toSql(obj.${field.getter}()));
 		</#list>
 		return queryByMap(queryMap);	
 	}

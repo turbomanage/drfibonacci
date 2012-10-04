@@ -40,8 +40,25 @@ public class FieldModel {
 		return TypeMapper.getConverter(javaType);
 	}
 	
-	public String getConverterType() {
+	/**
+	 * Convenience method for more compact Dao templates.
+	 * Returns the name of this field's converter class 
+	 * sans package name.
+	 * 
+	 * @return
+	 */
+	public String getConverterName() {
 		return getConverter().getClass().getSimpleName();
+	}
+	
+	/**
+	 * Fully-qualified name of the converter class
+	 * for this field.
+	 * 
+	 * @return String classname
+	 */
+	public String getQualifiedConverterClass() {
+		return getConverter().getClass().getName();
 	}
 	
 	public String getCursorMethod() {

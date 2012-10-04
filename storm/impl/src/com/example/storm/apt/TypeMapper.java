@@ -28,6 +28,7 @@ import com.example.storm.types.java.TypeConverter;
  */
 public class TypeMapper {
 
+	// Fully qualified field type name, fully qualified TypeConverter
 	private static Map<String, String> map = new HashMap<String, String>();
 
 	static {
@@ -72,17 +73,18 @@ public class TypeMapper {
 		Converter annotation = converter.getClass().getAnnotation(Converter.class);
 		Class[] forTypes = annotation.forTypes();
 		for (Class clazz : forTypes) {
-			map.put(clazz.getCanonicalName(), converter.getClass().getName());
-			System.out.println("registered " + converter.getClass().getCanonicalName() + " for " + clazz.getCanonicalName());
+			map.put(clazz.getCanonicalName(), converter.getClass().getCanonicalName());
 		}
 	}
 	
 	/**
-	 * Register a custom {@link TypeConverter}.
+	 * Register a custom {@link TypeConverter} for a given data (field) type.
+	 * This method is called at compile time by the annotation processor.
+	 * In order for the TypeConverter to be visible, it must be in a jar
+	 * on the client project's annotation factory classpath.
 	 * 
-	 * @param cm
-	 * @param logger
-	 * @param typeElement
+	 * @param String converterClass Fully-qualified classname
+	 * @param String type Fully-qualified classname
 	 */
 	static boolean registerConverter(String converterClass, String type) {
 		if (map.containsKey(type))
