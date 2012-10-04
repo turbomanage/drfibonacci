@@ -6,6 +6,7 @@ import java.util.List;
 public abstract class ClassModel {
 
 	protected String className;
+	// TODO Don't hardcode this
 	protected String packageName = "com.example.storm.dao";
 	protected List<String> imports = new ArrayList<String>();
 	protected List<FieldModel> fields = new ArrayList<FieldModel>();

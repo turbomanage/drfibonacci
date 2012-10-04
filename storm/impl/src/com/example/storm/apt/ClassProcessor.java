@@ -53,14 +53,6 @@ public abstract class ClassProcessor {
 	protected abstract void populateModel();
 	
 	/**
-	 * Subclasses override to inspect each field and possibly add it
-	 * to the model. Invoked by main annotation processor.
-	 * 
-	 * @param field VariableElement that represents a class field
-	 */
-	protected abstract void inspectField(VariableElement field);
-
-	/**
 	 * Constructor intended to be overridden by subclasses.
 	 * 
 	 * @param el
@@ -108,6 +100,17 @@ public abstract class ClassProcessor {
 		} catch (TemplateException e) {
 			logger.error("EntityProcessor error", e, this.typeElement);
 		}
+	}
+
+	/**
+	 * Subclasses override to inspect each field and possibly add it
+	 * to the model. Invoked by main annotation processor.
+	 * Default impl does nothing, just serves to make implementation
+	 * optional for subclasses.
+	 * 
+	 * @param field VariableElement that represents a class field
+	 */
+	protected void inspectField(VariableElement field) {
 	}
 
 }

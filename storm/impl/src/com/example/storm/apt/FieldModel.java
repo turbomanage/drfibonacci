@@ -67,8 +67,6 @@ public class FieldModel {
 
 	public String getSqlType() {
 		// TODO Hack. Add @Id annotation instead.
-		// TODO Make TypeNotSupportedException and swallow it here to prevent 
-		// template from failing, which will cause err to report elsewhere.
 		if ("id".equals(fieldName))
 			return "INTEGER PRIMARY KEY AUTOINCREMENT";
 		try {
@@ -80,7 +78,6 @@ public class FieldModel {
 	}
 	
 	public String getSetter() {
-		// TODO handle little-known case of 2nd cap rule
 		return "set" + capFirst(fieldName);
 	}
 	
@@ -98,7 +95,8 @@ public class FieldModel {
 	 * @return String
 	 */
 	private String capFirst(String anyName) {
-		// obscure Java convention: if second letter capitalized, leave it alone
+		// obscure Java convention:
+		// if second letter capitalized, leave it alone
 		if (anyName.length() > 1)
 			if (anyName.charAt(1) >='A' && anyName.charAt(1) <= 'Z')
 				return anyName;
@@ -110,22 +108,4 @@ public class FieldModel {
 		return javaType.contains(".") || javaType.contains("[]");
 	}
 	
-//	/**
-//	 * Returns the default value of a primitive type as a String to be used
-//	 * by a codegen template.
-//	 * 
-//	 * @return String Default value
-//	 */
-//	public String getDefaultValue() {
-//		if ("boolean".equals(javaType)) {
-//			return "false";
-//		} else if ("float".equals(javaType) || "double".equals(javaType)) {
-//			return "0.";
-//		} else if (isPrimitive()) {
-//			return "0";
-//		} else {
-//			return "null";
-//		}
-//	}
-//	
 }

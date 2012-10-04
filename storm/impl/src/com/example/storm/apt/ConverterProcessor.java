@@ -10,7 +10,6 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementVisitor;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.SimpleAnnotationValueVisitor6;
 
 import com.example.storm.api.Converter;
@@ -49,11 +48,6 @@ public class ConverterProcessor extends ClassProcessor {
 			}
 		}
 		}
-	}
-
-	@Override
-	protected void inspectField(VariableElement field) {
-		// TODO Make this optional
 	}
 
 }

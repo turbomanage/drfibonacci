@@ -10,7 +10,7 @@ import java.util.HashMap;
 import ${import};
 </#list>
 
-public class ${className} extends ${baseDao}<${entityName}>{
+public class ${className} extends ${baseDaoName}<${entityName}>{
 
 	public static void onCreate(SQLiteDatabase db) {
 		String sqlStmt = 
