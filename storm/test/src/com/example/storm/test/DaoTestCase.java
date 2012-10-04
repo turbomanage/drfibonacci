@@ -12,8 +12,8 @@ import android.test.AndroidTestCase;
 
 import com.example.storm.DatabaseFactory;
 import com.example.storm.TestActivity;
-import com.example.storm.TestEntity;
 import com.example.storm.dao.TestEntityDao;
+import com.example.storm.entity.TestEntity;
 import com.example.storm.exception.TooManyResultsException;
 
 public class DaoTestCase extends AndroidTestCase {
@@ -30,7 +30,7 @@ public class DaoTestCase extends AndroidTestCase {
 		// Verify that we started clean
 		assertEquals(1, id);
 	}
-	
+
 	public void testDelete() {
 		long id = dao.put(new TestEntity());
 		int numRowsDeleted = dao.delete(id);
@@ -121,11 +121,8 @@ public class DaoTestCase extends AndroidTestCase {
 		assertEquals(a.getDoubleField(), b.getDoubleField());
 		assertEquals(a.getFloatField(), b.getFloatField());
 		assertEquals(a.getIntField(), b.getIntField());
-		assertEquals(a.getLastMod(), b.getLastMod());
-		assertEquals(a.getLastSync(), b.getLastSync());
 		assertEquals(a.getLongField(), b.getLongField());
 		assertEquals(a.getShortField(), b.getShortField());
-		assertEquals(a.getVersion(), b.getVersion());
 		assertEquals(a.getwStringField(), b.getwStringField());
 		assertEquals(a.getwBooleanField(), b.getwBooleanField());
 		assertEquals(a.getwByteField(), b.getwByteField());
@@ -170,8 +167,6 @@ public class DaoTestCase extends AndroidTestCase {
 		e.setDoubleField((1 + Math.sqrt(5)) / 2);
 		e.setFloatField((float) ((1 + Math.sqrt(5)) / 2));
 		e.setIntField(75025);
-		e.setLastMod(new Date().getTime());
-		e.setLastSync(new Date().getTime());
 		e.setLongField(12586269025L);
 		e.setShortField((short) 28657);
 		e.setwBooleanField(Boolean.TRUE);

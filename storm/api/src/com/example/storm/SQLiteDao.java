@@ -7,14 +7,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.example.storm.exception.TooManyResultsException;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-public abstract class SQLiteDao<T extends ModelBase> {
+import com.example.storm.api.Persistable;
+import com.example.storm.exception.TooManyResultsException;
+
+public abstract class SQLiteDao<T extends Persistable> {
 
 	private static final String TAG = SQLiteDao.class.getName();
 

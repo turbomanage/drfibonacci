@@ -1,17 +1,21 @@
 
 package com.example.storm;
 
+import com.example.storm.api.Persistable;
 
-public abstract class ModelBase {
+
+/**
+ * Optional base class that entities can extend to
+ * enable synchronization (not yet supported). 
+ * 
+ * @author drfibonacci
+ */
+public abstract class ModelBase implements Persistable {
 
     public long id;
     public int version;
     public long lastMod; // ms since epoch
     public long lastSync; // ms since epoch
-
-    public ModelBase() {
-	    // Empty ctor for Jackson
-	}
 
 	public long getId() {
 		return id;

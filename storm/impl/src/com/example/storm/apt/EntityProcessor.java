@@ -56,11 +56,11 @@ public class EntityProcessor extends ClassProcessor {
 	@Override
 	protected void inspectField(VariableElement field) {
 		Set<Modifier> modifiers = field.getModifiers();
-		if (!modifiers.contains(Modifier.TRANSIENT)
-				&& !modifiers.contains(Modifier.PRIVATE)) {
+		if (!modifiers.contains(Modifier.TRANSIENT)) {
 			String javaType = getFieldType(field);
 			try {
 				String sqlType = TypeMapper.getSqlType(javaType);
+				// TODO verify getter + setter
 				entityModel.addField(field.getSimpleName().toString(), javaType);
 			} catch (TypeNotSupportedException e) {
 				logger.error(TAG, e, field);

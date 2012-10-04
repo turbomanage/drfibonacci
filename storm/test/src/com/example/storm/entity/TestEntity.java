@@ -1,14 +1,16 @@
-package com.example.storm;
+package com.example.storm.entity;
 
 import java.util.Date;
 
 import com.example.storm.api.Entity;
+import com.example.storm.api.Persistable;
 
 @Entity
-public class TestEntity extends ModelBase {
+public class TestEntity implements Persistable {
 	
 	private int privateField;
 	transient int transientField;
+	long id;
 	boolean booleanField;
 	byte byteField;
 	byte[] blobField;
@@ -29,6 +31,14 @@ public class TestEntity extends ModelBase {
 	Double wDoubleField;
 	String wStringField;
 	
+	@Override
+	public long getId() {
+		return id;
+	}
+	@Override
+	public void setId(long id) {
+		this.id = id;
+	}
 	public int getPrivateField() {
 		return privateField;
 	}
