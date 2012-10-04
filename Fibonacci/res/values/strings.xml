@@ -10,7 +10,12 @@
     <string name="about_blog">Blog: turbomanage.wordpress.com</string>
     <string name="about_source">Source code: drfibonacci.googlecode.com</string>
     <string name="about_publisher">Author: David M. Chandler</string>
-    <string name="app_version">2.1.3</string>
+    <string name="app_version">2.2</string>
     <string name="minus">minus</string>
+    <string name="sunflower">
+		An animation of a sunflower created using a simple equation in polar coordinates. It is
+		based on the golden angle, which is the fraction of a circle corresponding to the
+		golden mean, which is derived from the Fibonacci series.
+	</string>
 
 </resources>
