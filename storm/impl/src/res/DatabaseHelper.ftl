@@ -1,12 +1,8 @@
 package ${packageName};
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import com.example.storm.SQLiteDao;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	
