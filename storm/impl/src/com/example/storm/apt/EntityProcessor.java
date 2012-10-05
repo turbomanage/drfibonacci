@@ -46,7 +46,6 @@ public class EntityProcessor extends ClassProcessor {
 		entityModel.className = entityModel.entityName + "Dao";
 		entityModel.addImport(entityModel.entityPackageName + "." + entityModel.entityName);
 		readFields(typeElement);
-		verifyIdField();
 	}
 
 	private void inspectClass(TypeElement entity) {
@@ -62,18 +61,6 @@ public class EntityProcessor extends ClassProcessor {
 		} else {
 			logger.error(TAG + ": Entities must implement Persistable", entity);
 		}
-	}
-
-	private void verifyIdField() {
-		// Ensure that there is a field named 'id' of type int or long
-		for (FieldModel field : entityModel.getFields()) {
-			if ("id".equals(field.getFieldName())) { 
-				if ("int".equals(field.getJavaType()) || "long".equals(field.getJavaType())) {
-					return;
-				}
-			}
-		}
-		logger.error(TAG + ": entity must contain an id field of type int or long", typeElement);
 	}
 
 	@Override
