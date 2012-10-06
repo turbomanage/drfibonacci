@@ -1,17 +1,27 @@
-package ${packageName};
+package ${daoPackage};
 
 import android.content.Context;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import com.example.storm.DatabaseHelper;
 import java.util.Map;
 import java.util.HashMap;
 <#list imports as import>
 import ${import};
 </#list>
 
-public class ${className} extends ${baseDaoName}<${entityName}>{
+/**
+ * GENERATED CLASS
+ *
+ * @author drfibonacci
+ */
+public class ${daoName} extends ${baseDaoName}<${entityName}>{
 
+	public DatabaseHelper getDbHelper(Context ctx) {
+		return ${dbFactory}.getDatabaseHelper(ctx);
+	}
+	
 	public static void onCreate(SQLiteDatabase db) {
 		String sqlStmt = 
 			"CREATE TABLE ${tableName}(" +
@@ -29,7 +39,7 @@ public class ${className} extends ${baseDaoName}<${entityName}>{
 		onCreate(db);
 	}
 	
-	public ${className}(Context ctx) {
+	public ${daoName}(Context ctx) {
 		super(ctx);
 	}
 	

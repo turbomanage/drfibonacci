@@ -65,6 +65,10 @@ public class ProcessorLogger {
     public void error(String msg, Element elm) {
         error(msg, null, elm);
     }
+    
+    public void error(String msg, Exception ex) {
+    		log(Kind.ERROR, formatErrorMessage(msg, ex), null);
+    }
 
     public String formatErrorMessage(String msg, Exception ex) {
         StringBuilder sb = new StringBuilder(msg);

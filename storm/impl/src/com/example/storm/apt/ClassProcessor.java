@@ -1,21 +1,16 @@
 package com.example.storm.apt;
 
-import java.io.IOException;
-import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.tools.JavaFileObject;
-
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 
 /**
  * Base class that introspects an annotated class using the Mirror API and
@@ -23,44 +18,30 @@ import freemarker.template.TemplateException;
  * 
  * @author drfibonacci
  */
-/**
- * @author drfibonacci
- *
- */
 public abstract class ClassProcessor {
 
 	protected TypeElement typeElement;
-	protected ProcessorLogger logger;
+	protected StormEnvironment stormEnv;
 	
-	/**
-	 * Subclasses override to provide a template to Freemarker. 
-	 * 
-	 * @return Path to the template
-	 */
-	protected abstract String getTemplatePath();
-	
-	/**
-	 * Subclasses override to provide a model for a template.
-	 * 
-	 * @return ClassModel
-	 */
 	protected abstract ClassModel getModel();
 
-	/**
-	 * Subclasses override to populate the model.
-	 * Invoked by main annotation processor.
-	 */
-	protected abstract void populateModel();
-	
 	/**
 	 * Constructor intended to be overridden by subclasses.
 	 * 
 	 * @param el
 	 * @param logger
 	 */
-	protected ClassProcessor(Element el, ProcessorLogger logger) {
+	protected ClassProcessor(Element el, StormEnvironment stormEnv) {
 		this.typeElement = (TypeElement) el;
-		this.logger = logger;
+		this.stormEnv = stormEnv;
+	}
+	
+	/**
+	 * Subclasses override to populate the model.
+	 * Invoked by main annotation processor.
+	 */
+	protected void populateModel() {
+		inspectClass();
 	}
 
 	protected void readFields(TypeElement type) {
@@ -83,25 +64,11 @@ public abstract class ClassProcessor {
 		return fieldType.toString();
 	}
 
-	void processTemplate(ProcessingEnvironment processingEnv, Configuration cfg) {
-		JavaFileObject file;
-		try {
-			file = processingEnv.getFiler().createSourceFile(
-					getModel().getQualifiedClassName());
-			logger.info("Creating file  " + file.getName());
-			Writer out = file.openWriter();
-			Template t = cfg.getTemplate(getTemplatePath());
-			logger.info("Processing template " + t.getName());
-			t.process(getModel(), out);
-			out.flush();
-			out.close();
-		} catch (IOException e) {
-			logger.error("EntityProcessor error", e, this.typeElement);
-		} catch (TemplateException e) {
-			logger.error("EntityProcessor error", e, this.typeElement);
-		}
+	protected void inspectClass() {
+		this.getModel().setPackageName(getPackageName());
+		this.getModel().setClassName(getClassName());
 	}
-
+	
 	/**
 	 * Subclasses override to inspect each field and possibly add it
 	 * to the model. Invoked by main annotation processor.
@@ -111,6 +78,30 @@ public abstract class ClassProcessor {
 	 * @param field VariableElement that represents a class field
 	 */
 	protected void inspectField(VariableElement field) {
+	}
+
+	public String getQualifiedClassName() {
+		return this.typeElement.toString();
+	}
+	
+	protected String getPackageName() {
+		PackageElement pkgEl = (PackageElement) this.typeElement.getEnclosingElement();
+		return pkgEl.getQualifiedName().toString(); 
+	}
+	
+	protected String getClassName() {
+		return this.typeElement.getSimpleName().toString();
+	}
+
+	protected List<String> inspectInterfaces() {
+		// get list of interfaces
+		List<String> iNames = new ArrayList<String>();
+		List<? extends TypeMirror> interfaces = this.typeElement.getInterfaces();
+		for (TypeMirror i : interfaces) {
+			String iName = i.toString();
+			iNames.add(iName);
+		}
+		return iNames;
 	}
 
 }

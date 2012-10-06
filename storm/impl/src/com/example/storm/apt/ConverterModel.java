@@ -6,13 +6,23 @@ public class ConverterModel extends ClassModel {
 
 	public ConverterModel(String converterClass, String converterPkg,
 			String[] types) {
-		this.className = converterClass;
-		this.packageName = converterPkg;
+		this.setClassName(converterClass);
+		this.setPackageName(converterPkg);
 		this.types = types;
 	}
 
 	String[] getConvertForTypes() {
 		return types;
+	}
+
+	@Override
+	public String getTemplatePath() {
+		return null;
+	}
+
+	@Override
+	public String getGeneratedClass() {
+		return null;
 	}
 
 }

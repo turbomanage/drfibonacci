@@ -10,10 +10,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.test.AndroidTestCase;
 
-import com.example.storm.DatabaseFactory;
-import com.example.storm.TestActivity;
-import com.example.storm.dao.SimpleEntityDao;
+import com.example.storm.DatabaseHelper;
+import com.example.storm.TestDatabaseHelper;
+import com.example.storm.TestDbFactory;
 import com.example.storm.entity.SimpleEntity;
+import com.example.storm.entity.dao.SimpleEntityDao;
 import com.example.storm.exception.TooManyResultsException;
 
 public class DaoTestCase extends AndroidTestCase {
@@ -136,11 +137,11 @@ public class DaoTestCase extends AndroidTestCase {
 	}
 
 	private void openDatabase() {
-		SQLiteOpenHelper dbHelper = DatabaseFactory.getDatabaseHelper(ctx);
+		DatabaseHelper dbHelper = TestDbFactory.getDatabaseHelper(ctx);
 		SQLiteDatabase db = dbHelper.getReadableDatabase();
-		assertEquals(TestActivity.DB_VERSION, db.getVersion());
+		assertEquals(TestDatabaseHelper.DB_VERSION, db.getVersion());
 		// wipe database
-		dbHelper.onUpgrade(db, TestActivity.DB_VERSION, TestActivity.DB_VERSION);
+		dbHelper.onUpgrade(db, TestDatabaseHelper.DB_VERSION, TestDatabaseHelper.DB_VERSION);
 	}
 
 	private void persistRandomEntities(int n) {

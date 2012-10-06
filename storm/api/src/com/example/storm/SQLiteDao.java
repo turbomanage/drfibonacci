@@ -11,6 +11,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.storm.api.Persistable;
 import com.example.storm.exception.TooManyResultsException;
@@ -31,9 +32,17 @@ public abstract class SQLiteDao<T extends Persistable> {
 			clazz = (Class<T>) ((ParameterizedType) genericSuperclass)
 					.getActualTypeArguments()[0];
 
-		this.db = DatabaseFactory.getDatabaseHelper(ctx).getWritableDatabase();
+		this.db = getDbHelper(ctx).getWritableDatabase();
 	}
 
+	/**
+	 * Generated subclasses implement to point to the correct 
+	 * {@link SQLiteOpenHelper} for the entity.
+	 * 
+	 * @param Context ctx
+	 * @return DatabaseHelper 
+	 */
+	public abstract DatabaseHelper getDbHelper(Context ctx);
 	public abstract String getEntityName();
 	public abstract String getIdCol();
 	public abstract T newInstance(Cursor c);

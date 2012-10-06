@@ -5,12 +5,19 @@ import java.util.List;
 
 public abstract class ClassModel {
 
-	protected String className;
-	// TODO Don't hardcode this
-	protected String packageName = "com.example.storm.dao";
+	private String className;
+	private String packageName;
 	protected List<String> imports = new ArrayList<String>();
 	protected List<FieldModel> fields = new ArrayList<FieldModel>();
 
+	public abstract String getTemplatePath();
+	/**
+	 * Fully qualified classname, used to create generated file name
+	 * 
+	 * @return
+	 */
+	public abstract String getGeneratedClass();
+	
 	public List<String> getImports() {
 		return imports;
 	}
@@ -53,7 +60,20 @@ public abstract class ClassModel {
 	 * @return Name of generated class with package prepended
 	 */
 	public String getQualifiedClassName() {
-		return this.packageName + "." + this.className;
+		return this.getPackageName() + "." + this.getClassName();
 	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	public void setPackageName(String packageName) {
+		this.packageName = packageName;
+	}
+	protected String capFirst(String anyName) {
+		String capFirstLetter = anyName.substring(0, 1).toUpperCase();
+		return capFirstLetter + anyName.substring(1); 
+	}
+
 
 }

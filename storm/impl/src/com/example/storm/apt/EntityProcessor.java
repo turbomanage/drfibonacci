@@ -1,28 +1,24 @@
 package com.example.storm.apt;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
-import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.TypeMirror;
 
 import com.example.storm.SQLiteDao;
+import com.example.storm.api.Entity;
 import com.example.storm.api.Persistable;
 import com.example.storm.exception.TypeNotSupportedException;
 
 public class EntityProcessor extends ClassProcessor {
 
 	private static final String TAG = EntityProcessor.class.getName();
-	private static final String TEMPLATE_PATH = "EntityDAO.ftl";
-	protected EntityModel entityModel;
+	private EntityModel entityModel;
 	
-	protected EntityProcessor(Element el, ProcessorLogger logger) {
-		super(el, logger);
+	protected EntityProcessor(Element el, StormEnvironment stormEnv) {
+		super(el, stormEnv);
 	}
 	
 	@Override
@@ -31,38 +27,44 @@ public class EntityProcessor extends ClassProcessor {
 	}
 
 	@Override
-	protected String getTemplatePath() {
-		return TEMPLATE_PATH;
-	}
-
-	@Override
 	protected void populateModel() {
-//		TODO Choose correct Dao base class based on interfaces
 		this.entityModel = new EntityModel();
-		PackageElement packageElement = (PackageElement) this.typeElement.getEnclosingElement();
-		entityModel.entityPackageName = packageElement.getQualifiedName().toString();
-		inspectClass(this.typeElement);
-		entityModel.entityName = this.typeElement.getSimpleName().toString();
-		entityModel.className = entityModel.entityName + "Dao";
-		entityModel.addImport(entityModel.entityPackageName + "." + entityModel.entityName);
+		super.populateModel();
+		this.entityModel.addImport(getQualifiedClassName());
+		chooseBaseDao();
+		chooseDatabase();
 		readFields(typeElement);
 	}
 
-	private void inspectClass(TypeElement entity) {
-		// get list of interfaces
-		List<String> iNames = new ArrayList<String>();
-		List<? extends TypeMirror> interfaces = entity.getInterfaces();
-		for (TypeMirror i : interfaces) {
-			String iName = i.toString();
-			iNames.add(iName);
-		}
+	protected void chooseBaseDao() {
+		List<String> iNames = super.inspectInterfaces();
+//		TODO Choose correct Dao base class based on interfaces
 		if (iNames.contains(Persistable.class.getName())) {
 			this.entityModel.setBaseDaoClass(SQLiteDao.class);
 		} else {
-			logger.error(TAG + ": Entities must implement Persistable", entity);
+			stormEnv.getLogger().error(TAG + ": Entities must implement Persistable", this.typeElement);
 		}
 	}
 
+	protected void chooseDatabase() {
+		Entity entity = this.typeElement.getAnnotation(Entity.class);
+		DatabaseModel defaultDb = stormEnv.getDefaultDb();
+		if (entity.dbName().length() > 0) {
+			// Add db to entity model and vice versa
+			String dbName = entity.dbName();
+			DatabaseModel db = stormEnv.getDbByName(dbName);
+			if (db != null) {
+				this.entityModel.setDatabase(db);
+			} else {
+				stormEnv.getLogger().error(TAG + ": There is no @Database named " + dbName, this.typeElement);
+			}
+		} else if (defaultDb != null) {
+			this.entityModel.setDatabase(defaultDb);
+		} else {
+			stormEnv.getLogger().error(TAG + ": You must define at least one @Database", this.typeElement);
+		}
+	}
+	
 	@Override
 	protected void inspectField(VariableElement field) {
 		Set<Modifier> modifiers = field.getModifiers();
@@ -73,9 +75,9 @@ public class EntityProcessor extends ClassProcessor {
 				// TODO verify getter + setter
 				entityModel.addField(field.getSimpleName().toString(), javaType);
 			} catch (TypeNotSupportedException e) {
-				logger.error(TAG, e, field);
+				stormEnv.getLogger().error(TAG, e, field);
 			} catch (Exception e) {
-				logger.error(TAG, e, field);
+				stormEnv.getLogger().error(TAG, e, field);
 			}
 		}
 	}
