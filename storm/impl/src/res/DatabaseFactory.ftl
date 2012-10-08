@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.example.storm.DatabaseHelper;
 import com.example.storm.api.DatabaseFactory;
-import com.example.storm.api.TableHelper;
+import com.example.storm.TableHelper;
 
 /**
  * GENERATED CLASS

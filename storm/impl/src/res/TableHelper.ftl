@@ -1,8 +1,6 @@
 package ${package};
 
-import android.database.sqlite.SQLiteDatabase;
-
-import com.example.storm.api.TableHelper;
+import com.example.storm.TableHelper;
 
 /**
  * GENERATED CODE
@@ -15,7 +13,7 @@ import com.example.storm.api.TableHelper;
  * 
  * @author drfibonacci
  */
-public class SimpleEntityTable implements TableHelper {
+public class SimpleEntityTable extends TableHelper {
 
 	@Override
 	public String getTableName() {
@@ -23,22 +21,18 @@ public class SimpleEntityTable implements TableHelper {
 	}
 
 	@Override
-	public void onCreate(SQLiteDatabase db) {
-		String sqlStmt = 
-			"CREATE TABLE ${tableName}(" +
+	public String createSql() {
+		return
+			"CREATE TABLE IF NOT EXISTS ${tableName}(" +
 				<#list fields as field>
 				"${field.colName} ${field.sqlType}<#if !field.nullable> NOT NULL</#if><#if field_has_next>,</#if>" +
 				</#list>
 			")";
-		db.execSQL(sqlStmt);
 	}
 
 	@Override
-	public void onUpgrade(final SQLiteDatabase db, final int oldVersion,
-            final int newVersion) {
-		String sqlStmt = "DROP TABLE IF EXISTS ${tableName}";
-		db.execSQL(sqlStmt);
-		onCreate(db);
+	public String upgradeSql(int oldVersion, int newVersion) {
+		return null;
 	}
 
 }

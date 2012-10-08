@@ -18,7 +18,7 @@ import com.example.storm.api.DatabaseFactory;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-	private DatabaseFactory dbFactory;
+	protected DatabaseFactory dbFactory;
 
 	public DatabaseHelper(Context ctx, DatabaseFactory dbFactory) {
 		this(ctx, dbFactory.getName(), null, dbFactory.getVersion());
