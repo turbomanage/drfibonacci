@@ -25,7 +25,7 @@ public class EntityProcessor extends ClassProcessor {
 	protected EntityModel getModel() {
 		return this.entityModel;
 	}
-
+	
 	@Override
 	protected void populateModel() {
 		this.entityModel = new EntityModel();

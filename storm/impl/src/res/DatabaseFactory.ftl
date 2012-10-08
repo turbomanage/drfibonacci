@@ -1,10 +1,11 @@
-package ${packageName};
+package ${package};
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.example.storm.DatabaseHelper;
 import com.example.storm.api.DatabaseFactory;
+import com.example.storm.api.TableHelper;
 
 /**
  * GENERATED CLASS
@@ -15,10 +16,15 @@ import com.example.storm.api.DatabaseFactory;
  */
 public class ${factoryName} implements DatabaseFactory {
 
+	private static final String DB_NAME = "${dbName}";
+	private static final int DB_VERSION = ${dbVersion}; 
+	private static final TableHelper[] TABLE_HELPERS = new TableHelper[] { 
+	<#list tableHelpers as th>
+		new ${th}()<#if th_has_next>,</#if>
+	</#list>
+	};
 	private static DatabaseHelper mInstance;
-	private static String DB_NAME = "${dbName}";
-	private static int DB_VERSION = ${dbVersion}; 
-
+	
 	/**
 	 * Provides an instance of the DatabaseHelper.
 	 * 
@@ -51,17 +57,21 @@ public class ${factoryName} implements DatabaseFactory {
 	}
 
 	public void onCreate(SQLiteDatabase db) {
-	<#list daoClasses as daoClass>
-		${daoClass}.onCreate(db);	
-	</#list>
+		for (TableHelper th: TABLE_HELPERS) {
+			th.onCreate(db);
+		}
 	}
 	
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-	<#list daoClasses as daoClass>
-		${daoClass}.onUpgrade(db, oldVersion, newVersion);	
-	</#list>
+		for (TableHelper th: TABLE_HELPERS) {
+			th.onUpgrade(db, oldVersion, newVersion);
+		}
 	}
-		
+
+	public TableHelper[] getTableHelpers() {		
+		return TABLE_HELPERS;
+	}
+	
 	private ${factoryName}() {
 		// non-instantiable
 	}

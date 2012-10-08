@@ -32,7 +32,7 @@ public class DatabaseModel extends ClassModel {
 	}
 	
 	public String getFactoryClass() {
-		return this.getPackageName() + "." + getFactoryName();
+		return this.getPackage() + "." + getFactoryName();
 	}
 
 	public List<String> getDaoClasses() {
@@ -47,12 +47,12 @@ public class DatabaseModel extends ClassModel {
 		this.entities.add(daoModel);
 	}
 	
-	public List<String> getTableHelpers() {
+	public String[] getTableHelpers() {
 		ArrayList<String> tableHelpers = new ArrayList<String>();
 		for (EntityModel em : entities) {
-			tableHelpers.add(em.getTableName() + "Helper");
+			tableHelpers.add(em.getTableModel().getGeneratedClass());
 		}
-		return tableHelpers;
+		return tableHelpers.toArray(new String[]{});
 	}
 
 	@Override
@@ -62,6 +62,7 @@ public class DatabaseModel extends ClassModel {
 
 	@Override
 	public String getGeneratedClass() {
-		return this.getPackageName() + "." + this.getFactoryName();
+		return this.getPackage() + "." + this.getFactoryName();
 	}
+	
 }

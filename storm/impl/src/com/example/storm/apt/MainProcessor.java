@@ -54,7 +54,10 @@ public class MainProcessor extends AbstractProcessor {
 		for (Element element : roundEnv.getElementsAnnotatedWith(Entity.class)) {
 			EntityProcessor eproc = new EntityProcessor(element, stormEnv);
 			eproc.populateModel();
+			// Generate EntityDao
 			processTemplate(processingEnv, cfg, eproc.getModel());
+			// Generate EntityTable
+			processTemplate(processingEnv, cfg, eproc.getModel().getTableModel());
 		}
 		
 		// Second pass to generate DatabaseFactory templates now that

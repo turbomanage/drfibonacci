@@ -50,7 +50,7 @@ public abstract class ClassModel {
 	/**
 	 * @return Package name of the generated class
 	 */
-	public String getPackageName() {
+	public String getPackage() {
 		return this.packageName;
 	}
 
@@ -60,7 +60,7 @@ public abstract class ClassModel {
 	 * @return Name of generated class with package prepended
 	 */
 	public String getQualifiedClassName() {
-		return this.getPackageName() + "." + this.getClassName();
+		return this.getPackage() + "." + this.getClassName();
 	}
 
 	public void setClassName(String className) {

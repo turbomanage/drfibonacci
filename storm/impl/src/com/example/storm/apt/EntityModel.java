@@ -17,17 +17,13 @@ public class EntityModel extends ClassModel {
 	}
 	
 	public String getDaoPackage() {
-		return this.getPackageName() + ".dao";
+		return this.getPackage() + ".dao";
 	}
 
 	public String getDbFactory() {
 		return dbModel.getFactoryClass();
 	}
 	
-	public String getTableName() {
-		return this.getClassName();
-	}
-
 	/**
 	 * Provides the simple name of the base DAO class to templates.
 	 * 
@@ -50,6 +46,10 @@ public class EntityModel extends ClassModel {
 	void setDatabase(DatabaseModel dbModel) {
 		this.dbModel = dbModel;
 		dbModel.addEntity(this);
+	}
+	
+	TableModel getTableModel() {
+		return new TableModel(this);
 	}
 
 	@Override

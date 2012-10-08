@@ -22,23 +22,6 @@ public class ${daoName} extends ${baseDaoName}<${entityName}>{
 		return ${dbFactory}.getDatabaseHelper(ctx);
 	}
 	
-	public static void onCreate(SQLiteDatabase db) {
-		String sqlStmt = 
-			"CREATE TABLE ${tableName}(" +
-				<#list fields as field>
-				"${field.colName} ${field.sqlType}<#if !field.nullable> NOT NULL</#if><#if field_has_next>,</#if>" +
-				</#list>
-			")";
-		db.execSQL(sqlStmt);
-	}
-	
-	public static void onUpgrade(final SQLiteDatabase db, final int oldVersion,
-            final int newVersion) {
-		String sqlStmt = "DROP TABLE IF EXISTS ${tableName}";
-		db.execSQL(sqlStmt);
-		onCreate(db);
-	}
-	
 	public ${daoName}(Context ctx) {
 		super(ctx);
 	}
