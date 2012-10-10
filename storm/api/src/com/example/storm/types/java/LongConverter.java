@@ -27,4 +27,9 @@ public class LongConverter extends TypeConverter<Long,Long> {
 		return sqlValue;
 	}
 
+	@Override
+	public Long fromString(String strValue) {
+		return Long.valueOf(strValue);
+	}
+
 }

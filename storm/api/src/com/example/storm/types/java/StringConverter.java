@@ -27,4 +27,9 @@ public class StringConverter extends TypeConverter<String,String> {
 		return sqlValue;
 	}
 
+	@Override
+	public String fromString(String strValue) {
+		return strValue;
+	}
+
 }

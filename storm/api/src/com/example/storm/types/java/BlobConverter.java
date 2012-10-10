@@ -1,5 +1,7 @@
 package com.example.storm.types.java;
 
+import android.util.Base64;
+
 import com.example.storm.CursorMethod;
 import com.example.storm.api.Converter;
 import com.example.storm.types.sql.SqlType;
@@ -25,6 +27,11 @@ public class BlobConverter extends TypeConverter<byte[], byte[]> {
 	@Override
 	public byte[] fromSql(byte[] sqlValue) {
 		return sqlValue;
+	}
+
+	@Override
+	public byte[] fromString(String strValue) {
+		return Base64.decode(strValue, Base64.DEFAULT);
 	}
 
 }

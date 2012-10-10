@@ -27,4 +27,9 @@ public class IntegerConverter extends TypeConverter<Integer, Integer> {
 		return sqlValue;
 	}
 
+	@Override
+	public Integer fromString(String strValue) {
+		return Integer.valueOf(strValue);
+	}
+
 }

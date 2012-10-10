@@ -32,4 +32,9 @@ public class BooleanConverter extends TypeConverter<Boolean,Integer> {
 		return sqlValue==0 ? Boolean.FALSE : Boolean.TRUE;
 	}
 
+	@Override
+	public Boolean fromString(String strValue) {
+		return Boolean.valueOf(strValue);
+	}
+
 }

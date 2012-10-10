@@ -31,4 +31,9 @@ public class ByteConverter extends TypeConverter<Byte,Short> {
 		return sqlValue.byteValue();
 	}
 
+	@Override
+	public Byte fromString(String strValue) {
+		return Byte.valueOf(strValue);
+	}
+
 }

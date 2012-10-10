@@ -28,4 +28,9 @@ public class FloatConverter extends TypeConverter<Float,Float> {
 		return sqlValue;
 	}
 
+	@Override
+	public Float fromString(String strValue) {
+		return Float.valueOf(strValue);
+	}
+
 }

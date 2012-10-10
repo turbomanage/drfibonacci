@@ -46,6 +46,7 @@ public abstract class SQLiteDao<T extends Persistable> {
 	public abstract String getEntityName();
 	public abstract String getIdCol();
 	public abstract T newInstance(Cursor c);
+	public abstract T newInstance(Map<String,String> values);
 	public abstract ContentValues getEditableValues(T obj);
 	public abstract Cursor queryByExample(T exampleObj);
 
@@ -75,6 +76,10 @@ public abstract class SQLiteDao<T extends Persistable> {
 		return asObject(queryByExample(exampleObj));
 	}
 	
+	public SQLiteDatabase getDatabase() {
+		return db;
+	}
+	
 	public List<T> listAll() {
 		return asList(queryAll());
 	}
@@ -88,28 +93,36 @@ public abstract class SQLiteDao<T extends Persistable> {
 	}
 
 	/**
+	 * Insert a row in the database. If the object's id is the
+	 * default long (0), the db will generate an id.
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	public long insert(T obj) {
+		ContentValues cv = getEditableValues(obj);
+		if (obj.getId() == 0) {
+			// the default, remove from ContentValues to allow autoincrement
+			cv.remove(getIdCol());
+		}
+		long id = db.insertOrThrow(this.getTableName(), null, cv);
+		obj.setId(id);
+		return id;
+	}
+	
+	/**
 	 * Insert or update, depending on whether the ID column is set to
 	 * a non-default value.
 	 * 
 	 * @param obj
 	 * @return
 	 */
-	public long put(T obj) {
+	public long update(T obj) {
 		ContentValues cv = getEditableValues(obj);
-		if (cv.containsKey(getIdCol())) {
-			Long id = cv.getAsLong(getIdCol());
-			if (id == null || id==0) {
-				// insert
-				cv.remove(getIdCol());
-				id = db.insertOrThrow(this.getTableName(), null, cv);
-				obj.setId(id);
-				return id;
-			} else {
-				int numRowsUpdated = db.update(this.getTableName(), cv, getIdCol() + "=?", new String[]{id.toString()});
-				return numRowsUpdated;
-			}
-		}
-		return 0;
+		Long id = obj.getId();
+		int numRowsUpdated = db.update(this.getTableName(), cv, getIdCol()
+				+ "=?", new String[] { id.toString() });
+		return numRowsUpdated;
 	}
 
 	public Cursor queryAll() {

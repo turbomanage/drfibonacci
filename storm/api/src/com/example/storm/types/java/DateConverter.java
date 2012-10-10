@@ -40,4 +40,9 @@ public class DateConverter extends TypeConverter<Date, Long> {
 		return CursorMethod.GET_LONG;
 	}
 
+	@Override
+	public Date fromString(String strValue) {
+		return fromSql(Long.valueOf(strValue));
+	}
+
 }

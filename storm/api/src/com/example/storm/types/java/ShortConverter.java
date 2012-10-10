@@ -27,4 +27,9 @@ public class ShortConverter extends TypeConverter<Short, Short> {
 		return sqlValue;
 	}
 
+	@Override
+	public Short fromString(String strValue) {
+		return Short.valueOf(strValue);
+	}
+
 }

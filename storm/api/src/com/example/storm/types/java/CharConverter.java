@@ -31,4 +31,9 @@ public class CharConverter extends TypeConverter<Character,Integer> {
 		return (char) sqlValue.intValue();
 	}
 
+	@Override
+	public Character fromString(String strValue) {
+		return strValue.charAt(0);
+	}
+
 }

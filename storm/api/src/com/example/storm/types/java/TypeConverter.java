@@ -26,6 +26,15 @@ public abstract class TypeConverter<J extends Object, S extends Object> {
 	 * @return
 	 */
 	public abstract J fromSql(S sqlValue);
+
+	/**
+	 * Convert a value from a String to its Java type. This
+	 * method is used by the CSV importer.
+	 * 
+	 * @param strValue
+	 * @return 
+	 */
+	public abstract J fromString(String strValue);
 	
 	/**
 	 * SQLite column type that represents this Java type. 

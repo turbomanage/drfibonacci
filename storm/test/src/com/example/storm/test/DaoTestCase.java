@@ -7,7 +7,6 @@ import java.util.Random;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.test.AndroidTestCase;
 
 import com.example.storm.DatabaseHelper;
@@ -27,20 +26,20 @@ public class DaoTestCase extends AndroidTestCase {
 		ctx = getContext();
 		openDatabase();
 		dao = new SimpleEntityDao(ctx);
-		long id = dao.put(new SimpleEntity());
+		long id = dao.insert(new SimpleEntity());
 		// Verify that we started clean
 		assertEquals(1, id);
 	}
 
 	public void testDelete() {
-		long id = dao.put(new SimpleEntity());
+		long id = dao.insert(new SimpleEntity());
 		int numRowsDeleted = dao.delete(id);
 		assertEquals(1, numRowsDeleted);
 		assertNull(dao.get(id));
 	}
 	
 	public void testDeleteAll() {
-		persistRandomEntities(5);
+		insertRandomEntities(5);
 		int numRowsDeleted = dao.deleteAll();
 		assertTrue(numRowsDeleted > 5);
 		List<SimpleEntity> listAll = dao.listAll();
@@ -50,7 +49,7 @@ public class DaoTestCase extends AndroidTestCase {
 	public void testGetByExample() {
 		SimpleEntity newEntity = new SimpleEntity();
 		newEntity.setIntField(21);
-		long id = dao.put(newEntity);
+		long id = dao.insert(newEntity);
 		SimpleEntity exampleObj = new SimpleEntity();
 		exampleObj.setIntField(21);
 		SimpleEntity resultEntity = dao.getByExample(exampleObj);
@@ -59,7 +58,7 @@ public class DaoTestCase extends AndroidTestCase {
 
 	public void testGetByExampleWithTooManyResults() {
 		String testName = "testGetByExampleWithTooManyResults";
-		persistTwoEntitiesHavingAnIdenticalStringField(testName);
+		insertTwoEntitiesHavingAnIdenticalStringField(testName);
 		SimpleEntity exampleObj = new SimpleEntity();
 		exampleObj.setwStringField(testName);
 		try {
@@ -72,17 +71,33 @@ public class DaoTestCase extends AndroidTestCase {
 
 	public void testInsert() {
 		SimpleEntity newEntity = new SimpleEntity();
-		long id = dao.put(newEntity);
+		long id = dao.insert(newEntity);
 		assertTrue(id > 0);
 		assertEquals(id, newEntity.getId());
 		SimpleEntity retrievedEntity = dao.get(id);
 		assertAllFieldsMatch(newEntity, retrievedEntity);
 	}
 
+	public void testInsertWithId() {
+		for (int i = 5000; i < 5010; i++) {
+			SimpleEntity newEntity = new SimpleEntity();
+			newEntity.setId(i);
+			newEntity.setwStringField("testInsertWithId");
+			long id = dao.insert(newEntity);
+			SimpleEntity resultEntity = dao.get(id);
+			assertEquals(i, id);
+			assertEquals(id, resultEntity.getId());
+		}
+		SimpleEntity ex = new SimpleEntity();
+		ex.setwStringField("testInsertWithId");
+		List<SimpleEntity> listAll = dao.listByExample(ex);
+		assertEquals(10, listAll.size());
+	}
+
 	public void testInsertWithNonDefaultValues() {
 		SimpleEntity newEntity = new SimpleEntity();
 		populateTestEntity(newEntity);
-		long id = dao.put(newEntity);
+		long id = dao.insert(newEntity);
 		assertTrue(id > 0);
 		SimpleEntity retrievedEntity = dao.get(id);
 		assertAllFieldsMatch(newEntity, retrievedEntity);
@@ -90,9 +105,9 @@ public class DaoTestCase extends AndroidTestCase {
 	
 	public void testUpdate() {
 		SimpleEntity newEntity = new SimpleEntity();
-		long id = dao.put(newEntity);
+		long id = dao.insert(newEntity);
 		populateTestEntity(newEntity);
-		long numRowsUpdated = dao.put(newEntity);
+		long numRowsUpdated = dao.update(newEntity);
 		assertEquals(1, numRowsUpdated);
 		SimpleEntity retrievedEntity = dao.get(id);
 		assertAllFieldsMatch(newEntity, retrievedEntity);
@@ -100,14 +115,14 @@ public class DaoTestCase extends AndroidTestCase {
 
 	public void testListAll() {
 		List<SimpleEntity> before = dao.listAll();
-		persistRandomEntities(5);
+		insertRandomEntities(5);
 		List<SimpleEntity> after = dao.listAll();
 		assertEquals(5, after.size() - before.size());
 	}
 
 	public void testListByExample() {
 		String testName = "testListByExample";
-		persistTwoEntitiesHavingAnIdenticalStringField(testName);
+		insertTwoEntitiesHavingAnIdenticalStringField(testName);
 		SimpleEntity exampleObj = new SimpleEntity();
 		exampleObj.setwStringField(testName);
 		List<SimpleEntity> resultList = dao.listByExample(exampleObj);
@@ -144,21 +159,21 @@ public class DaoTestCase extends AndroidTestCase {
 		dbHelper.onUpgrade(db, TestDatabaseHelper.DB_VERSION, TestDatabaseHelper.DB_VERSION);
 	}
 
-	private void persistRandomEntities(int n) {
+	private void insertRandomEntities(int n) {
 		for (int i = 0; i < n; i++) {
 			SimpleEntity randomEntity = new SimpleEntity();
 			randomEntity.setLongField(new Random().nextLong());
-			dao.put(randomEntity);
+			dao.insert(randomEntity);
 		}
 	}
 
-	private void persistTwoEntitiesHavingAnIdenticalStringField(String strInCommon) {
+	private void insertTwoEntitiesHavingAnIdenticalStringField(String strInCommon) {
 		SimpleEntity e1 = new SimpleEntity();
 		e1.setwStringField(strInCommon);
-		dao.put(e1);
+		dao.insert(e1);
 		SimpleEntity e2 = new SimpleEntity();
 		e2.setwStringField(strInCommon);
-		dao.put(e2);
+		dao.insert(e2);
 	}
 
 	private void populateTestEntity(SimpleEntity e) {

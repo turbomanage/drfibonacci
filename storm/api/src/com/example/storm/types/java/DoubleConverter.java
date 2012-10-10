@@ -27,4 +27,9 @@ public class DoubleConverter extends TypeConverter<Double,Double> {
 		return sqlValue;
 	}
 
+	@Override
+	public Double fromString(String strValue) {
+		return Double.valueOf(strValue);
+	}
+
 }
