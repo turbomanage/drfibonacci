@@ -35,7 +35,7 @@ public class TableModel extends ClassModel {
 
 	@Override
 	public String getGeneratedClass() {
-		return entityModel.getDaoPackage() + "." + getTableName() + TABLE_SUFFIX;
+		return entityModel.getDaoPackage() + "." + getClassName();
 	}
 
 	public List<FieldModel> getFields() {
@@ -45,6 +45,11 @@ public class TableModel extends ClassModel {
 	public String getTableName() {
 		// TODO Make configurable in @Entity
 		return entityModel.getEntityName();
+	}
+	
+	@Override
+	public String getClassName() {
+		return getTableName() + TABLE_SUFFIX;
 	}
 	
 }

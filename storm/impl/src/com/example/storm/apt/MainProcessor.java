@@ -21,7 +21,7 @@ import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
-@SupportedAnnotationTypes({ "com.example.storm.api.Entity","com.example.storm.api.Database","com.example.storm.api.Converter" })
+@SupportedAnnotationTypes({ "com.example.storm.api.Database","com.example.storm.api.Entity","com.example.storm.api.Converter" })
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class MainProcessor extends AbstractProcessor {
 	private ProcessorLogger logger;

@@ -18,7 +18,7 @@ import ${import};
  * 
  * @author drfibonacci
  */
-public class SimpleEntityTable extends TableHelper<${entityName}> {
+public class ${className} extends TableHelper<${entityName}> {
 
 	protected static Map<String,String> COLUMNS = new HashMap<String,String>();
 	static {
