@@ -1,7 +1,5 @@
 package com.example.storm.apt;
 
-import java.util.List;
-
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
 

@@ -57,4 +57,8 @@ public class CsvUtils {
 		return true;
 	}
 
+	public static String[] parseRow(String csvRow) {
+		return null;
+	}
+
 }

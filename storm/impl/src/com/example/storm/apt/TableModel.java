@@ -9,8 +9,20 @@ public class TableModel extends ClassModel {
 
 	public TableModel(EntityModel em) {
 		this.entityModel = em;
+		addImport(em.getQualifiedClassName());
+		addConverterImports();
 	}
 
+	private void addConverterImports() {
+		for (FieldModel field : entityModel.getFields()) {
+			addImport(field.getQualifiedConverterClass());
+		}
+	}
+
+	public String getEntityName() {
+		return this.entityModel.getEntityName();
+	}
+	
 	@Override
 	public String getPackage() {
 		return this.entityModel.getDaoPackage();

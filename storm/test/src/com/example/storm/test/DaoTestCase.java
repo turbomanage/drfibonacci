@@ -129,7 +129,7 @@ public class DaoTestCase extends AndroidTestCase {
 		assertEquals(2, resultList.size());
 	}
 
-	private void assertAllFieldsMatch(SimpleEntity a, SimpleEntity b) {
+	static void assertAllFieldsMatch(SimpleEntity a, SimpleEntity b) {
 		assertEquals(a.getId(), b.getId());
 		assertEquals(a.getByteField(), b.getByteField());
 		assertTrue(Arrays.equals(a.getBlobField(), b.getBlobField()));

@@ -42,14 +42,6 @@ public class ${daoName} extends ${baseDaoName}<${entityName}>{
 		return obj;
 	}
 
-	public ${entityName} newInstance(Map<String,String> values) {
-		${entityName} obj = new ${entityName}();
-		<#list fields as field>
-		obj.${field.setter}(new ${field.converterName}().fromString(values.get("${field.colName}")));
-		</#list>
-		return obj;
-	}
-	
 	public ContentValues getEditableValues(${entityName} obj) {
 		ContentValues cv = new ContentValues();
 		<#list fields as field>

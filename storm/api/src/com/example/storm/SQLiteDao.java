@@ -46,7 +46,6 @@ public abstract class SQLiteDao<T extends Persistable> {
 	public abstract String getEntityName();
 	public abstract String getIdCol();
 	public abstract T newInstance(Cursor c);
-	public abstract T newInstance(Map<String,String> values);
 	public abstract ContentValues getEditableValues(T obj);
 	public abstract Cursor queryByExample(T exampleObj);
 

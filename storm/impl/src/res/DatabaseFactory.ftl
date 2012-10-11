@@ -56,18 +56,6 @@ public class ${factoryName} implements DatabaseFactory {
 		return DB_VERSION;
 	}
 
-	public void onCreate(SQLiteDatabase db) {
-		for (TableHelper th: TABLE_HELPERS) {
-			th.onCreate(db);
-		}
-	}
-	
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		for (TableHelper th: TABLE_HELPERS) {
-			th.onUpgrade(db, oldVersion, newVersion);
-		}
-	}
-
 	public TableHelper[] getTableHelpers() {		
 		return TABLE_HELPERS;
 	}
