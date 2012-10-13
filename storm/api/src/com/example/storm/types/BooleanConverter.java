@@ -1,8 +1,6 @@
-package com.example.storm.types.java;
+package com.example.storm.types;
 
-import com.example.storm.CursorMethod;
 import com.example.storm.api.Converter;
-import com.example.storm.types.sql.SqlType;
 
 
 @Converter(forTypes = { boolean.class, Boolean.class })
@@ -14,8 +12,8 @@ public class BooleanConverter extends TypeConverter<Boolean,Integer> {
 	}
 
 	@Override
-	public CursorMethod getCursorMethod() {
-		return CursorMethod.GET_INT;
+	public BindType getBindType() {
+		return BindType.INT;
 	}
 
 	@Override
@@ -33,8 +31,10 @@ public class BooleanConverter extends TypeConverter<Boolean,Integer> {
 	}
 
 	@Override
-	public Boolean fromString(String strValue) {
-		return Boolean.valueOf(strValue);
+	public Integer fromString(String strValue) {
+		if (strValue == null)
+			return null;
+		return Integer.valueOf(strValue);
 	}
 
 }

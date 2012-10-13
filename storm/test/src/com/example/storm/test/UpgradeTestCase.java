@@ -1,7 +1,11 @@
 package com.example.storm.test;
 
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -15,6 +19,7 @@ import com.example.storm.TestDatabaseHelper;
 import com.example.storm.TestDbFactory;
 import com.example.storm.entity.SimpleEntity;
 import com.example.storm.entity.dao.SimpleEntityDao;
+import com.example.storm.entity.dao.SimpleEntityTable;
 
 public class UpgradeTestCase extends AndroidTestCase {
 
@@ -55,13 +60,33 @@ public class UpgradeTestCase extends AndroidTestCase {
 		List<SimpleEntity> before = dao.listAll();
 		dbHelper.backupAllTablesToCsv();
 		dbHelper.dropAndCreate();
+		assertEquals(0, dao.listAll().size());
 		dbHelper.restoreAllTablesFromCsv();
 		List<SimpleEntity> after = dao.listAll();
 		for (int i = 0; i < before.size(); i++) {
 			DaoTestCase.assertAllFieldsMatch(before.get(i), after.get(i));
 		}
 	}
-
+	
+	public void testWriteToCsv() throws IOException {
+		dbHelper.dropAndCreate();
+		SimpleEntity populatedEntity = new SimpleEntity();
+		populateTestEntity(populatedEntity);
+		dao.insert(populatedEntity);
+		dao.insert(new SimpleEntity()); // default
+		dbHelper.backupAllTablesToCsv();
+		FileInputStream ois = ctx.openFileInput("testDb.v2.SimpleEntity");
+		InputStreamReader isr = new InputStreamReader(ois);
+		BufferedReader reader = new BufferedReader(isr);
+		String headerRow = reader.readLine();
+		String row1 = reader.readLine();
+		String expected = "Q0FGRUJBQkU=,1,0,122,4609965796441453736,1.618034,1,75025,12586269025,0,28657,1,89,88,18000000,-4619630062026626736,-0.618034,1836311903,86267571272,17711,\"Hello, world!\"";
+		assertEquals(expected, row1);
+		String row2 = reader.readLine();
+		expected = ",0,0,0,0,0.0,2,0,0,0,0,,,,,,,,,,";
+		assertEquals(expected, row2);
+	}
+	
 	private void populateTestEntity(SimpleEntity e) {
 		e.setBlobField("CAFEBABE".getBytes());
 		e.setBooleanField(true);
@@ -74,7 +99,7 @@ public class UpgradeTestCase extends AndroidTestCase {
 		e.setwBooleanField(Boolean.TRUE);
 		e.setwByteField(new Byte((byte) 89));
 		e.setwCharacterField('X');
-		e.setwDateField(new Date());
+		e.setwDateField(new Date("Jan 1, 1970"));
 		e.setwDoubleField((1 - Math.sqrt(5)) / 2);
 		e.setwFloatField((float) ((1 - Math.sqrt(5)) / 2));
 		e.setwIntegerField(1836311903);

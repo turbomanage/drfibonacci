@@ -1,8 +1,6 @@
-package com.example.storm.types.java;
+package com.example.storm.types;
 
-import com.example.storm.CursorMethod;
 import com.example.storm.api.Converter;
-import com.example.storm.types.sql.SqlType;
 
 
 @Converter(forTypes = { float.class, Float.class })
@@ -14,8 +12,8 @@ public class FloatConverter extends TypeConverter<Float,Float> {
 	}
 
 	@Override
-	public CursorMethod getCursorMethod() {
-		return CursorMethod.GET_FLOAT;
+	public BindType getBindType() {
+		return BindType.FLOAT;
 	}
 
 	@Override

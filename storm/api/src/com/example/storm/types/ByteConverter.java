@@ -1,8 +1,6 @@
-package com.example.storm.types.java;
+package com.example.storm.types;
 
-import com.example.storm.CursorMethod;
 import com.example.storm.api.Converter;
-import com.example.storm.types.sql.SqlType;
 
 @Converter(forTypes = { byte.class, Byte.class })
 public class ByteConverter extends TypeConverter<Byte,Short> {
@@ -13,8 +11,8 @@ public class ByteConverter extends TypeConverter<Byte,Short> {
 	}
 
 	@Override
-	public CursorMethod getCursorMethod() {
-		return CursorMethod.GET_SHORT;
+	public BindType getBindType() {
+		return BindType.SHORT;
 	}
 
 	@Override
@@ -32,8 +30,10 @@ public class ByteConverter extends TypeConverter<Byte,Short> {
 	}
 
 	@Override
-	public Byte fromString(String strValue) {
-		return Byte.valueOf(strValue);
+	public Short fromString(String strValue) {
+		if (strValue == null)
+			return null;
+		return Short.valueOf(strValue);
 	}
 
 }

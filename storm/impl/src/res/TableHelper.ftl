@@ -1,5 +1,7 @@
 package ${package};
 
+import android.database.Cursor;
+import android.database.DatabaseUtils.InsertHelper;
 import com.example.storm.TableHelper;
 import java.util.Map;
 import java.util.HashMap;
@@ -58,12 +60,19 @@ public class ${className} extends TableHelper<${entityName}> {
 	}
 
 	@Override
-	public ${entityName} newInstance(Map<String,String> values) {
-		${entityName} obj = new ${entityName}();
+	public String[] getRowValues(Cursor c) {
+		String[] values = new String[c.getColumnCount()];
 		<#list fields as field>
-		obj.${field.setter}(new ${field.converterName}().fromString(values.get("${field.colName}")));
+		values[${field_index}] = new ${field.converterName}().toString(get${field.bindType}OrNull(c, ${field_index}));
 		</#list>
-		return obj;
+		return values;
+	}
+
+	@Override
+	protected void bindRowValues(InsertHelper insHelper, String[] rowValues) {
+		<#list fields as field>
+		if (rowValues[${field_index}] == null) insHelper.bindNull(${field_index}+1); else insHelper.bind(${field_index} + 1, new ${field.converterName}().fromString(rowValues[${field_index}]));
+		</#list>
 	}
 
 }

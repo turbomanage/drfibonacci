@@ -9,18 +9,18 @@ import javax.lang.model.element.TypeElement;
 
 import com.example.storm.api.Converter;
 import com.example.storm.exception.TypeNotSupportedException;
-import com.example.storm.types.java.BlobConverter;
-import com.example.storm.types.java.BooleanConverter;
-import com.example.storm.types.java.ByteConverter;
-import com.example.storm.types.java.CharConverter;
-import com.example.storm.types.java.DateConverter;
-import com.example.storm.types.java.DoubleConverter;
-import com.example.storm.types.java.FloatConverter;
-import com.example.storm.types.java.IntegerConverter;
-import com.example.storm.types.java.LongConverter;
-import com.example.storm.types.java.ShortConverter;
-import com.example.storm.types.java.StringConverter;
-import com.example.storm.types.java.TypeConverter;
+import com.example.storm.types.BlobConverter;
+import com.example.storm.types.BooleanConverter;
+import com.example.storm.types.ByteConverter;
+import com.example.storm.types.CharConverter;
+import com.example.storm.types.DateConverter;
+import com.example.storm.types.DoubleConverter;
+import com.example.storm.types.FloatConverter;
+import com.example.storm.types.IntegerConverter;
+import com.example.storm.types.LongConverter;
+import com.example.storm.types.ShortConverter;
+import com.example.storm.types.StringConverter;
+import com.example.storm.types.TypeConverter;
 
 /**
  * @author drfibonacci

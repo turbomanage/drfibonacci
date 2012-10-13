@@ -1,8 +1,6 @@
-package com.example.storm.types.java;
+package com.example.storm.types;
 
-import com.example.storm.CursorMethod;
 import com.example.storm.api.Converter;
-import com.example.storm.types.sql.SqlType;
 
 @Converter(forTypes = { double.class, Double.class })
 public class DoubleConverter extends TypeConverter<Double,Double> {
@@ -13,8 +11,8 @@ public class DoubleConverter extends TypeConverter<Double,Double> {
 	}
 
 	@Override
-	public CursorMethod getCursorMethod() {
-		return CursorMethod.GET_DOUBLE;
+	public BindType getBindType() {
+		return BindType.DOUBLE;
 	}
 
 	@Override
@@ -29,7 +27,13 @@ public class DoubleConverter extends TypeConverter<Double,Double> {
 
 	@Override
 	public Double fromString(String strValue) {
-		return Double.valueOf(strValue);
+		// use long bits to preserve exact value
+		return Double.longBitsToDouble(Long.valueOf(strValue));
 	}
 
+	@Override
+	public String toString(Double sqlValue) {
+		// use long bits to preserve exact value
+		return (sqlValue == null) ? null : String.valueOf(Double.doubleToLongBits(sqlValue));
+	}
 }

@@ -1,7 +1,7 @@
 package com.example.storm.apt;
 
 import com.example.storm.exception.TypeNotSupportedException;
-import com.example.storm.types.java.TypeConverter;
+import com.example.storm.types.TypeConverter;
 
 
 /**
@@ -61,8 +61,15 @@ public class FieldModel {
 		return getConverter().getClass().getName();
 	}
 	
-	public String getCursorMethod() {
-		return getConverter().getCursorMethod().getMethodName();
+	/**
+	 * Morph bind type like INT ==> Int so it can be used in a 
+	 * Cursor getXxx method name. Never called at runtime.
+	 * 
+	 * @return
+	 */
+	public String getBindType() {
+		String bindType = getConverter().getBindType().name();
+		return bindType.charAt(0) + bindType.toLowerCase().substring(1);
 	}
 
 	public String getSqlType() {

@@ -1,10 +1,8 @@
-package com.example.storm.types.java;
+package com.example.storm.types;
 
 import android.util.Base64;
 
-import com.example.storm.CursorMethod;
 import com.example.storm.api.Converter;
-import com.example.storm.types.sql.SqlType;
 
 @Converter(forTypes = { byte[].class })
 public class BlobConverter extends TypeConverter<byte[], byte[]> {
@@ -15,8 +13,8 @@ public class BlobConverter extends TypeConverter<byte[], byte[]> {
 	}
 
 	@Override
-	public CursorMethod getCursorMethod() {
-		return CursorMethod.GET_BLOB;
+	public BindType getBindType() {
+		return BindType.BLOB;
 	}
 
 	@Override
@@ -32,6 +30,11 @@ public class BlobConverter extends TypeConverter<byte[], byte[]> {
 	@Override
 	public byte[] fromString(String strValue) {
 		return Base64.decode(strValue, Base64.DEFAULT);
+	}
+	
+	@Override
+	public String toString(byte[] sqlValue) {
+		return (sqlValue == null) ? null : Base64.encodeToString(sqlValue, Base64.NO_WRAP);
 	}
 
 }

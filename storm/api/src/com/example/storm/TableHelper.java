@@ -1,26 +1,23 @@
 package com.example.storm;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Map;
 
-import com.example.storm.api.Persistable;
-
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
-import android.util.Base64;
+import android.util.Log;
+
+import com.example.storm.api.Persistable;
 
 /**
  * This class contains methods related to database creation and upgrades which
@@ -34,6 +31,8 @@ import android.util.Base64;
  * @author drfibonacci
  */
 public abstract class TableHelper<T extends Persistable> {
+
+	private static final String TAG = TableHelper.class.getName();
 
 	/**
 	 * String representation of Java types associated with each column, like
@@ -51,7 +50,18 @@ public abstract class TableHelper<T extends Persistable> {
 
 	protected abstract String upgradeSql(int oldVersion, int newVersion);
 
-	protected abstract T newInstance(Map<String, String> values);
+	/**
+	 * Extract from a cursor a map containing each column name and value as a
+	 * String. This is used by the CsvWriter and is necessary mainly because
+	 * Cursor.getString truncates doubles and blobs need to be Base64 encoded.
+	 * 
+	 * @param c
+	 *            Cursor
+	 * @return Map<String colName, String colValue>
+	 */
+	protected abstract String[] getRowValues(Cursor c);
+
+	protected abstract void bindRowValues(InsertHelper insHelper, String[] rowValues);
 
 	/**
 	 * Create the table that represents the associated entity.
@@ -148,21 +158,13 @@ public abstract class TableHelper<T extends Persistable> {
 
 	protected String buildCsvRow(Cursor c) {
 		StringBuilder sb = new StringBuilder();
+		String[] values = this.getRowValues(c);
 		for (int i = 0; i < c.getColumnCount(); i++) {
-			String value;
-			String colName = c.getColumnName(i);
-			if (c.isNull(i)) {
-				value = "";
-			} else if (getColType(colName) == "byte[]") {
-				value = Base64.encodeToString(c.getBlob(i), Base64.NO_WRAP);
-			} else {
-				value = CsvUtils.escapeCsv(c.getString(i));
-			}
-			if (i > 0)
-				sb.append(',');
-			sb.append(value);
+			String value = values[i];
+			sb.append(',');
+			sb.append(CsvUtils.escapeCsv(value));
 		}
-		return sb.toString();
+		return sb.toString().substring(1);
 	}
 
 	public int importFromCsv(DatabaseHelper dbHelper) {
@@ -180,7 +182,6 @@ public abstract class TableHelper<T extends Persistable> {
 			String headerRow = reader.readLine();
 			int[] cols = parseCsvHeader(headerRow, insertHelper);
 			boolean[] isBlobCol = getTypes(headerRow);
-			insertHelper.prepareForInsert();
 			String csvRow = reader.readLine();
 			while (csvRow != null) {
 				long rowId = parseAndInsert(csvRow, cols, isBlobCol,
@@ -189,6 +190,7 @@ public abstract class TableHelper<T extends Persistable> {
 					throw new RuntimeException("Error after row " + numInserts);
 				}
 				numInserts++;
+				csvRow = reader.readLine();
 			}
 			db.setTransactionSuccessful();
 		} catch (FileNotFoundException e) {
@@ -215,20 +217,14 @@ public abstract class TableHelper<T extends Persistable> {
 
 	private long parseAndInsert(String csvRow, int[] cols, boolean[] isBlobCol,
 			InsertHelper insertHelper) {
-		String[] values = CsvUtils.parseRow(csvRow);
-		for (int i = 0; i < values.length; i++) {
-			String str = values[i];
-			int colIdx = cols[i];
-			if (str == null) {
-				insertHelper.bindNull(colIdx);
-			} else if (isBlobCol[i]) {
-				byte[] blob = Base64.decode(str, Base64.DEFAULT);
-				insertHelper.bind(colIdx, blob);
-			} else {
-				String val = CsvUtils.unescapeCsv(str);
-				insertHelper.bind(colIdx, val);
-			}
+		List<String> values = CsvUtils.getValues(csvRow);
+		Log.d(TAG, csvRow);
+		for (String val : values) {
+			Log.d(TAG, "val=" + val);
 		}
+		// TODO prepare only once, maybe use SqlStatement directly
+		insertHelper.prepareForInsert();
+		this.bindRowValues(insertHelper, values.toArray(new String[]{}));
 		return insertHelper.execute();
 	}
 
@@ -245,7 +241,7 @@ public abstract class TableHelper<T extends Persistable> {
 		for (int i = 0; i < csvCols.length; i++) {
 			String colName = csvCols[i];
 			int columnIndex = insertHelper.getColumnIndex(colName);
-			colMap[i] = columnIndex;
+			colMap[i] = columnIndex - 1;
 		}
 		return colMap;
 	}
@@ -254,4 +250,32 @@ public abstract class TableHelper<T extends Persistable> {
 		return getColumns().get(colName);
 	}
 
+	protected byte[] getBlobOrNull(Cursor c, int col) {
+		return c.isNull(col) ? null : c.getBlob(col);
+	}
+
+	protected Double getDoubleOrNull(Cursor c, int col) {
+		return c.isNull(col) ? null : c.getDouble(col);
+	}
+
+	protected Float getFloatOrNull(Cursor c, int col) {
+		return c.isNull(col) ? null : c.getFloat(col);
+	}
+
+	protected Integer getIntOrNull(Cursor c, int col) {
+		return c.isNull(col) ? null : c.getInt(col);
+	}
+
+	protected Long getLongOrNull(Cursor c, int col) {
+		return c.isNull(col) ? null : c.getLong(col);
+	}
+
+	protected Short getShortOrNull(Cursor c, int col) {
+		return c.isNull(col) ? null : c.getShort(col);
+	}
+
+	protected String getStringOrNull(Cursor c, int col) {
+		return c.isNull(col) ? null : c.getString(col);
+	}
+	
 }

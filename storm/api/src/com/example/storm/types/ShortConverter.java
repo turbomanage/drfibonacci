@@ -1,8 +1,6 @@
-package com.example.storm.types.java;
+package com.example.storm.types;
 
-import com.example.storm.CursorMethod;
 import com.example.storm.api.Converter;
-import com.example.storm.types.sql.SqlType;
 
 @Converter(forTypes = { short.class, Short.class })
 public class ShortConverter extends TypeConverter<Short, Short> {
@@ -13,8 +11,8 @@ public class ShortConverter extends TypeConverter<Short, Short> {
 	}
 
 	@Override
-	public CursorMethod getCursorMethod() {
-		return CursorMethod.GET_SHORT;
+	public BindType getBindType() {
+		return BindType.SHORT;
 	}
 
 	@Override

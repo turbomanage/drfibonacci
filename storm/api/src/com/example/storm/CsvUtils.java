@@ -1,14 +1,18 @@
 package com.example.storm;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CsvUtils {
 
-	public static final char CSV_DELIMITER = ',';
+	public static final char DELIMITER = ',';
 	public static final char QUOTE = '"';
 	public static final char CR = '\r';
 	public static final char LF = '\n';
-	public static final char[] CSV_SEARCH_CHARS = new char[] { CSV_DELIMITER,
+	public static final char[] CSV_SEARCH_CHARS = new char[] { DELIMITER,
 			QUOTE, CR, LF };
 	public static final String QUOTE_STR = String.valueOf(QUOTE);
 
@@ -24,6 +28,8 @@ public class CsvUtils {
 	 * @return the input String enclosed in double quotes if required, or null
 	 */
 	public static String escapeCsv(String str) {
+		if (str == null)
+			return "";
 		if (containsNone(str, CSV_SEARCH_CHARS))
 			return str;
 		StringWriter out = new StringWriter();
@@ -57,8 +63,72 @@ public class CsvUtils {
 		return true;
 	}
 
-	public static String[] parseRow(String csvRow) {
-		return null;
+	/**
+	 * Return values from a CSV String.
+	 * 
+	 * @param csvRow
+	 * @return
+	 */
+	public static List<String> getValues(String csvRow) {
+		List<String> values = new ArrayList<String>();
+		StringReader in = new StringReader(csvRow);
+		String value;
+		try {
+			value = nextValue(in);
+			while (true) {
+				values.add(value);
+				value = nextValue(in);
+			}
+		} catch (IOException e) {
+			// TODO this feels like a hack
+			// handles case of final null value
+			if (csvRow.lastIndexOf(',') == csvRow.length() - 1)
+				values.add(null);
+			return values;
+		}
 	}
+
+	public static String nextValue(StringReader in) throws IOException {
+		StringWriter w = new StringWriter();
+		boolean inQuotedValue = false;
+		boolean openQuote = false;
+		int c = in.read();
+		if (c == QUOTE)
+			inQuotedValue = true;
+		else if (c == DELIMITER) {
+			return null;
+		} else if (c >= 0) {
+			w.write(c);
+		} else {
+			throw new IOException("End of file reached");
+		}
+		c = in.read();
+		while (c >= 0) {
+			if (c == QUOTE) {
+				if (inQuotedValue) {
+					if (openQuote) {
+						openQuote = false;
+						w.write(QUOTE);
+					} else {
+						openQuote = true;
+					}
+				} else
+					// invalid
+					return w.toString();
+			} else if (c == DELIMITER) {
+				if (openQuote)
+					return w.toString();
+				else if (inQuotedValue)
+					w.write(c);
+				else
+					// invalid
+					return w.toString();
+			} else
+				w.write(c);
+			c = in.read();
+		}
+		return w.toString();
+	}
+
 
 }

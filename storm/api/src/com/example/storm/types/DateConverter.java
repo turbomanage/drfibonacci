@@ -1,11 +1,8 @@
-package com.example.storm.types.java;
+package com.example.storm.types;
 
 import java.util.Date;
 
-import com.example.storm.CursorMethod;
 import com.example.storm.api.Converter;
-import com.example.storm.types.java.TypeConverter;
-import com.example.storm.types.sql.SqlType;
 
 /**
  * User-supplied TypeConverter.
@@ -36,13 +33,13 @@ public class DateConverter extends TypeConverter<Date, Long> {
 	}
 
 	@Override
-	public CursorMethod getCursorMethod() {
-		return CursorMethod.GET_LONG;
+	public BindType getBindType() {
+		return BindType.LONG;
 	}
 
 	@Override
-	public Date fromString(String strValue) {
-		return fromSql(Long.valueOf(strValue));
+	public Long fromString(String strValue) {
+		return Long.valueOf(strValue);
 	}
 
 }

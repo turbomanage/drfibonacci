@@ -1,8 +1,8 @@
 package com.example.storm.apt.test;
 
 import com.example.storm.apt.TypeMapper;
-import com.example.storm.types.java.BooleanConverter;
-import com.example.storm.types.java.IntegerConverter;
+import com.example.storm.types.BooleanConverter;
+import com.example.storm.types.IntegerConverter;
 
 import junit.framework.TestCase;
 

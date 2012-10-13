@@ -1,8 +1,6 @@
-package com.example.storm.types.java;
+package com.example.storm.types;
 
-import com.example.storm.CursorMethod;
 import com.example.storm.api.Converter;
-import com.example.storm.types.sql.SqlType;
 
 @Converter(forTypes = { String.class })
 public class StringConverter extends TypeConverter<String,String> {
@@ -13,8 +11,8 @@ public class StringConverter extends TypeConverter<String,String> {
 	}
 
 	@Override
-	public CursorMethod getCursorMethod() {
-		return CursorMethod.GET_STRING;
+	public BindType getBindType() {
+		return BindType.STRING;
 	}
 
 	@Override

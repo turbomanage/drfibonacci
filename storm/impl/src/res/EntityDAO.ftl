@@ -37,7 +37,7 @@ public class ${daoName} extends ${baseDaoName}<${entityName}>{
 	public ${entityName} newInstance(Cursor c) {
 		${entityName} obj = new ${entityName}();
 		<#list fields as field>
-		obj.${field.setter}(new ${field.converterName}().fromSql(${field.cursorMethod}OrNull(c, "${field.colName}")));
+		obj.${field.setter}(new ${field.converterName}().fromSql(get${field.bindType}OrNull(c, "${field.colName}")));
 		</#list>
 		return obj;
 	}
