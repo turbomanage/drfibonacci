@@ -111,6 +111,7 @@ public abstract class TableHelper<T extends Persistable> {
 		this.onCreate(db);
 	}
 
+	// TODO move CSV methods to CsvWriter, CsvReader
 	protected int dumpToCsv(DatabaseHelper dbHelper) {
 		int numRowsWritten = 0;
 		String filename = getCsvFilename(dbHelper);

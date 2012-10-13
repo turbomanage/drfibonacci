@@ -52,6 +52,7 @@ public class UpgradeTestCase extends AndroidTestCase {
 		}
 	}
 
+	// TODO test case when adding / removing columns
 	public void testBackupAndRestore() throws IOException {
 		persistRandomEntities(11);
 		SimpleEntity e = new SimpleEntity();

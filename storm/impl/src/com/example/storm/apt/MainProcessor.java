@@ -27,6 +27,7 @@ public class MainProcessor extends AbstractProcessor {
 	private ProcessorLogger logger;
 	private Configuration cfg = new Configuration();
 
+	// TODO why do we have to clean after adding @Entity to a POJO?
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations,
 			RoundEnvironment roundEnv) {
