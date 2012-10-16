@@ -2,6 +2,7 @@ package com.example.storm;
 
 import java.util.Map;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
@@ -62,6 +63,14 @@ public abstract class TableHelper<T extends Persistable> {
 	 * @return
 	 */
 	public abstract String[] getDefaultValues();
+
+	public abstract ContentValues getEditableValues(T obj);
+
+	public abstract String getIdCol();
+
+	public abstract T newInstance(Cursor c);
+
+	public abstract Map<String,String> getQueryValuesMap(T exampleObj);
 
 	/**
 	 * Create the table that represents the associated entity.
@@ -163,6 +172,45 @@ public abstract class TableHelper<T extends Persistable> {
 	}
 
 	protected String getStringOrNull(Cursor c, int col) {
+		return c.isNull(col) ? null : c.getString(col);
+	}
+
+	/*
+	 * Methods to wrap Cursor get methods
+	 */
+	
+	protected byte[] getBlobOrNull(Cursor c, String colName) {
+		int col = c.getColumnIndexOrThrow(colName);
+		return c.isNull(col) ? null : c.getBlob(col);
+	}
+
+	protected Double getDoubleOrNull(Cursor c, String colName) {
+		int col = c.getColumnIndexOrThrow(colName);
+		return c.isNull(col) ? null : c.getDouble(col);
+	}
+
+	protected Float getFloatOrNull(Cursor c, String colName) {
+		int col = c.getColumnIndexOrThrow(colName);
+		return c.isNull(col) ? null : c.getFloat(col);
+	}
+
+	protected Integer getIntOrNull(Cursor c, String colName) {
+		int col = c.getColumnIndexOrThrow(colName);
+		return c.isNull(col) ? null : c.getInt(col);
+	}
+
+	protected Long getLongOrNull(Cursor c, String colName) {
+		int col = c.getColumnIndexOrThrow(colName);
+		return c.isNull(col) ? null : c.getLong(col);
+	}
+
+	protected Short getShortOrNull(Cursor c, String colName) {
+		int col = c.getColumnIndexOrThrow(colName);
+		return c.isNull(col) ? null : c.getShort(col);
+	}
+
+	protected String getStringOrNull(Cursor c, String colName) {
+		int col = c.getColumnIndexOrThrow(colName);
 		return c.isNull(col) ? null : c.getString(col);
 	}
 	

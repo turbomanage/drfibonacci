@@ -5,6 +5,7 @@ import com.example.storm.SQLiteDao;
 
 public class EntityModel extends ClassModel {
 
+	private static final String TABLE_SUFFIX = "Table";
 	private Class<SQLiteDao> baseDaoClass;
 	private DatabaseModel dbModel;
 
@@ -48,18 +49,17 @@ public class EntityModel extends ClassModel {
 		dbModel.addEntity(this);
 	}
 	
-	TableModel getTableModel() {
-		return new TableModel(this);
+	public String getTableHelperClass() {
+		return getDaoPackage() + "." + getTableHelperName();
+	}
+	
+	public String getTableHelperName() {
+		return getTableName() + TABLE_SUFFIX;
 	}
 
-	@Override
-	public String getTemplatePath() {
-		return "EntityDAO.ftl";
-	}
-
-	@Override
-	public String getGeneratedClass() {
-		return this.getDaoPackage() + "." + getDaoName();
+	public String getTableName() {
+		// TODO Make configurable in @Entity
+		return getEntityName();
 	}
 
 }

@@ -15,14 +15,4 @@ public class ConverterModel extends ClassModel {
 		return types;
 	}
 
-	@Override
-	public String getTemplatePath() {
-		return null;
-	}
-
-	@Override
-	public String getGeneratedClass() {
-		return null;
-	}
-
 }

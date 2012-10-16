@@ -56,30 +56,32 @@ public class MainProcessor extends AbstractProcessor {
 			EntityProcessor eproc = new EntityProcessor(element, stormEnv);
 			eproc.populateModel();
 			// Generate EntityDao
-			processTemplate(processingEnv, cfg, eproc.getModel());
+			EntityDaoTemplate daoTemplate = new EntityDaoTemplate(eproc.getModel());
+			processTemplate(processingEnv, cfg, daoTemplate);
 			// Generate EntityTable
-			processTemplate(processingEnv, cfg, eproc.getModel().getTableModel());
+			TableHelperTemplate tableHelperTemplate = new TableHelperTemplate(eproc.getModel());
+			processTemplate(processingEnv, cfg, tableHelperTemplate);
 		}
 		
 		// Second pass to generate DatabaseFactory templates now that
 		// all entities have been associated with a db
 		for (DatabaseProcessor dbProc : stormEnv.getDbProcessors()) {
-			processTemplate(processingEnv, cfg, dbProc.getModel());
+			DatabaseFactoryTemplate dbFactoryTemplate = new DatabaseFactoryTemplate(dbProc.getModel());
+			processTemplate(processingEnv, cfg, dbFactoryTemplate);
 		}
 		
 		return true;
 	}
 
-	void processTemplate(ProcessingEnvironment processingEnv, Configuration cfg, ClassModel model) {
+	void processTemplate(ProcessingEnvironment processingEnv, Configuration cfg, ClassTemplate template) {
 		JavaFileObject file;
 		try {
 			file = processingEnv.getFiler().createSourceFile(
-					model.getGeneratedClass());
-			logger.info("Creating file " + file.getName());
+					template.getGeneratedClass());
 			Writer out = file.openWriter();
-			Template t = cfg.getTemplate(model.getTemplatePath());
-			logger.info("Generating " + model.getClassName() + " with " + t.getName());
-			t.process(model, out);
+			Template t = cfg.getTemplate(template.getTemplatePath());
+			logger.info("Generating " + file.getName() + " with " + t.getName());
+			t.process(template.getModel(), out);
 			out.flush();
 			out.close();
 		} catch (Exception e) {

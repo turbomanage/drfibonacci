@@ -22,9 +22,9 @@ public abstract class SQLiteDao<T extends Persistable> {
 
 	protected SQLiteDatabase db;
 	protected Class<T> clazz;
-	// TODO SQL methods should delegate to TableHelper
 	protected TableHelper<T> th;
 
+	@SuppressWarnings("unchecked")
 	public SQLiteDao(Context ctx) {
 		// Reflection voodoo to get the type parameter from the subclass
 		Type genericSuperclass = getClass().getGenericSuperclass();
@@ -35,6 +35,7 @@ public abstract class SQLiteDao<T extends Persistable> {
 					.getActualTypeArguments()[0];
 
 		this.db = getDbHelper(ctx).getWritableDatabase();
+		this.th = getTableHelper();
 	}
 
 	/**
@@ -45,17 +46,11 @@ public abstract class SQLiteDao<T extends Persistable> {
 	 * @return DatabaseHelper 
 	 */
 	public abstract DatabaseHelper getDbHelper(Context ctx);
-	// TODO merge abstract methods below into TableHelper
-	public abstract String getEntityName();
-	public abstract String getIdCol();
-	public abstract T newInstance(Cursor c);
-	public abstract ContentValues getEditableValues(T obj);
-	// TODO Refactor this to getValuesMap
-	public abstract Cursor queryByExample(T exampleObj);
-
+	@SuppressWarnings("rawtypes")
+	public abstract TableHelper getTableHelper();
 	public int delete(Long id) {
 		if (id != null) {
-			return db.delete(getTableName(), getIdCol() + "=?", new String[]{id.toString()});
+			return db.delete(getTableName(), th.getIdCol() + "=?", new String[]{id.toString()});
 		}
 		return 0;
 	}
@@ -65,7 +60,7 @@ public abstract class SQLiteDao<T extends Persistable> {
 	}
 	
 	protected String getTableName() {
-		return getEntityName();
+		return th.getTableName();
 	}
 
 	public T get(Long id) {
@@ -103,15 +98,17 @@ public abstract class SQLiteDao<T extends Persistable> {
 	 * @return
 	 */
 	public long insert(T obj) {
-		ContentValues cv = getEditableValues(obj);
+		ContentValues cv = th.getEditableValues(obj);
 		if (obj.getId() == 0) {
 			// the default, remove from ContentValues to allow autoincrement
-			cv.remove(getIdCol());
+			cv.remove(th.getIdCol());
 		}
 		long id = db.insertOrThrow(this.getTableName(), null, cv);
 		obj.setId(id);
 		return id;
 	}
+
+	// TODO add insertMany(List<T>)
 	
 	/**
 	 * Insert or update, depending on whether the ID column is set to
@@ -121,9 +118,9 @@ public abstract class SQLiteDao<T extends Persistable> {
 	 * @return
 	 */
 	public long update(T obj) {
-		ContentValues cv = getEditableValues(obj);
+		ContentValues cv = th.getEditableValues(obj);
 		Long id = obj.getId();
-		int numRowsUpdated = db.update(this.getTableName(), cv, getIdCol()
+		int numRowsUpdated = db.update(this.getTableName(), cv, th.getIdCol()
 				+ "=?", new String[] { id.toString() });
 		return numRowsUpdated;
 	}
@@ -132,6 +129,11 @@ public abstract class SQLiteDao<T extends Persistable> {
 		return db.query(getTableName(), null, null, null, null, null, null);
 	}
 
+	public Cursor queryByExample(T obj) {
+		Map<String, String> queryValuesMap = th.getQueryValuesMap(obj);
+		return queryByMap(queryValuesMap);
+	}
+	
 	public Cursor queryByMap(Map<String,String> queryMap) {
 		String where =""; 
 		String[] args = new String[queryMap.size()];
@@ -153,7 +155,7 @@ public abstract class SQLiteDao<T extends Persistable> {
 	public List<T> asList(Cursor c) {
 		ArrayList<T> resultList = new ArrayList<T>();
 		for (boolean hasItem = c.moveToFirst(); hasItem; hasItem = c.moveToNext()) {
-			T obj = newInstance(c);
+			T obj = th.newInstance(c);
 			resultList.add(obj);
 		}
 		return resultList;
@@ -169,7 +171,7 @@ public abstract class SQLiteDao<T extends Persistable> {
 	public T asObject(Cursor c) {
 		if (c.getCount() == 1) {
 			c.moveToFirst();
-			return newInstance(c);
+			return th.newInstance(c);
 		} else if (c.getCount() > 1) {
 			throw new TooManyResultsException("Cursor returned " + c.getCount() + " rows");
 		}
@@ -183,40 +185,5 @@ public abstract class SQLiteDao<T extends Persistable> {
 	/*
 	 * Methods to wrap Cursor get methods
 	 */
-	
-	protected byte[] getBlobOrNull(Cursor c, String colName) {
-		int col = c.getColumnIndexOrThrow(colName);
-		return c.isNull(col) ? null : c.getBlob(col);
-	}
-	
-	protected Double getDoubleOrNull(Cursor c, String colName) {
-		int col = c.getColumnIndexOrThrow(colName);
-		return c.isNull(col) ? null : c.getDouble(col);
-	}
-
-	protected Float getFloatOrNull(Cursor c, String colName) {
-		int col = c.getColumnIndexOrThrow(colName);
-		return c.isNull(col) ? null : c.getFloat(col);
-	}
-
-	protected Integer getIntOrNull(Cursor c, String colName) {
-		int col = c.getColumnIndexOrThrow(colName);
-		return c.isNull(col) ? null : c.getInt(col);
-	}
-	
-	protected Long getLongOrNull(Cursor c, String colName) {
-		int col = c.getColumnIndexOrThrow(colName);
-		return c.isNull(col) ? null : c.getLong(col);
-	}
-
-	protected Short getShortOrNull(Cursor c, String colName) {
-		int col = c.getColumnIndexOrThrow(colName);
-		return c.isNull(col) ? null : c.getShort(col);
-	}
-
-	protected String getStringOrNull(Cursor c, String colName) {
-		int col = c.getColumnIndexOrThrow(colName);
-		return c.isNull(col) ? null : c.getString(col);
-	}
 	
 }

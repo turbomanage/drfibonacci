@@ -50,19 +50,9 @@ public class DatabaseModel extends ClassModel {
 	public String[] getTableHelpers() {
 		ArrayList<String> tableHelpers = new ArrayList<String>();
 		for (EntityModel em : entities) {
-			tableHelpers.add(em.getTableModel().getGeneratedClass());
+			tableHelpers.add(em.getTableHelperClass());
 		}
 		return tableHelpers.toArray(new String[]{});
 	}
 
-	@Override
-	public String getTemplatePath() {
-		return "DatabaseFactory.ftl";
-	}
-
-	@Override
-	public String getGeneratedClass() {
-		return this.getPackage() + "." + this.getFactoryName();
-	}
-	
 }

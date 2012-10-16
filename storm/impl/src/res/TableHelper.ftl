@@ -1,5 +1,6 @@
-package ${package};
+package ${daoPackage};
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils.InsertHelper;
 import com.example.storm.TableHelper;
@@ -20,7 +21,7 @@ import ${import};
  * 
  * @author drfibonacci
  */
-public class ${className} extends TableHelper<${entityName}> {
+public class ${tableHelperName} extends TableHelper<${entityName}> {
 
 	protected static Map<String,String> COLUMNS = new HashMap<String,String>();
 	static {
@@ -83,6 +84,37 @@ public class ${className} extends TableHelper<${entityName}> {
 		values[${field_index}] = new ${field.converterName}().toString(new ${field.converterName}().toSql(defaultObj.${field.getter}()));
 		</#list>
 		return values;
+	}
+
+	public String getIdCol() {
+		return "_id";
+	}
+	
+	public ${entityName} newInstance(Cursor c) {
+		${entityName} obj = new ${entityName}();
+		<#list fields as field>
+		obj.${field.setter}(new ${field.converterName}().fromSql(get${field.bindType}OrNull(c, "${field.colName}")));
+		</#list>
+		return obj;
+	}
+
+	public ContentValues getEditableValues(${entityName} obj) {
+		ContentValues cv = new ContentValues();
+		<#list fields as field>
+		cv.put("${field.colName}", new ${field.converterName}().toSql(obj.${field.getter}()));
+		</#list>	
+		return cv;
+	}
+	
+	public Map<String,String> getQueryValuesMap(${entityName} obj) {
+		Map<String,String> queryMap = new HashMap<String,String>(); 
+		${entityName} defaultObj = new ${entityName}();
+		// Include fields in query if they differ from the default object
+		<#list fields as field>
+		if (obj.${field.getter}() != defaultObj.${field.getter}())
+			queryMap.put("${field.colName}", "" + new ${field.converterName}().toSql(obj.${field.getter}()));
+		</#list>
+		return queryMap;	
 	}
 
 }

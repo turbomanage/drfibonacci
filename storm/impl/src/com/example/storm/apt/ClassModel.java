@@ -10,14 +10,6 @@ public abstract class ClassModel {
 	protected List<String> imports = new ArrayList<String>();
 	protected List<FieldModel> fields = new ArrayList<FieldModel>();
 
-	public abstract String getTemplatePath();
-	/**
-	 * Fully qualified classname, used to create generated file name
-	 * 
-	 * @return
-	 */
-	public abstract String getGeneratedClass();
-	
 	public List<String> getImports() {
 		return imports;
 	}
