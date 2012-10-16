@@ -3,8 +3,8 @@ package com.example.storm.test;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +17,7 @@ import android.test.AndroidTestCase;
 import com.example.storm.DatabaseHelper;
 import com.example.storm.TestDatabaseHelper;
 import com.example.storm.TestDbFactory;
+import com.example.storm.csv.CsvTableReader;
 import com.example.storm.entity.SimpleEntity;
 import com.example.storm.entity.dao.SimpleEntityDao;
 import com.example.storm.entity.dao.SimpleEntityTable;
@@ -52,11 +53,9 @@ public class UpgradeTestCase extends AndroidTestCase {
 		}
 	}
 
-	// TODO test case when adding / removing columns
 	public void testBackupAndRestore() throws IOException {
 		persistRandomEntities(11);
-		SimpleEntity e = new SimpleEntity();
-		populateTestEntity(e);
+		SimpleEntity e = newTestEntity();
 		dao.insert(e);
 		List<SimpleEntity> before = dao.listAll();
 		dbHelper.backupAllTablesToCsv();
@@ -69,17 +68,20 @@ public class UpgradeTestCase extends AndroidTestCase {
 		}
 	}
 	
+	/**
+	 * Verify that all columns are correctly escaped and converted to Strings.
+	 * 
+	 * @throws IOException
+	 */
 	public void testWriteToCsv() throws IOException {
 		dbHelper.dropAndCreate();
-		SimpleEntity populatedEntity = new SimpleEntity();
-		populateTestEntity(populatedEntity);
+		SimpleEntity populatedEntity = newTestEntity();
 		dao.insert(populatedEntity);
 		dao.insert(new SimpleEntity()); // default
 		dbHelper.backupAllTablesToCsv();
 		FileInputStream ois = ctx.openFileInput("testDb.v2.SimpleEntity");
 		InputStreamReader isr = new InputStreamReader(ois);
 		BufferedReader reader = new BufferedReader(isr);
-		String headerRow = reader.readLine();
 		String row1 = reader.readLine();
 		String expected = "Q0FGRUJBQkU=,1,0,122,4609965796441453736,1.618034,1,75025,12586269025,0,28657,1,89,88,18000000,-4619630062026626736,-0.618034,1836311903,86267571272,17711,\"Hello, world!\"";
 		assertEquals(expected, row1);
@@ -88,7 +90,41 @@ public class UpgradeTestCase extends AndroidTestCase {
 		assertEquals(expected, row2);
 	}
 	
-	private void populateTestEntity(SimpleEntity e) {
+	/**
+	 * Read in a CSV file from the prior db version with columns added and dropped.
+	 * Ensure that the unchanged columns are matched by name and that new columns
+	 * have the expected default values.  
+	 */
+	public void testReadFromCsv() {
+		dbHelper.dropAndCreate();
+		SimpleEntityTable th = new SimpleEntityTable();
+		InputStream csvStream = this.getClass().getClassLoader().getResourceAsStream("assets/testDb.v1.SimpleEntity");
+		new CsvTableReader(th).importFromCsv(dbHelper, csvStream);
+		List<SimpleEntity> listAll = dao.listAll();
+		assertEquals(2, listAll.size());
+		SimpleEntity testEntity = newTestEntity();
+		testEntity.setId(1);
+		testEntity.setCharField((char) 0); // Expected default value
+		DaoTestCase.assertAllFieldsMatch(testEntity,listAll.get(0));
+		SimpleEntity newEntity = new SimpleEntity();
+		newEntity.setId(2);
+		DaoTestCase.assertAllFieldsMatch(newEntity, listAll.get(1));
+	}
+	
+	public void testRestoreWithDefaultValuesForNewFields() {
+		dbHelper.dropAndCreate();
+		SimpleEntityTable th = new SimpleEntityTable();
+		InputStream csvStream = this.getClass().getClassLoader().getResourceAsStream("assets/testDb.v0.SimpleEntity");
+		new CsvTableReader(th).importFromCsv(dbHelper, csvStream);
+		List<SimpleEntity> listAll = dao.listAll();
+		assertEquals(1, listAll.size());
+		SimpleEntity newEntity = new SimpleEntity();
+		newEntity.setId(1);
+		DaoTestCase.assertAllFieldsMatch(newEntity, listAll.get(0));
+	}
+	
+	private SimpleEntity newTestEntity() {
+		SimpleEntity e = new SimpleEntity();
 		e.setBlobField("CAFEBABE".getBytes());
 		e.setBooleanField(true);
 		e.setCharField('z');
@@ -107,6 +143,7 @@ public class UpgradeTestCase extends AndroidTestCase {
 		e.setwLongField(86267571272L);
 		e.setwShortField((short) 17711);
 		e.setwStringField("Hello, world!");
+		return e;
 	}
 
 }

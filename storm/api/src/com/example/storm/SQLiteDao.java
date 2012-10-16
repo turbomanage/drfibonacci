@@ -22,6 +22,8 @@ public abstract class SQLiteDao<T extends Persistable> {
 
 	protected SQLiteDatabase db;
 	protected Class<T> clazz;
+	// TODO SQL methods should delegate to TableHelper
+	protected TableHelper<T> th;
 
 	public SQLiteDao(Context ctx) {
 		// Reflection voodoo to get the type parameter from the subclass
@@ -43,10 +45,12 @@ public abstract class SQLiteDao<T extends Persistable> {
 	 * @return DatabaseHelper 
 	 */
 	public abstract DatabaseHelper getDbHelper(Context ctx);
+	// TODO merge abstract methods below into TableHelper
 	public abstract String getEntityName();
 	public abstract String getIdCol();
 	public abstract T newInstance(Cursor c);
 	public abstract ContentValues getEditableValues(T obj);
+	// TODO Refactor this to getValuesMap
 	public abstract Cursor queryByExample(T exampleObj);
 
 	public int delete(Long id) {

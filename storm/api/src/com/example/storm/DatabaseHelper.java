@@ -21,13 +21,13 @@ public abstract class DatabaseHelper extends SQLiteOpenHelper {
 		DROP_CREATE, BACKUP_RESTORE, UPGRADE
 	}
 
-	protected DatabaseFactory dbFactory;
+	private DatabaseFactory dbFactory;
 	protected Context mContext;
 
 	public DatabaseHelper(Context ctx, DatabaseFactory dbFactory) {
 		this(ctx, dbFactory.getName(), null, dbFactory.getVersion());
 		this.mContext = ctx;
-		this.dbFactory = dbFactory;
+		this.setDbFactory(dbFactory);
 	}
 
 	/**
@@ -45,7 +45,7 @@ public abstract class DatabaseHelper extends SQLiteOpenHelper {
 
 	protected abstract UpgradeStrategy getUpgradeStrategy();
 
-	protected Context getContext() {
+	public Context getContext() {
 		return this.mContext;
 	}
 
@@ -55,7 +55,7 @@ public abstract class DatabaseHelper extends SQLiteOpenHelper {
 	 * @return
 	 */
 	protected TableHelper[] getTableHelpers() {
-		return dbFactory.getTableHelpers();
+		return getDbFactory().getTableHelpers();
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public abstract class DatabaseHelper extends SQLiteOpenHelper {
 	 */
 	public void backupAllTablesToCsv() {
 		for (TableHelper table : getTableHelpers()) {
-			table.dumpToCsv(this);
+			table.backup(this);
 		}
 	}
 
@@ -112,8 +112,16 @@ public abstract class DatabaseHelper extends SQLiteOpenHelper {
 	 */
 	public void restoreAllTablesFromCsv() {
 		for (TableHelper table : getTableHelpers()) {
-			table.importFromCsv(this);
+			table.restore(this);
 		}
+	}
+
+	public DatabaseFactory getDbFactory() {
+		return dbFactory;
+	}
+
+	private void setDbFactory(DatabaseFactory dbFactory) {
+		this.dbFactory = dbFactory;
 	}
 
 }

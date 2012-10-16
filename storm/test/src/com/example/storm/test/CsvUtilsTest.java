@@ -5,7 +5,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import com.example.storm.CsvUtils;
+import com.example.storm.csv.CsvUtils;
+
 
 public class CsvUtilsTest extends TestCase {
 

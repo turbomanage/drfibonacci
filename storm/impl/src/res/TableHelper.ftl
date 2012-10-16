@@ -69,7 +69,7 @@ public class ${className} extends TableHelper<${entityName}> {
 	}
 
 	@Override
-	protected void bindRowValues(InsertHelper insHelper, String[] rowValues) {
+	public void bindRowValues(InsertHelper insHelper, String[] rowValues) {
 		<#list fields as field>
 		if (rowValues[${field_index}] == null) insHelper.bindNull(${field_index+1}); else insHelper.bind(${field_index+1}, new ${field.converterName}().fromString(rowValues[${field_index}]));
 		</#list>
