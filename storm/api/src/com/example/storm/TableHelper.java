@@ -15,7 +15,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.example.storm.api.Persistable;
 
@@ -62,6 +61,15 @@ public abstract class TableHelper<T extends Persistable> {
 	protected abstract String[] getRowValues(Cursor c);
 
 	protected abstract void bindRowValues(InsertHelper insHelper, String[] rowValues);
+	
+	/**
+	 * Populate an array with the entity's default values for each field obtained
+	 * by creating a new instance of the entity. These values are used to fill in
+	 * any missing columns when importing from CSV.
+	 *  
+	 * @return
+	 */
+	protected abstract String[] getDefaultValues();
 
 	/**
 	 * Create the table that represents the associated entity.
@@ -182,10 +190,10 @@ public abstract class TableHelper<T extends Persistable> {
 			BufferedReader reader = new BufferedReader(isr);
 			String headerRow = reader.readLine();
 			int[] cols = parseCsvHeader(headerRow, insertHelper);
-			boolean[] isBlobCol = getTypes(headerRow);
+			String[] defaultValues = getDefaultValues();
 			String csvRow = reader.readLine();
 			while (csvRow != null) {
-				long rowId = parseAndInsert(csvRow, cols, isBlobCol,
+				long rowId = parseAndInsert(csvRow, cols, defaultValues,
 						insertHelper);
 				if (rowId < 0) {
 					throw new RuntimeException("Error after row " + numInserts);
@@ -204,29 +212,21 @@ public abstract class TableHelper<T extends Persistable> {
 		return numInserts;
 	}
 
-	private boolean[] getTypes(String headerRow) {
-		String[] colNames = headerRow.split(",");
-		boolean[] isBlob = new boolean[colNames.length];
-		for (int i = 0; i < colNames.length; i++) {
-			String colName = colNames[i];
-			if ("byte[]".equals(getColType(colName))) {
-				isBlob[i] = true;
-			}
-		}
-		return isBlob;
+	private long parseAndInsert(String csvRow, int[] cols, String[] defaultValues,
+			InsertHelper insertHelper) {
+		List<String> textValues = CsvUtils.getValues(csvRow);
+		insertHelper.prepareForInsert();
+		String[] rowValues = mapValuesToTable(cols, textValues, defaultValues);
+		this.bindRowValues(insertHelper, rowValues);
+		return insertHelper.execute();
 	}
 
-	private long parseAndInsert(String csvRow, int[] cols, boolean[] isBlobCol,
-			InsertHelper insertHelper) {
-		List<String> values = CsvUtils.getValues(csvRow);
-		Log.d(TAG, csvRow);
-		for (String val : values) {
-			Log.d(TAG, "val=" + val);
+	private String[] mapValuesToTable(int[] colMap, List<String> textValues, String[] defaultValues) {
+		String[] rowValues = defaultValues.clone();
+		for (int i=0; i < textValues.size(); i++) {
+			 rowValues[colMap[i]] = textValues.get(i);
 		}
-		// TODO prepare only once, maybe use SqlStatement directly
-		insertHelper.prepareForInsert();
-		this.bindRowValues(insertHelper, values.toArray(new String[]{}));
-		return insertHelper.execute();
+		return rowValues;
 	}
 
 	/**
@@ -242,7 +242,7 @@ public abstract class TableHelper<T extends Persistable> {
 		for (int i = 0; i < csvCols.length; i++) {
 			String colName = csvCols[i];
 			int columnIndex = insertHelper.getColumnIndex(colName);
-			colMap[i] = columnIndex - 1;
+			colMap[i] = columnIndex - 1; // columnIndex is 1-based
 		}
 		return colMap;
 	}

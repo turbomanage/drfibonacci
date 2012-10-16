@@ -80,8 +80,7 @@ public class CsvUtils {
 				value = nextValue(in);
 			}
 		} catch (IOException e) {
-			// TODO this feels like a hack
-			// handles case of final null value
+			// TODO handle case of final null value better?
 			if (csvRow.lastIndexOf(',') == csvRow.length() - 1)
 				values.add(null);
 			return values;
@@ -100,7 +99,7 @@ public class CsvUtils {
 		} else if (c >= 0) {
 			w.write(c);
 		} else {
-			throw new IOException("End of file reached");
+			throw new IOException("End of line reached");
 		}
 		c = in.read();
 		while (c >= 0) {
