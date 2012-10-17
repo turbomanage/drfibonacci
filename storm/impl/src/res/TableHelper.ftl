@@ -93,7 +93,7 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 	public ${entityName} newInstance(Cursor c) {
 		${entityName} obj = new ${entityName}();
 		<#list fields as field>
-		obj.${field.setter}(new ${field.converterName}().fromSql(get${field.bindType}OrNull(c, "${field.colName}")));
+		obj.${field.setter}(new ${field.converterName}().fromSql(get${field.bindType}OrNull(c, ${field_index})));
 		</#list>
 		return obj;
 	}
