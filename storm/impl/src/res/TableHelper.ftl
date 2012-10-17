@@ -39,6 +39,10 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 	public Map<String,String> getColumns() {
 		return COLUMNS;
 	}
+	
+	public String getIdCol() {
+		return "_id";
+	}
 
 	@Override
 	public String createSql() {
@@ -86,10 +90,6 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 		return values;
 	}
 
-	public String getIdCol() {
-		return "_id";
-	}
-	
 	public ${entityName} newInstance(Cursor c) {
 		${entityName} obj = new ${entityName}();
 		<#list fields as field>
@@ -112,7 +112,7 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 		// Include fields in query if they differ from the default object
 		<#list fields as field>
 		if (obj.${field.getter}() != defaultObj.${field.getter}())
-			queryMap.put("${field.colName}", "" + new ${field.converterName}().toSql(obj.${field.getter}()));
+			queryMap.put("${field.colName}", "" + new ${field.converterName}().toString(new ${field.converterName}().toSql(obj.${field.getter}())));
 		</#list>
 		return queryMap;	
 	}

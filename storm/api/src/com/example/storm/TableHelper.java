@@ -70,6 +70,7 @@ public abstract class TableHelper<T extends Persistable> {
 
 	public abstract T newInstance(Cursor c);
 
+	// TODO make doubles (& blobs?) work right
 	public abstract Map<String,String> getQueryValuesMap(T exampleObj);
 
 	/**
@@ -179,6 +180,7 @@ public abstract class TableHelper<T extends Persistable> {
 	 * Methods to wrap Cursor get methods
 	 */
 	
+	// TODO are these still necessary?
 	protected byte[] getBlobOrNull(Cursor c, String colName) {
 		int col = c.getColumnIndexOrThrow(colName);
 		return c.isNull(col) ? null : c.getBlob(col);
