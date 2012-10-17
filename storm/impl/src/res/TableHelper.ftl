@@ -68,7 +68,7 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 	public String[] getRowValues(Cursor c) {
 		String[] values = new String[c.getColumnCount()];
 		<#list fields as field>
-		values[${field_index}] = new ${field.converterName}().toString(get${field.bindType}OrNull(c, ${field_index}));
+		values[${field_index}] = ${field.converterName}.GET.toString(get${field.bindType}OrNull(c, ${field_index}));
 		</#list>
 		return values;
 	}
@@ -76,7 +76,7 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 	@Override
 	public void bindRowValues(InsertHelper insHelper, String[] rowValues) {
 		<#list fields as field>
-		if (rowValues[${field_index}] == null) insHelper.bindNull(${field_index+1}); else insHelper.bind(${field_index+1}, new ${field.converterName}().fromString(rowValues[${field_index}]));
+		if (rowValues[${field_index}] == null) insHelper.bindNull(${field_index+1}); else insHelper.bind(${field_index+1}, ${field.converterName}.GET.fromString(rowValues[${field_index}]));
 		</#list>
 	}
 
@@ -85,7 +85,7 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 		String[] values = new String[getColumns().size()];
 		${entityName} defaultObj = new ${entityName}();
 		<#list fields as field>
-		values[${field_index}] = new ${field.converterName}().toString(new ${field.converterName}().toSql(defaultObj.${field.getter}()));
+		values[${field_index}] = ${field.converterName}.GET.toString(${field.converterName}.GET.toSql(defaultObj.${field.getter}()));
 		</#list>
 		return values;
 	}
@@ -93,7 +93,7 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 	public ${entityName} newInstance(Cursor c) {
 		${entityName} obj = new ${entityName}();
 		<#list fields as field>
-		obj.${field.setter}(new ${field.converterName}().fromSql(get${field.bindType}OrNull(c, ${field_index})));
+		obj.${field.setter}(${field.converterName}.GET.fromSql(get${field.bindType}OrNull(c, ${field_index})));
 		</#list>
 		return obj;
 	}
@@ -101,7 +101,7 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 	public ContentValues getEditableValues(${entityName} obj) {
 		ContentValues cv = new ContentValues();
 		<#list fields as field>
-		cv.put("${field.colName}", new ${field.converterName}().toSql(obj.${field.getter}()));
+		cv.put("${field.colName}", ${field.converterName}.GET.toSql(obj.${field.getter}()));
 		</#list>	
 		return cv;
 	}
@@ -112,7 +112,7 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 		// Include fields in query if they differ from the default object
 		<#list fields as field>
 		if (obj.${field.getter}() != defaultObj.${field.getter}())
-			queryMap.put("${field.colName}", "" + new ${field.converterName}().toString(new ${field.converterName}().toSql(obj.${field.getter}())));
+			queryMap.put("${field.colName}", "" + ${field.converterName}.GET.toString(${field.converterName}.GET.toSql(obj.${field.getter}())));
 		</#list>
 		return queryMap;	
 	}

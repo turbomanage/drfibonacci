@@ -12,6 +12,8 @@ import com.example.storm.api.Converter;
 @Converter(forTypes = { Date.class })
 public class DateConverter extends TypeConverter<Date, Long> {
 
+	public static final DateConverter GET = new DateConverter();
+	
 	@Override
 	public Long toSql(Date javaValue) {
 		if (javaValue == null) 

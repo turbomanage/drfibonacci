@@ -5,6 +5,8 @@ import com.example.storm.api.Converter;
 @Converter(forTypes = { byte.class, Byte.class })
 public class ByteConverter extends TypeConverter<Byte,Short> {
 
+	public static final ByteConverter GET = new ByteConverter();
+	
 	@Override
 	public SqlType getSqlType() {
 		return SqlType.INTEGER;

@@ -49,7 +49,6 @@ public class FieldModel {
 	 */
 	public String getConverterName() {
 		return getConverter().getClass().getSimpleName();
-		// TODO make converter references static in templates
 	}
 	
 	/**

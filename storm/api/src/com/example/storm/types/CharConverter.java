@@ -5,6 +5,8 @@ import com.example.storm.api.Converter;
 @Converter(forTypes = { char.class, Character.class })
 public class CharConverter extends TypeConverter<Character,Integer> {
 
+	public static final CharConverter GET = new CharConverter();
+	
 	@Override
 	public SqlType getSqlType() {
 		return SqlType.INTEGER;

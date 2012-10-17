@@ -5,6 +5,8 @@ import com.example.storm.api.Converter;
 @Converter(forTypes = { double.class, Double.class })
 public class DoubleConverter extends TypeConverter<Double,Double> {
 
+	public static final DoubleConverter GET = new DoubleConverter();
+	
 	@Override
 	public SqlType getSqlType() {
 		return SqlType.REAL;

@@ -6,6 +6,8 @@ import com.example.storm.api.Converter;
 @Converter(forTypes = { float.class, Float.class })
 public class FloatConverter extends TypeConverter<Float,Float> {
 
+	public static final FloatConverter GET = new FloatConverter();
+	
 	@Override
 	public SqlType getSqlType() {
 		return SqlType.REAL;

@@ -5,6 +5,8 @@ import com.example.storm.api.Converter;
 @Converter(forTypes = { short.class, Short.class })
 public class ShortConverter extends TypeConverter<Short, Short> {
 
+	public static final ShortConverter GET = new ShortConverter();
+	
 	@Override
 	public SqlType getSqlType() {
 		return SqlType.INTEGER;

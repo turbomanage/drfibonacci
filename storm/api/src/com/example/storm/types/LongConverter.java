@@ -5,6 +5,8 @@ import com.example.storm.api.Converter;
 @Converter(forTypes = { long.class, Long.class })
 public class LongConverter extends TypeConverter<Long,Long> {
 
+	public static final LongConverter GET = new LongConverter();
+	
 	@Override
 	public SqlType getSqlType() {
 		return SqlType.INTEGER;

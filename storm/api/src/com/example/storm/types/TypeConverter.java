@@ -3,8 +3,20 @@ package com.example.storm.types;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-
-
+/**
+ * Base class that converts a Java type to one of the four valid
+ * SQLite representations. To write a custom converter, extend
+ * this class and annotate it with @Convert. Besides the abstract
+ * methods, each concrete TypeConverter class must also have a
+ * static field named GET that is used by generated code to obtain
+ * an instance of the converter. See {@link BooleanConverter} for
+ * an example.
+ * 
+ * @author drfibonacci
+ *
+ * @param <J> native Java type
+ * @param <S> SQL type (Integer, Double, String, or byte[])
+ */
 public abstract class TypeConverter<J extends Object, S extends Object> {
 	
 	public enum SqlType {INTEGER, REAL, BLOB, TEXT};

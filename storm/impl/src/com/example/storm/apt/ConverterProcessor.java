@@ -22,6 +22,7 @@ public class ConverterProcessor extends ClassProcessor {
 	}
 
 	@Override
+	// TODO verify presence of static GET field
 	protected void populateModel() {
 		String converterClass = this.typeElement.getQualifiedName().toString();
 //		Converter converter = typeElement.getAnnotation(Converter.class);

@@ -6,6 +6,8 @@ import com.example.storm.api.Converter;
 
 @Converter(forTypes = { byte[].class })
 public class BlobConverter extends TypeConverter<byte[], byte[]> {
+	
+	public static final BlobConverter GET = new BlobConverter();
 
 	@Override
 	public SqlType getSqlType() {

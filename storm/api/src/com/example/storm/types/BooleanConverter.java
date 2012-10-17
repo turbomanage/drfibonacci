@@ -6,6 +6,8 @@ import com.example.storm.api.Converter;
 @Converter(forTypes = { boolean.class, Boolean.class })
 public class BooleanConverter extends TypeConverter<Boolean,Integer> {
 
+	public static final BooleanConverter GET = new BooleanConverter();
+	
 	@Override
 	public SqlType getSqlType() {
 		return SqlType.INTEGER;
