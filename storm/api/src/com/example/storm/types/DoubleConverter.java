@@ -29,13 +29,14 @@ public class DoubleConverter extends TypeConverter<Double,Double> {
 
 	@Override
 	public Double fromString(String strValue) {
-		// use long bits to preserve exact value
-		return Double.longBitsToDouble(Long.valueOf(strValue));
+		// use long bits as hex to preserve exact value
+		return Double.longBitsToDouble(Long.parseLong(strValue, 16));
 	}
 
 	@Override
 	public String toString(Double sqlValue) {
-		// use long bits to preserve exact value
-		return (sqlValue == null) ? null : String.valueOf(Double.doubleToLongBits(sqlValue));
+		// use long bits as hex to preserve exact value
+		// Don't use Long.toHexString! Long.parseLong doesn't understand 2's complement
+		return (sqlValue == null) ? null : Long.toString(Double.doubleToLongBits(sqlValue), 16);
 	}
 }

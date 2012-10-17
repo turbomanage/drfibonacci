@@ -84,7 +84,7 @@ public class UpgradeTestCase extends AndroidTestCase {
 		BufferedReader reader = new BufferedReader(isr);
 		reader.readLine(); // header row
 		String row1 = reader.readLine();
-		String expected = "Q0FGRUJBQkU=,1,0,122,4609965796441453736,1.618034,1,75025,12586269025,0,28657,1,89,88,18000000,-4619630062026626736,-0.618034,1836311903,86267571272,17711,\"Hello, world!\"";
+		String expected = "Q0FGRUJBQkU=,1,0,122,3ff9e3779b97f4a8,1.618034,1,75025,12586269025,0,28657,1,89,88,18000000,-401c3910c8d016b0,-0.618034,1836311903,86267571272,17711,\"Hello, world!\"";
 		assertEquals(expected, row1);
 		String row2 = reader.readLine();
 		expected = ",0,0,0,0,0.0,2,0,0,0,0,,,,,,,,,,";
