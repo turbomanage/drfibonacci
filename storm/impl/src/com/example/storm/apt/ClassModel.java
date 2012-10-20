@@ -3,6 +3,8 @@ package com.example.storm.apt;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.storm.apt.entity.FieldModel;
+
 public abstract class ClassModel {
 
 	private String className;
@@ -18,7 +20,7 @@ public abstract class ClassModel {
 		return fields;
 	}
 
-	protected void addField(String fieldName, String javaType) {
+	public void addField(String fieldName, String javaType) {
 		FieldModel field = new FieldModel(fieldName, javaType);
 		fields.add(field);
 		// add import for converter if needed
@@ -28,7 +30,7 @@ public abstract class ClassModel {
 		}
 	}
 
-	protected void addImport(String importPath) {
+	public void addImport(String importPath) {
 		imports.add(importPath);
 	}
 

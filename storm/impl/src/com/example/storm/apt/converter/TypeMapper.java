@@ -1,4 +1,4 @@
-package com.example.storm.apt;
+package com.example.storm.apt.converter;
 
 import java.util.HashMap;
 import java.util.List;
@@ -86,7 +86,7 @@ public class TypeMapper {
 	 * @param String converterClass Fully-qualified classname
 	 * @param String type Fully-qualified classname
 	 */
-	static boolean registerConverter(String converterClass, String type) {
+	public static boolean registerConverter(String converterClass, String type) {
 		if (map.containsKey(type))
 			return false;
 		map.put(type, converterClass);

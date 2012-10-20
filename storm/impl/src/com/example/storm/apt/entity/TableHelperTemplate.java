@@ -1,4 +1,6 @@
-package com.example.storm.apt;
+package com.example.storm.apt.entity;
+
+import com.example.storm.apt.ClassTemplate;
 
 public class TableHelperTemplate extends ClassTemplate {
 

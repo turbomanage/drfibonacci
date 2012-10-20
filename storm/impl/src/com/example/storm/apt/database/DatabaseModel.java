@@ -1,4 +1,4 @@
-package com.example.storm.apt;
+package com.example.storm.apt.database;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.storm.apt.ClassModel;
+import com.example.storm.apt.StormEnvironment;
+import com.example.storm.apt.entity.EntityModel;
 import com.example.storm.csv.CsvUtils;
 
 public class DatabaseModel extends ClassModel {
@@ -55,7 +58,7 @@ public class DatabaseModel extends ClassModel {
 		return daoClasses;
 	}
 
-	void addEntity(EntityModel daoModel) {
+	public void addEntity(EntityModel daoModel) {
 		this.entities.add(daoModel);
 		// Duplicate TableHelper info for use by index writer
 		this.tableHelpers.add(daoModel.getTableHelperClass());
@@ -73,7 +76,7 @@ public class DatabaseModel extends ClassModel {
 	 * @return DatabaseModel
 	 * @throws IOException
 	 */
-	static DatabaseModel readFromIndex(BufferedReader reader) throws IOException {
+	public static DatabaseModel readFromIndex(BufferedReader reader) throws IOException {
 		String dbInfo = reader.readLine();
 		Map<String, String> props = CsvUtils.getAsMap(dbInfo);
 		String dbName = props.get("dbName");

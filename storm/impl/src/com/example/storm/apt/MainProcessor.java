@@ -16,6 +16,13 @@ import javax.tools.JavaFileObject;
 import com.example.storm.api.Converter;
 import com.example.storm.api.Database;
 import com.example.storm.api.Entity;
+import com.example.storm.apt.converter.ConverterProcessor;
+import com.example.storm.apt.database.DatabaseFactoryTemplate;
+import com.example.storm.apt.database.DatabaseModel;
+import com.example.storm.apt.database.DatabaseProcessor;
+import com.example.storm.apt.entity.EntityDaoTemplate;
+import com.example.storm.apt.entity.EntityProcessor;
+import com.example.storm.apt.entity.TableHelperTemplate;
 
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;

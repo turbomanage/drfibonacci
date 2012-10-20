@@ -1,4 +1,4 @@
-package com.example.storm.apt;
+package com.example.storm.apt.converter;
 
 import java.util.List;
 import java.util.Map;
@@ -7,6 +7,9 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+
+import com.example.storm.apt.ClassProcessor;
+import com.example.storm.apt.StormEnvironment;
 
 public class ConverterProcessor extends ClassProcessor {
 
@@ -22,8 +25,9 @@ public class ConverterProcessor extends ClassProcessor {
 	}
 
 	@Override
+	public
 	// TODO verify presence of static GET field
-	protected void populateModel() {
+ void populateModel() {
 		String converterClass = this.typeElement.getQualifiedName().toString();
 //		Converter converter = typeElement.getAnnotation(Converter.class);
 //		Class[] forTypes = converter.forTypes();

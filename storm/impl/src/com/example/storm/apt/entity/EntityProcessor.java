@@ -1,4 +1,4 @@
-package com.example.storm.apt;
+package com.example.storm.apt.entity;
 
 import java.util.List;
 import java.util.Set;
@@ -10,6 +10,10 @@ import javax.lang.model.element.VariableElement;
 import com.example.storm.SQLiteDao;
 import com.example.storm.api.Entity;
 import com.example.storm.api.Persistable;
+import com.example.storm.apt.ClassProcessor;
+import com.example.storm.apt.StormEnvironment;
+import com.example.storm.apt.converter.TypeMapper;
+import com.example.storm.apt.database.DatabaseModel;
 import com.example.storm.exception.TypeNotSupportedException;
 
 public class EntityProcessor extends ClassProcessor {
@@ -17,17 +21,17 @@ public class EntityProcessor extends ClassProcessor {
 	private static final String TAG = EntityProcessor.class.getName();
 	private EntityModel entityModel;
 	
-	protected EntityProcessor(Element el, StormEnvironment stormEnv) {
+	public EntityProcessor(Element el, StormEnvironment stormEnv) {
 		super(el, stormEnv);
 	}
 	
 	@Override
-	protected EntityModel getModel() {
+	public EntityModel getModel() {
 		return this.entityModel;
 	}
 	
 	@Override
-	protected void populateModel() {
+	public void populateModel() {
 		this.entityModel = new EntityModel();
 		super.populateModel();
 		this.entityModel.addImport(getQualifiedClassName());

@@ -1,6 +1,6 @@
-package com.example.storm.apt.test;
+package com.example.storm.apt.converter;
 
-import com.example.storm.apt.TypeMapper;
+import com.example.storm.apt.converter.TypeMapper;
 import com.example.storm.types.BooleanConverter;
 import com.example.storm.types.DoubleConverter;
 import com.example.storm.types.IntegerConverter;

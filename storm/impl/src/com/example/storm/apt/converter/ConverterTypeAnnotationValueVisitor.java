@@ -1,9 +1,10 @@
-package com.example.storm.apt;
+package com.example.storm.apt.converter;
 
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.SimpleAnnotationValueVisitor6;
 
 import com.example.storm.api.Converter;
+import com.example.storm.apt.ProcessorLogger;
 
 /**
  * Obtains the name of one type listed in {@link Converter#forTypes()}.

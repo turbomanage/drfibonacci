@@ -1,4 +1,6 @@
-package com.example.storm.apt;
+package com.example.storm.apt.converter;
+
+import com.example.storm.apt.ClassModel;
 
 public class ConverterModel extends ClassModel {
 

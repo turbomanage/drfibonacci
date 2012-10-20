@@ -12,6 +12,8 @@ import javax.annotation.processing.Filer;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
+import com.example.storm.apt.database.DatabaseModel;
+
 /**
  * Top-level container for the source code models populated by
  * {@link MainProcessor} and its subsidiaries.
@@ -20,8 +22,8 @@ import javax.tools.StandardLocation;
  */
 public class StormEnvironment {
 
-	static final String BEGIN_DATABASE = ":DB_START";
-	static final String END_DATABASE = ":DB_END";
+	public static final String BEGIN_DATABASE = ":DB_START";
+	public static final String END_DATABASE = ":DB_END";
 	private static final String ENV_FILE = "stormEnv";
 	private ProcessorLogger logger;
 	private List<DatabaseModel> dbModels = new ArrayList<DatabaseModel>();
@@ -30,7 +32,7 @@ public class StormEnvironment {
 		this.logger = logger;
 	}
 
-	ProcessorLogger getLogger() {
+	public ProcessorLogger getLogger() {
 		return this.logger;
 	}
 
@@ -42,7 +44,7 @@ public class StormEnvironment {
 		return dbModels;
 	}
 	
-	DatabaseModel getDbByName(String helperClass) {
+	public DatabaseModel getDbByName(String helperClass) {
 		// iterate over all dbs and find matching
 		for (DatabaseModel dbModel : dbModels) {
 			if (dbModel.getDbHelperClass().equals(helperClass)) {
@@ -52,7 +54,7 @@ public class StormEnvironment {
 		return null;
 	}
 	
-	DatabaseModel getDefaultDb() {
+	public DatabaseModel getDefaultDb() {
 		if (dbModels.size() > 0) {
 			return dbModels.get(0);
 		}

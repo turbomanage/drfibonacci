@@ -1,4 +1,4 @@
-package com.example.storm.apt;
+package com.example.storm.apt.converter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,7 @@ import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.util.SimpleAnnotationValueVisitor6;
 
 import com.example.storm.api.Converter;
+import com.example.storm.apt.ProcessorLogger;
 
 /**
  * Obtains the list of all types declared in a {@link Converter#forTypes()}
