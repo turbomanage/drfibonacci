@@ -46,7 +46,10 @@
             <src path="src"/>
             <classpath refid="istorm-impl.classpath"/>
         </javac>
-        <jar destfile="storm-apt.jar" basedir="bin"></jar>
+        <jar destfile="storm-apt.jar">
+            <fileset dir="bin"></fileset>
+            <fileset dir="../api/bin/classes"></fileset>
+        </jar>
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
     <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
