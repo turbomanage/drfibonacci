@@ -27,20 +27,29 @@ public class MainProcessor extends AbstractProcessor {
 	private ProcessorLogger logger;
 	private Configuration cfg = new Configuration();
 
-	// TODO why do we have to clean after adding @Entity to a POJO?
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations,
 			RoundEnvironment roundEnv) {
+		
+		cfg.setTemplateLoader(new ClassTemplateLoader(this.getClass(), "/res"));
 		this.logger = new ProcessorLogger(processingEnv.getMessager());
 		logger.info("Running MainProcessor...");
+		
+		// Exit early if no annotations in this round so we don't overwrite the
+		// env file
+		if (annotations.size() < 1) {
+			return true;
+		}
+		
+		for (TypeElement annotationType : annotations) {
+			logger.info("Processing elements with @" + annotationType.getQualifiedName());
+		}
+
 		StormEnvironment stormEnv = new StormEnvironment(logger);	
-
-		cfg.setTemplateLoader(new ClassTemplateLoader(this.getClass(), "/res"));
-
-//		for (TypeElement annotationType : annotations) {}
+		// Read in previously processed classes to support incremental compilation
+		stormEnv.readIndex(processingEnv.getFiler());
 
 		for (Element element : roundEnv.getElementsAnnotatedWith(Converter.class)) {
-			logger.info("processing " + element.getSimpleName());
 			ConverterProcessor cproc = new ConverterProcessor(element, stormEnv);
 			cproc.populateModel();
 		}
@@ -49,7 +58,7 @@ public class MainProcessor extends AbstractProcessor {
 		for (Element element : roundEnv.getElementsAnnotatedWith(Database.class)) {
 			DatabaseProcessor dbProc = new DatabaseProcessor(element, stormEnv);
 			dbProc.populateModel();
-			stormEnv.addDatabase(dbProc);
+			stormEnv.addDatabase(dbProc.getModel());
 		}
 		
 		for (Element element : roundEnv.getElementsAnnotatedWith(Entity.class)) {
@@ -65,10 +74,13 @@ public class MainProcessor extends AbstractProcessor {
 		
 		// Second pass to generate DatabaseFactory templates now that
 		// all entities have been associated with a db
-		for (DatabaseProcessor dbProc : stormEnv.getDbProcessors()) {
-			DatabaseFactoryTemplate dbFactoryTemplate = new DatabaseFactoryTemplate(dbProc.getModel());
+		for (DatabaseModel dbModel : stormEnv.getDbModels()) {
+			DatabaseFactoryTemplate dbFactoryTemplate = new DatabaseFactoryTemplate(dbModel);
 			processTemplate(processingEnv, cfg, dbFactoryTemplate);
 		}
+		
+		// Write all processed dbs to index to support incremental compilation
+		stormEnv.writeIndex(processingEnv.getFiler());
 		
 		return true;
 	}

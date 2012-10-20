@@ -21,7 +21,7 @@ public class DatabaseProcessor extends ClassProcessor {
 	@Override
 	protected void populateModel() {
 		Database dba = this.typeElement.getAnnotation(Database.class);
-		databaseModel = new DatabaseModel(dba.name(), dba.version());
+		databaseModel = new DatabaseModel(dba.name(), dba.version(), getQualifiedClassName());
 		super.populateModel();
 	}
 

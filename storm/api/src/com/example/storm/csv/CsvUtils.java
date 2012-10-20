@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CsvUtils {
 
@@ -129,4 +131,37 @@ public class CsvUtils {
 		return w.toString();
 	}
 
+	/**
+	 * Parse a CSV row containing name=value pairs.
+	 * 
+	 * @param csvPairs
+	 * @return Map<name,value>
+	 */
+	public static Map<String,String> getAsMap(String csvPairs) {
+		Map<String,String> map = new HashMap<String,String>();
+		String[] pairs = csvPairs.split(",");
+		for (String pair : pairs) {
+			String[] split = pair.split("=");
+			map.put(split[0], split[1]);
+		}
+		return map;
+	}
+	
+	/**
+	 * Return a String containing a comma-separated list
+	 * of name=value pairs from a map.
+	 * 
+	 * @param map
+	 * @return String csv
+	 */
+	public static String mapToCsv(Map<String,String> map) {
+		StringBuilder sb = new StringBuilder();
+		for (String key : map.keySet()) {
+			sb.append(",");
+			String val = map.get(key);
+			sb.append(key + "=" + val);
+		}
+		return sb.toString().substring(1);
+	}
+	
 }

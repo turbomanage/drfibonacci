@@ -1,7 +1,16 @@
 package com.example.storm.apt;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.processing.Filer;
+import javax.tools.FileObject;
+import javax.tools.StandardLocation;
 
 /**
  * Top-level container for the source code models populated by
@@ -11,8 +20,11 @@ import java.util.List;
  */
 public class StormEnvironment {
 
+	static final String BEGIN_DATABASE = ":DB_START";
+	static final String END_DATABASE = ":DB_END";
+	private static final String ENV_FILE = "stormEnv";
 	private ProcessorLogger logger;
-	private List<DatabaseProcessor> dbProcessors = new ArrayList<DatabaseProcessor>();
+	private List<DatabaseModel> dbModels = new ArrayList<DatabaseModel>();
 
 	StormEnvironment(ProcessorLogger logger) {
 		this.logger = logger;
@@ -22,20 +34,17 @@ public class StormEnvironment {
 		return this.logger;
 	}
 
-	void addDatabase(DatabaseProcessor dbProc) {
-		dbProcessors.add(dbProc);
-		DatabaseModel dbModel = dbProc.getModel();
-		String dbName = dbModel.getDbName();
+	void addDatabase(DatabaseModel dbModel) {
+		dbModels.add(dbModel);
 	}
 	
-	List<DatabaseProcessor> getDbProcessors() {
-		return dbProcessors;
+	List<DatabaseModel> getDbModels() {
+		return dbModels;
 	}
 	
 	DatabaseModel getDbByName(String helperClass) {
 		// iterate over all dbs and find matching
-		for (DatabaseProcessor dbProc : dbProcessors) {
-			DatabaseModel dbModel = dbProc.getModel();
+		for (DatabaseModel dbModel : dbModels) {
 			if (dbModel.getDbHelperClass().equals(helperClass)) {
 				return dbModel;
 			}
@@ -44,10 +53,67 @@ public class StormEnvironment {
 	}
 	
 	DatabaseModel getDefaultDb() {
-		if (dbProcessors.size() > 0) {
-			return dbProcessors.get(0).getModel();
+		if (dbModels.size() > 0) {
+			return dbModels.get(0);
 		}
 		return null;
 	}
 	
+	/**
+	 * Read the current model state from a file in support of incremental 
+	 * compilation. This is necessary because the annotation processor has
+	 * access to only classes which have been annotated (and any resulting
+	 * generated classes on subsequent rounds), but DatabaseHelper classes
+	 * aren't available when doing incremental compilation on a new @Entity.
+	 * 
+	 * @see
+	 * http://stackoverflow.com/questions/10585665/how-can-i-examine-the-whole-source-tree-with-an-annotation-processor
+	 * https://github.com/sentinelt/evo-classindex
+	 * 
+	 * @param Filer used by the annotation processor
+	 */
+	void readIndex(Filer filer) {
+		StandardLocation location = StandardLocation.SOURCE_OUTPUT;
+		FileObject indexFile;
+		try {
+			indexFile = filer.getResource(location, "com.example.storm", ENV_FILE);
+			logger.info("Reading index " + indexFile.getName());
+			Reader fileReader = indexFile.openReader(true);
+			BufferedReader reader = new BufferedReader(fileReader);
+			String line = reader.readLine();
+			while (line != null && line.startsWith(BEGIN_DATABASE)) {
+				DatabaseModel dbModel = DatabaseModel.readFromIndex(reader);
+				this.addDatabase(dbModel);
+				line = reader.readLine();
+			}
+			reader.close();
+		} catch (IOException e) {
+			// gulp--only way to catch not yet existing file on first run
+		}
+	}
+
+	/**
+	 * Write the current model state to a file in support of incremental 
+	 * compilation.
+	 * 
+	 * @see StormEnvironment#readIndex(Filer)
+	 * 
+	 * @param Filer used by the annotation processor
+	 */
+	void writeIndex(Filer filer) {
+		StandardLocation location = StandardLocation.SOURCE_OUTPUT;
+		FileObject indexFile;
+		try {
+			indexFile = filer.createResource(location, "com.example.storm", ENV_FILE);
+			OutputStream fos = indexFile.openOutputStream();
+			PrintWriter out = new PrintWriter(fos);
+			for (DatabaseModel dbModel : dbModels) {
+				dbModel.writeToIndex(out);
+			}
+			out.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 }

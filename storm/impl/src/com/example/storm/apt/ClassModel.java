@@ -62,10 +62,10 @@ public abstract class ClassModel {
 	public void setPackageName(String packageName) {
 		this.packageName = packageName;
 	}
+	
 	protected String capFirst(String anyName) {
 		String capFirstLetter = anyName.substring(0, 1).toUpperCase();
 		return capFirstLetter + anyName.substring(1); 
 	}
-
 
 }
