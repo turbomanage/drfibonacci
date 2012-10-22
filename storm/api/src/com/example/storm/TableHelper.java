@@ -27,13 +27,9 @@ public abstract class TableHelper<T extends Persistable> {
 	private static final String TAG = TableHelper.class.getName();
 
 	/**
-	 * String representation of Java types associated with each column, like
-	 * int, java.lang.Integer, byte[]
-	 * 
-	 * @return
+	 * @return array of column names in declared order
 	 */
-	// TODO TreeMap or String[]?
-	public abstract Map<String, String> getColumns();
+	public abstract String[] getColumns();
 
 	public abstract String getTableName();
 

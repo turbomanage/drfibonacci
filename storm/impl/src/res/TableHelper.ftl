@@ -23,12 +23,18 @@ import ${import};
  */
 public class ${tableHelperName} extends TableHelper<${entityName}> {
 
-	protected static Map<String,String> COLUMNS = new HashMap<String,String>();
-	static {
+	public interface Columns {
 		<#list fields as field>
-		COLUMNS.put("${field.colName}","${field.javaType}");
+		String ${field.ucColName} = "${field.colName}";
 		</#list>
 	}
+	
+	public static String[] cols = new String[] {
+		<#list fields as field>
+		Columns.${field.ucColName}<#if field_has_next>,</#if>
+		</#list>
+	};
+	
 	
 	@Override
 	public String getTableName() {
@@ -36,8 +42,8 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 	}
 	
 	@Override
-	public Map<String,String> getColumns() {
-		return COLUMNS;
+	public String[] getColumns() {
+		return cols;
 	}
 	
 	public String getIdCol() {
@@ -82,7 +88,7 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 
 	@Override
 	public String[] getDefaultValues() {
-		String[] values = new String[getColumns().size()];
+		String[] values = new String[getColumns().length];
 		${entityName} defaultObj = new ${entityName}();
 		<#list fields as field>
 		values[${field_index}] = ${field.converterName}.GET.toString(${field.converterName}.GET.toSql(defaultObj.${field.getter}()));

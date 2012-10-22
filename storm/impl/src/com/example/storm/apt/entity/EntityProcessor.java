@@ -42,7 +42,7 @@ public class EntityProcessor extends ClassProcessor {
 
 	protected void chooseBaseDao() {
 		List<String> iNames = super.inspectInterfaces();
-//		TODO Choose correct Dao base class based on interfaces
+//		TODO Choose Dao base class based on interfaces
 		if (iNames.contains(Persistable.class.getName())) {
 			this.entityModel.setBaseDaoClass(SQLiteDao.class);
 		} else {
