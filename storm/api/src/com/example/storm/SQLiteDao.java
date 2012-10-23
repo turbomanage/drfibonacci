@@ -1,7 +1,5 @@
 package com.example.storm;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,25 +13,17 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.storm.api.Persistable;
 import com.example.storm.exception.TooManyResultsException;
+import com.example.storm.query.FilterBuilder;
 
 public abstract class SQLiteDao<T extends Persistable> {
 
 	private static final String TAG = SQLiteDao.class.getName();
 
 	protected SQLiteDatabase db;
-	protected Class<T> clazz;
 	protected TableHelper<T> th;
 
 	@SuppressWarnings("unchecked")
 	public SQLiteDao(Context ctx) {
-		// Reflection voodoo to get the type parameter from the subclass
-		Type genericSuperclass = getClass().getGenericSuperclass();
-		// Allow this class to be safely instantiated with or without a
-		// parameterized type
-		if (genericSuperclass instanceof ParameterizedType)
-			clazz = (Class<T>) ((ParameterizedType) genericSuperclass)
-					.getActualTypeArguments()[0];
-
 		this.db = getDbHelper(ctx).getWritableDatabase();
 		this.th = getTableHelper();
 	}
@@ -50,24 +40,27 @@ public abstract class SQLiteDao<T extends Persistable> {
 	public abstract TableHelper getTableHelper();
 	public int delete(Long id) {
 		if (id != null) {
-			return db.delete(getTableName(), th.getIdCol() + "=?", new String[]{id.toString()});
+			return db.delete(th.getTableName(), th.getIdCol() + "=?", new String[]{id.toString()});
 		}
 		return 0;
 	}
 	
 	public int deleteAll() {
-		return db.delete(getTableName(), null, null);
+		return db.delete(th.getTableName(), null, null);
 	}
 	
-	protected String getTableName() {
-		return th.getTableName();
+	/**
+	 * Return an object to construct a filter with AND conditions.
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public FilterBuilder filter() {
+		return new FilterBuilder((SQLiteDao<Persistable>) this);
 	}
-
+	
 	public T get(Long id) {
-		Map<String, String> queryMap = newQueryMap();
-		queryMap.put("_id", id.toString());
-		Cursor c = queryByMap(queryMap);
-		return asObject(c);
+		return asObject(filter().eq(th.getIdCol(), id).exec());
 	}
 	
 	public T getByExample(T exampleObj) {
@@ -86,10 +79,6 @@ public abstract class SQLiteDao<T extends Persistable> {
 		return asList(queryByExample(exampleObj));
 	}
 	
-	public List<T> listByMap(Map<String,String> queryMap) {
-		return asList(queryByMap(queryMap));
-	}
-
 	/**
 	 * Insert a row in the database. If the object's id is the
 	 * default long (0), the db will generate an id.
@@ -103,7 +92,7 @@ public abstract class SQLiteDao<T extends Persistable> {
 			// the default, remove from ContentValues to allow autoincrement
 			cv.remove(th.getIdCol());
 		}
-		long id = db.insertOrThrow(this.getTableName(), null, cv);
+		long id = db.insertOrThrow(th.getTableName(), null, cv);
 		obj.setId(id);
 		return id;
 	}
@@ -120,32 +109,21 @@ public abstract class SQLiteDao<T extends Persistable> {
 	public long update(T obj) {
 		ContentValues cv = th.getEditableValues(obj);
 		Long id = obj.getId();
-		int numRowsUpdated = db.update(this.getTableName(), cv, th.getIdCol()
+		int numRowsUpdated = db.update(th.getTableName(), cv, th.getIdCol()
 				+ "=?", new String[] { id.toString() });
 		return numRowsUpdated;
 	}
 
+	public Cursor query(String where, String[] params) {
+		return db.query(th.getTableName(), null, where, params, null, null, null);
+	}
+	
 	public Cursor queryAll() {
-		return db.query(getTableName(), null, null, null, null, null, null);
+		return query(null, null);
 	}
 
 	public Cursor queryByExample(T obj) {
-		Map<String, String> queryValuesMap = th.getQueryValuesMap(obj);
-		return queryByMap(queryValuesMap);
-	}
-	
-	public Cursor queryByMap(Map<String,String> queryMap) {
-		String where =""; 
-		String[] args = new String[queryMap.size()];
-		int i=0;
-		for (String key : queryMap.keySet()) {
-			String colName = key;
-			String value = queryMap.get(key);
-			where += " AND " + colName + "=?";
-			args[i++] = value;
-		}
-		where = where.substring(5); // chop leading AND
-		return db.query(getTableName(), null, where, args, null, null, null);
+		return th.buildFilter(this.filter(), obj).exec();
 	}
 	
 	/**

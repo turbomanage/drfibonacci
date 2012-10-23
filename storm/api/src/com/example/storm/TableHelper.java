@@ -1,7 +1,5 @@
 package com.example.storm;
 
-import java.util.Map;
-
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils.InsertHelper;
@@ -10,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.example.storm.api.Persistable;
 import com.example.storm.csv.CsvTableReader;
 import com.example.storm.csv.CsvTableWriter;
+import com.example.storm.query.FilterBuilder;
 
 /**
  * This class contains methods related to database creation and upgrades which
@@ -31,12 +30,29 @@ public abstract class TableHelper<T extends Persistable> {
 	 */
 	public abstract String[] getColumns();
 
+	/**
+	 * @return SQL table name
+	 */
 	public abstract String getTableName();
 
+	/**
+	 * @return CREATE TABLE statement
+	 */
 	protected abstract String createSql();
 
+	/**
+	 * @return DROP TABLE statement
+	 */
 	protected abstract String dropSql();
 
+	/**
+	 * Return SQL statement to execute when upgrading the table,
+	 * probably ALTER TABLE
+	 * 
+	 * @param oldVersion
+	 * @param newVersion
+	 * @return String SQL statement
+	 */
 	protected abstract String upgradeSql(int oldVersion, int newVersion);
 
 	/**
@@ -44,12 +60,18 @@ public abstract class TableHelper<T extends Persistable> {
 	 * String. This is used by the CsvWriter and is necessary mainly because
 	 * Cursor.getString truncates doubles and blobs need to be Base64 encoded.
 	 * 
-	 * @param c
-	 *            Cursor
+	 * @param c Cursor
 	 * @return Map<String colName, String colValue>
 	 */
 	public abstract String[] getRowValues(Cursor c);
 
+	/**
+	 * Convert the String values for each column into their appropriate SQL
+	 * types and bind to the insert statement using {@link InsertHelper}.
+	 * 
+	 * @param insHelper
+	 * @param rowValues
+	 */
 	public abstract void bindRowValues(InsertHelper insHelper, String[] rowValues);
 	
 	/**
@@ -61,14 +83,38 @@ public abstract class TableHelper<T extends Persistable> {
 	 */
 	public abstract String[] getDefaultValues();
 
+	/**
+	 * Populate a {@link ContentValues} object with the values of the supplied
+	 * POJO by calling the appropriate getters and converters.
+	 * 
+	 * @param obj
+	 * @return ContentValues
+	 */
 	public abstract ContentValues getEditableValues(T obj);
 
+	/**
+	 * @return name of the ID column
+	 */
 	public abstract String getIdCol();
 
+	/**
+	 * Create a new instance of a POJO by calling its setters with the values
+	 * obtained from a {@link Cursor}.
+	 * 
+	 * @param c
+	 * @return a new instance
+	 */
 	public abstract T newInstance(Cursor c);
 
-	// TODO make doubles (& blobs?) work right
-	public abstract Map<String,String> getQueryValuesMap(T exampleObj);
+	/**
+	 * Add conditions to a filter for each property of the example object
+	 * which does not have its default value.
+	 * 
+	 * @param builder
+	 * @param exampleObj
+	 * @return FilterBuilder ready to execute
+	 */
+	public abstract FilterBuilder buildFilter(FilterBuilder builder, T exampleObj);
 
 	/**
 	 * Create the table that represents the associated entity.
@@ -140,6 +186,11 @@ public abstract class TableHelper<T extends Persistable> {
 		this.onDrop(db);
 		this.onCreate(db);
 	}
+	
+	/*
+	 * Cursor wrapper methods which bind to primitive type columns
+	 * and return the corresponding wrapper type which may be null 
+	 */
 
 	protected byte[] getBlobOrNull(Cursor c, int col) {
 		return c.isNull(col) ? null : c.getBlob(col);

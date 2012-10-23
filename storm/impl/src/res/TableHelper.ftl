@@ -3,6 +3,7 @@ package ${daoPackage};
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils.InsertHelper;
+import com.example.storm.query.FilterBuilder;
 import com.example.storm.TableHelper;
 import java.util.Map;
 import java.util.HashMap;
@@ -112,15 +113,15 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 		return cv;
 	}
 	
-	public Map<String,String> getQueryValuesMap(${entityName} obj) {
-		Map<String,String> queryMap = new HashMap<String,String>(); 
+	public FilterBuilder buildFilter(FilterBuilder filter, ${entityName} obj) {
 		${entityName} defaultObj = new ${entityName}();
 		// Include fields in query if they differ from the default object
 		<#list fields as field>
 		if (obj.${field.getter}() != defaultObj.${field.getter}())
-			queryMap.put("${field.colName}", "" + ${field.converterName}.GET.toString(${field.converterName}.GET.toSql(obj.${field.getter}())));
+			filter = filter.eq("${field.colName}", ${field.converterName}.GET.toSql(obj.${field.getter}()));
 		</#list>
-		return queryMap;	
+		return filter;	
+	
 	}
 
 }
