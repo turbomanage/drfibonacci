@@ -57,26 +57,41 @@ public class MainProcessor extends AbstractProcessor {
 		stormEnv.readIndex(processingEnv.getFiler());
 
 		for (Element element : roundEnv.getElementsAnnotatedWith(Converter.class)) {
-			ConverterProcessor cproc = new ConverterProcessor(element, stormEnv);
-			cproc.populateModel();
+			try {
+				ConverterProcessor cproc = new ConverterProcessor(element, stormEnv);
+				cproc.populateModel();
+			} catch (Exception e) {
+				logger.error("stORM error", e, element);
+				return true;
+			}
 		}
 		
 		// First pass on @Database annotations to get all db names
 		for (Element element : roundEnv.getElementsAnnotatedWith(Database.class)) {
-			DatabaseProcessor dbProc = new DatabaseProcessor(element, stormEnv);
-			dbProc.populateModel();
-			stormEnv.addDatabase(dbProc.getModel());
+			try {
+				DatabaseProcessor dbProc = new DatabaseProcessor(element, stormEnv);
+				dbProc.populateModel();
+				stormEnv.addDatabase(dbProc.getModel());
+			} catch (Exception e) {
+				logger.error("stORM error", e, element);
+				return true;
+			}
 		}
 		
 		for (Element element : roundEnv.getElementsAnnotatedWith(Entity.class)) {
-			EntityProcessor eproc = new EntityProcessor(element, stormEnv);
-			eproc.populateModel();
-			// Generate EntityDao
-			EntityDaoTemplate daoTemplate = new EntityDaoTemplate(eproc.getModel());
-			processTemplate(processingEnv, cfg, daoTemplate);
-			// Generate EntityTable
-			TableHelperTemplate tableHelperTemplate = new TableHelperTemplate(eproc.getModel());
-			processTemplate(processingEnv, cfg, tableHelperTemplate);
+			try {
+				EntityProcessor eproc = new EntityProcessor(element, stormEnv);
+				eproc.populateModel();
+				// Generate EntityDao
+				EntityDaoTemplate daoTemplate = new EntityDaoTemplate(eproc.getModel());
+				processTemplate(processingEnv, cfg, daoTemplate);
+				// Generate EntityTable
+				TableHelperTemplate tableHelperTemplate = new TableHelperTemplate(eproc.getModel());
+				processTemplate(processingEnv, cfg, tableHelperTemplate);
+			} catch (Exception e) {
+				logger.error("stORM error", e, element);
+				return true;
+			}
 		}
 		
 		// Second pass to generate DatabaseFactory templates now that

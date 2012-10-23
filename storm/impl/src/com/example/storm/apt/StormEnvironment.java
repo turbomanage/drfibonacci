@@ -12,6 +12,7 @@ import javax.annotation.processing.Filer;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
+import com.example.storm.apt.converter.TypeMapper;
 import com.example.storm.apt.database.DatabaseModel;
 
 /**
@@ -24,6 +25,8 @@ public class StormEnvironment {
 
 	public static final String BEGIN_DATABASE = ":DB_START";
 	public static final String END_DATABASE = ":DB_END";
+	public static final String BEGIN_CONVERTERS = ":CONV_START";
+	public static final String END_CONVERTERS = ":CONV_END";
 	private static final String ENV_FILE = "stormEnv";
 	private ProcessorLogger logger;
 	private List<DatabaseModel> dbModels = new ArrayList<DatabaseModel>();
@@ -83,6 +86,10 @@ public class StormEnvironment {
 			Reader fileReader = indexFile.openReader(true);
 			BufferedReader reader = new BufferedReader(fileReader);
 			String line = reader.readLine();
+//			while (line != null && line.startsWith(BEGIN_CONVERTERS)) {
+//				TypeMapper.readFromIndex(reader);
+//				line = reader.readLine();
+//			}
 			while (line != null && line.startsWith(BEGIN_DATABASE)) {
 				DatabaseModel dbModel = DatabaseModel.readFromIndex(reader);
 				this.addDatabase(dbModel);
@@ -109,6 +116,9 @@ public class StormEnvironment {
 			indexFile = filer.createResource(location, "com.example.storm", ENV_FILE);
 			OutputStream fos = indexFile.openOutputStream();
 			PrintWriter out = new PrintWriter(fos);
+			// Dump converters
+//			TypeMapper.writeToIndex(out);
+			// Dump databases
 			for (DatabaseModel dbModel : dbModels) {
 				dbModel.writeToIndex(out);
 			}

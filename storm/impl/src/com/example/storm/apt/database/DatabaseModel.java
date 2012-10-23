@@ -24,10 +24,7 @@ public class DatabaseModel extends ClassModel {
 		super();
 		this.dbName = dbName;
 		this.dbVersion = dbVersion;
-		int lastDot = helperClass.lastIndexOf('.');
-		String pkg = helperClass.substring(0, lastDot);
-		this.setPackageName(pkg);
-		this.setClassName(helperClass.substring(lastDot + 1));
+		parseQualifiedClassName(helperClass);
 	}
 
 	public String getDbName() {
@@ -47,6 +44,9 @@ public class DatabaseModel extends ClassModel {
 	}
 	
 	public String getFactoryClass() {
+		String pkg = this.getPackage();
+		if (pkg == null || pkg.length() < 1)
+			return getFactoryName();
 		return this.getPackage() + "." + getFactoryName();
 	}
 

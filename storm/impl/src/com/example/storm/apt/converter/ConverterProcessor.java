@@ -14,7 +14,7 @@ import com.example.storm.apt.StormEnvironment;
 public class ConverterProcessor extends ClassProcessor {
 
 	private ConverterModel cm;
-	
+
 	public ConverterProcessor(Element el, StormEnvironment stormEnv) {
 		super(el, stormEnv);
 	}
@@ -25,27 +25,29 @@ public class ConverterProcessor extends ClassProcessor {
 	}
 
 	@Override
-	public
 	// TODO verify presence of static GET field
- void populateModel() {
+	public void populateModel() {
 		String converterClass = this.typeElement.getQualifiedName().toString();
-//		Converter converter = typeElement.getAnnotation(Converter.class);
-//		Class[] forTypes = converter.forTypes();
-//		for (Class type : forTypes) {
-//			
-//		}
-		List<? extends AnnotationMirror> annoMirrors = this.typeElement.getAnnotationMirrors();
+		List<? extends AnnotationMirror> annoMirrors = this.typeElement
+				.getAnnotationMirrors();
 		for (AnnotationMirror anno : annoMirrors) {
-			Map<? extends ExecutableElement, ? extends AnnotationValue> annoValues = anno.getElementValues();
+			Map<? extends ExecutableElement, ? extends AnnotationValue> annoValues = anno
+					.getElementValues();
 			for (AnnotationValue val : annoValues.values()) {
-				String[] types = val.accept(new ConverterTypeAnnotationValuesVisitor(), stormEnv.getLogger());
+				String[] types = val.accept(
+						new ConverterTypeAnnotationValuesVisitor(),
+						stormEnv.getLogger());
 				for (String type : types) {
 					if (TypeMapper.registerConverter(converterClass, type))
-						stormEnv.getLogger().info(converterClass + " registered for type " + type);
+						stormEnv.getLogger()
+								.info(converterClass + " registered for type "
+										+ type);
 					else
-						stormEnv.getLogger().error("Converter already registered for type " + type, this.typeElement);
+						stormEnv.getLogger()
+								.error("Converter already registered for type "
+										+ type, this.typeElement);
+				}
 			}
-		}
 		}
 	}
 

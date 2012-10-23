@@ -81,7 +81,10 @@ public abstract class ClassProcessor {
 	}
 
 	public String getQualifiedClassName() {
-		return this.typeElement.toString();
+		String pkg = getPackageName();
+		if (pkg == null || pkg.length() < 1)
+			throw new IllegalArgumentException("The default package is not allowed for type " + getClassName());
+		return getPackageName() + "." + getClassName();
 	}
 	
 	protected String getPackageName() {

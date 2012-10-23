@@ -64,10 +64,20 @@ public abstract class ClassModel {
 	public void setPackageName(String packageName) {
 		this.packageName = packageName;
 	}
-	
+
 	protected String capFirst(String anyName) {
 		String capFirstLetter = anyName.substring(0, 1).toUpperCase();
-		return capFirstLetter + anyName.substring(1); 
+		return capFirstLetter + anyName.substring(1);
+	}
+
+	protected void parseQualifiedClassName(String helperClass) {
+		int lastDot = helperClass.lastIndexOf('.');
+		if (lastDot < 1) {
+			throw new IllegalArgumentException("The default package is not allowed for type " + helperClass);
+		}
+		String pkg = helperClass.substring(0, lastDot);
+		this.setPackageName(pkg);
+		this.setClassName(helperClass.substring(lastDot + 1));
 	}
 
 }

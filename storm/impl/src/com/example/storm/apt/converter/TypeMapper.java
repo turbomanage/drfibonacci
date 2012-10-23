@@ -1,13 +1,13 @@
 package com.example.storm.apt.converter;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.TypeElement;
-
 import com.example.storm.api.Converter;
+import com.example.storm.apt.StormEnvironment;
 import com.example.storm.exception.TypeNotSupportedException;
 import com.example.storm.types.BlobConverter;
 import com.example.storm.types.BooleanConverter;
@@ -87,7 +87,7 @@ public class TypeMapper {
 	 * @param String type Fully-qualified classname
 	 */
 	public static boolean registerConverter(String converterClass, String type) {
-		if (map.containsKey(type))
+		if (map.containsKey(type) && !map.get(type).equals(converterClass))
 			return false;
 		map.put(type, converterClass);
 		return true;
@@ -131,4 +131,24 @@ public class TypeMapper {
 			System.out.println(String.format("%s for %s", type, map.get(type)));
 		}
 	}
+
+	public static void writeToIndex(PrintWriter out) {
+		out.println(StormEnvironment.BEGIN_CONVERTERS);
+		for (String forType : map.keySet()) {
+			String converterClass = map.get(forType); 
+			out.format("%s,%s\n", forType, converterClass);
+		}
+		out.println(StormEnvironment.END_CONVERTERS);
+	}
+
+	public static void readFromIndex(BufferedReader reader) throws IOException {
+		// Clear the built-in definitions since they'll be read from file
+//		map.clear();
+		String line = reader.readLine();
+		while (line != null && !line.equals(StormEnvironment.END_CONVERTERS)) {
+			String[] converterMapping = line.split(",");
+			registerConverter(converterMapping[0], converterMapping[1]);
+		}
+	}
+	
 }
