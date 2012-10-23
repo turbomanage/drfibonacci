@@ -23,12 +23,19 @@ import com.example.storm.query.FilterBuilder;
  */
 public abstract class TableHelper<T extends Persistable> {
 
+	/**
+	 * Marker interface for column enums
+	 * 
+	 * @author drfibonacci
+	 */
+	public interface Column{};
+	
 	private static final String TAG = TableHelper.class.getName();
 
 	/**
 	 * @return array of column names in declared order
 	 */
-	public abstract String[] getColumns();
+	public abstract Column[] getColumns();
 
 	/**
 	 * @return SQL table name
@@ -95,7 +102,7 @@ public abstract class TableHelper<T extends Persistable> {
 	/**
 	 * @return name of the ID column
 	 */
-	public abstract String getIdCol();
+	public abstract Column getIdCol();
 
 	/**
 	 * Create a new instance of a POJO by calling its setters with the values

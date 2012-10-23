@@ -1,5 +1,7 @@
 package com.example.storm.query;
 
+import com.example.storm.TableHelper.Column;
+
 /**
  * A condition in a SQL WHERE clause
  * 
@@ -7,10 +9,10 @@ package com.example.storm.query;
  */
 public abstract class Predicate {
 
-	protected String colName;
+	protected Column colName;
 	protected String param;
 
-	public Predicate(String colName, String param) {
+	public Predicate(Column colName, String param) {
 		this.colName = colName;
 		this.param = (String) param;
 	}

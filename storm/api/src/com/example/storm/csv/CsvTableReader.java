@@ -114,7 +114,7 @@ public class CsvTableReader {
 		colMap = new int[numCols];
 		// Iterate over table columns and assign index of each csv column
 		for (int i = 0; i < numCols; i++) {
-			String colName = th.getColumns()[i];
+			String colName = th.getColumns()[i].toString();
 			int csvPos = csvCols.indexOf(colName);
 			colMap[i] = csvPos;
 		}

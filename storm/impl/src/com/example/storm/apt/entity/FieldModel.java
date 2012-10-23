@@ -30,13 +30,9 @@ public class FieldModel {
 	}
 
 	public String getColName() {
-		return colName;
-	}
-
-	public String getUcColName() {
 		return colName.toUpperCase();
 	}
-	
+
 	public String getJavaType() {
 		return javaType;
 	}

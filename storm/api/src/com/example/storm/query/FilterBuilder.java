@@ -6,6 +6,7 @@ import java.util.List;
 import android.database.Cursor;
 
 import com.example.storm.SQLiteDao;
+import com.example.storm.TableHelper.Column;
 import com.example.storm.api.Persistable;
 import com.example.storm.types.BooleanConverter;
 import com.example.storm.types.ByteConverter;
@@ -28,52 +29,52 @@ public class FilterBuilder {
 	 * Convenience methods for comparing equality of each wrapper type
 	 */
 
-	public FilterBuilder eq(String colName, Boolean param) {
+	public FilterBuilder eq(Column colName, Boolean param) {
 		Integer sqlValue = BooleanConverter.GET.toSql(param);
 		where.add(new Equality(colName, BooleanConverter.GET.toString(sqlValue)));
 		return this;
 	}
 
-	public FilterBuilder eq(String colName, Byte param) {
+	public FilterBuilder eq(Column colName, Byte param) {
 		Short sqlValue = ByteConverter.GET.toSql(param);
 		where.add(new Equality(colName, ByteConverter.GET.toString(sqlValue)));
 		return this;
 	}
 
-	public FilterBuilder eq(String colName, byte[] param) {
+	public FilterBuilder eq(Column colName, byte[] param) {
 		throw new IllegalArgumentException("Exact match on type byte[] is not supported");
 	}
 
-	public FilterBuilder eq(String colName, Character param) {
+	public FilterBuilder eq(Column colName, Character param) {
 		Integer sqlValue = CharConverter.GET.toSql(param);
 		where.add(new Equality(colName, CharConverter.GET.toString(sqlValue)));
 		return this;
 	}
 
-	public FilterBuilder eq(String colName, Double param) {
+	public FilterBuilder eq(Column colName, Double param) {
 		throw new IllegalArgumentException("Exact match on type double is not supported");
 	}
 
-	public FilterBuilder eq(String colName, Float param) {
+	public FilterBuilder eq(Column colName, Float param) {
 		throw new IllegalArgumentException("Exact match on type float is not supported");
 	}
 
-	public FilterBuilder eq(String colName, Integer param) {
+	public FilterBuilder eq(Column colName, Integer param) {
 		where.add(new Equality(colName, IntegerConverter.GET.toString(param)));
 		return this;
 	}
 	
-	public FilterBuilder eq(String colName, Long param) {
+	public FilterBuilder eq(Column colName, Long param) {
 		where.add(new Equality(colName, LongConverter.GET.toString(param)));
 		return this;
 	}
 
-	public FilterBuilder eq(String colName, Short param) {
+	public FilterBuilder eq(Column colName, Short param) {
 		where.add(new Equality(colName, ShortConverter.GET.toString(param)));
 		return this;
 	}
 
-	public FilterBuilder eq(String colName, String param) {
+	public FilterBuilder eq(Column colName, String param) {
 		where.add(new Equality(colName, param));
 		return this;
 	}

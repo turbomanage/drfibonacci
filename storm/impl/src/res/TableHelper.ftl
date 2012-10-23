@@ -24,18 +24,11 @@ import ${import};
  */
 public class ${tableHelperName} extends TableHelper<${entityName}> {
 
-	public interface Columns {
+	public enum Columns implements TableHelper.Column {
 		<#list fields as field>
-		String ${field.ucColName} = "${field.colName}";
+		${field.colName}<#if field_has_next>,</#if>
 		</#list>
 	}
-	
-	public static String[] cols = new String[] {
-		<#list fields as field>
-		Columns.${field.ucColName}<#if field_has_next>,</#if>
-		</#list>
-	};
-	
 	
 	@Override
 	public String getTableName() {
@@ -43,13 +36,13 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 	}
 	
 	@Override
-	public String[] getColumns() {
-		return cols;
+	public Column[] getColumns() {
+		return Columns.values();
 	}
 
 	@Override	
-	public String getIdCol() {
-		return "_id";
+	public Column getIdCol() {
+		return Columns._ID;
 	}
 
 	@Override
@@ -122,7 +115,7 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 		// Include fields in query if they differ from the default object
 		<#list fields as field>
 		if (obj.${field.getter}() != defaultObj.${field.getter}())
-			filter = filter.eq("${field.colName}", ${field.converterName}.GET.toSql(obj.${field.getter}()));
+			filter = filter.eq(Columns.${field.colName}, ${field.converterName}.GET.toSql(obj.${field.getter}()));
 		</#list>
 		return filter;	
 	}

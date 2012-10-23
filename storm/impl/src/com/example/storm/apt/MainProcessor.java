@@ -33,6 +33,7 @@ import freemarker.template.Template;
 public class MainProcessor extends AbstractProcessor {
 	private ProcessorLogger logger;
 	private Configuration cfg = new Configuration();
+	private static String ERR_MSG = "Error processing stORM annotation";
 
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations,
@@ -61,7 +62,7 @@ public class MainProcessor extends AbstractProcessor {
 				ConverterProcessor cproc = new ConverterProcessor(element, stormEnv);
 				cproc.populateModel();
 			} catch (Exception e) {
-				logger.error("stORM error", e, element);
+				logger.error(ERR_MSG, e, element);
 				return true;
 			}
 		}
@@ -73,7 +74,7 @@ public class MainProcessor extends AbstractProcessor {
 				dbProc.populateModel();
 				stormEnv.addDatabase(dbProc.getModel());
 			} catch (Exception e) {
-				logger.error("stORM error", e, element);
+				logger.error(ERR_MSG, e, element);
 				return true;
 			}
 		}
@@ -89,7 +90,7 @@ public class MainProcessor extends AbstractProcessor {
 				TableHelperTemplate tableHelperTemplate = new TableHelperTemplate(eproc.getModel());
 				processTemplate(processingEnv, cfg, tableHelperTemplate);
 			} catch (Exception e) {
-				logger.error("stORM error", e, element);
+				logger.error(ERR_MSG, e, element);
 				return true;
 			}
 		}

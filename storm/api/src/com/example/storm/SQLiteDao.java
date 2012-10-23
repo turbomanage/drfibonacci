@@ -92,7 +92,7 @@ public abstract class SQLiteDao<T extends Persistable> {
 		ContentValues cv = th.getEditableValues(obj);
 		if (obj.getId() == 0) {
 			// the default, remove from ContentValues to allow autoincrement
-			cv.remove(th.getIdCol());
+			cv.remove(th.getIdCol().toString());
 		}
 		long id = db.insertOrThrow(th.getTableName(), null, cv);
 		obj.setId(id);
@@ -114,7 +114,7 @@ public abstract class SQLiteDao<T extends Persistable> {
 				ContentValues cv = th.getEditableValues(obj);
 				if (obj.getId() == 0) {
 					// the default, remove from ContentValues to allow autoincrement
-					cv.remove(th.getIdCol());
+					cv.remove(th.getIdCol().toString());
 				}
 				long id = insertHelper.insert(cv);
 				if (id == -1)

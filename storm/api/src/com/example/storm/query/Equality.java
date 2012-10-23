@@ -1,5 +1,7 @@
 package com.example.storm.query;
 
+import com.example.storm.TableHelper.Column;
+
 /**
  * SQL =
  * 
@@ -7,7 +9,7 @@ package com.example.storm.query;
  */
 public class Equality extends Predicate {
 	
-	public Equality(String colName, String param) {
+	public Equality(Column colName, String param) {
 		super(colName, param);
 	}
 
