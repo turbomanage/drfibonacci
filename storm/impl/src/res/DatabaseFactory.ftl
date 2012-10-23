@@ -3,9 +3,9 @@ package ${package};
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import com.example.storm.DatabaseHelper;
-import com.example.storm.api.DatabaseFactory;
-import com.example.storm.TableHelper;
+import com.turbomanage.storm.DatabaseHelper;
+import com.turbomanage.storm.api.DatabaseFactory;
+import com.turbomanage.storm.TableHelper;
 
 /**
  * GENERATED CODE

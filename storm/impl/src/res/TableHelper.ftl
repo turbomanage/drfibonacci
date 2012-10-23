@@ -3,8 +3,8 @@ package ${daoPackage};
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils.InsertHelper;
-import com.example.storm.query.FilterBuilder;
-import com.example.storm.TableHelper;
+import com.turbomanage.storm.query.FilterBuilder;
+import com.turbomanage.storm.TableHelper;
 import java.util.Map;
 import java.util.HashMap;
 <#list imports as import>

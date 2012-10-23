@@ -1,8 +1,8 @@
 package ${daoPackage};
 
 import android.content.Context;
-import com.example.storm.DatabaseHelper;
-import com.example.storm.TableHelper;
+import com.turbomanage.storm.DatabaseHelper;
+import com.turbomanage.storm.TableHelper;
 <#list imports as import>
 import ${import};
 </#list>
