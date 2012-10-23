@@ -20,7 +20,7 @@ import ${import};
  * they are instance methods vs. static so that they can be 
  * overridden in a typesafe manner.
  * 
- * @author drfibonacci
+ * @author David M. Chandler
  */
 public class ${tableHelperName} extends TableHelper<${entityName}> {
 

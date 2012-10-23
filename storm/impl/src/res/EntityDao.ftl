@@ -8,9 +8,9 @@ import ${import};
 </#list>
 
 /**
- * GENERATED CLASS
+ * GENERATED CODE
  *
- * @author drfibonacci
+ * @author David M. Chandler
  */
 public class ${daoName} extends ${baseDaoName}<${entityName}>{
 
@@ -18,13 +18,13 @@ public class ${daoName} extends ${baseDaoName}<${entityName}>{
 		return ${dbFactory}.getDatabaseHelper(ctx);
 	}
 
-	@SuppressWarnings("rawtypes")	
+	@SuppressWarnings("rawtypes")
 	public TableHelper getTableHelper() {
 		return new ${tableHelperClass}();
 	}
-	
+
 	public ${daoName}(Context ctx) {
 		super(ctx);
 	}
-	
+
 }
