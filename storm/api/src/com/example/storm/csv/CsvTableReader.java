@@ -81,14 +81,6 @@ public class CsvTableReader {
 		return numInserts;
 	}
 
-//	private String[] mapValuesToTable(List<String> textValues) {
-//		String[] rowValues = defaultValues.clone();
-//		for (int i=0; i < textValues.size(); i++) {
-//			 rowValues[colMap[i]] = textValues.get(i);
-//		}
-//		return rowValues;
-//	}
-
 	/**
 	 * Populate an array containing the value for each column
 	 * from a CSV row where the columns may be in different order.

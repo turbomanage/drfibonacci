@@ -9,6 +9,7 @@ import com.example.storm.entity.dao.SimpleEntityTable.Columns;
 import com.example.storm.query.FilterBuilder;
 
 public class FilterTestCase extends AndroidTestCase {
+	
 	private static final byte BYTE_VALUE = (byte) 13;
 	private static final byte[] BLOB_VALUE = "blobField".getBytes();
 	private static final boolean BOOLEAN_VALUE = true;
@@ -58,7 +59,7 @@ public class FilterTestCase extends AndroidTestCase {
 		}
 	}
 
-	public void testQueryByBooleanValue() {
+	public void testQueryByBoolean() {
 		FilterBuilder filter = dao.filter().eq(Columns.BOOLEANFIELD, BOOLEAN_VALUE);
 		SimpleEntity result = dao.asObject(filter.exec());
 		assertEquals(BOOLEAN_VALUE, result.isBooleanField());

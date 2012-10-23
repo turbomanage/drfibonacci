@@ -8,6 +8,8 @@ import java.util.Map;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -84,7 +86,7 @@ public abstract class SQLiteDao<T extends Persistable> {
 	 * default long (0), the db will generate an id.
 	 * 
 	 * @param obj
-	 * @return
+	 * @return row ID of newly inserted or -1 if err
 	 */
 	public long insert(T obj) {
 		ContentValues cv = th.getEditableValues(obj);
@@ -97,7 +99,34 @@ public abstract class SQLiteDao<T extends Persistable> {
 		return id;
 	}
 
-	// TODO add insertMany(List<T>)
+	/**
+	 * Efficiently insert a collection of objects using {@link InsertHelper}.
+	 *  
+	 * @param many Collection of objects
+	 * @return count of inserted objects or -1 immediately if any errors
+	 */
+	public long insertMany(Iterable<T> many) {
+		long numInserted = 0;
+		InsertHelper insertHelper = new DatabaseUtils.InsertHelper(db, th.getTableName());
+		db.beginTransaction();
+		try {
+			for (T obj : many) {
+				ContentValues cv = th.getEditableValues(obj);
+				if (obj.getId() == 0) {
+					// the default, remove from ContentValues to allow autoincrement
+					cv.remove(th.getIdCol());
+				}
+				long id = insertHelper.insert(cv);
+				if (id == -1)
+					return -1;
+				numInserted++;
+			}
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+		return numInserted;
+	}
 	
 	/**
 	 * Insert or update, depending on whether the ID column is set to
@@ -113,7 +142,7 @@ public abstract class SQLiteDao<T extends Persistable> {
 				+ "=?", new String[] { id.toString() });
 		return numRowsUpdated;
 	}
-
+	
 	public Cursor query(String where, String[] params) {
 		return db.query(th.getTableName(), null, where, params, null, null, null);
 	}

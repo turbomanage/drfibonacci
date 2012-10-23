@@ -1,5 +1,6 @@
 package com.example.storm.test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -76,6 +77,19 @@ public class DaoTestCase extends AndroidTestCase {
 		assertEquals(id, newEntity.getId());
 		SimpleEntity retrievedEntity = dao.get(id);
 		assertAllFieldsMatch(newEntity, retrievedEntity);
+	}
+	
+	public void testInsertMany() {
+		dao.deleteAll();
+		List<SimpleEntity> testEntities = new ArrayList<SimpleEntity>();
+		for (int i = 0; i < 100; i++) {
+			SimpleEntity randomEntity = new SimpleEntity();
+			randomEntity.setLongField(new Random().nextLong());
+			testEntities.add(randomEntity);
+		}
+		long numInserted = dao.insertMany(testEntities);
+		assertEquals(100, numInserted);
+		assertEquals(100, dao.listAll().size());
 	}
 
 	public void testInsertWithId() {

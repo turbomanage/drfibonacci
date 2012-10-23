@@ -46,7 +46,8 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 	public String[] getColumns() {
 		return cols;
 	}
-	
+
+	@Override	
 	public String getIdCol() {
 		return "_id";
 	}
@@ -97,6 +98,7 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 		return values;
 	}
 
+	@Override
 	public ${entityName} newInstance(Cursor c) {
 		${entityName} obj = new ${entityName}();
 		<#list fields as field>
@@ -104,7 +106,8 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 		</#list>
 		return obj;
 	}
-
+	
+	@Override
 	public ContentValues getEditableValues(${entityName} obj) {
 		ContentValues cv = new ContentValues();
 		<#list fields as field>
@@ -113,6 +116,7 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 		return cv;
 	}
 	
+	@Override
 	public FilterBuilder buildFilter(FilterBuilder filter, ${entityName} obj) {
 		${entityName} defaultObj = new ${entityName}();
 		// Include fields in query if they differ from the default object
@@ -121,7 +125,6 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 			filter = filter.eq("${field.colName}", ${field.converterName}.GET.toSql(obj.${field.getter}()));
 		</#list>
 		return filter;	
-	
 	}
 
 }
