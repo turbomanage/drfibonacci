@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 Google, Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,11 +46,11 @@ public abstract class SQLiteDao<T extends Persistable> {
 	}
 
 	/**
-	 * Generated subclasses implement to point to the correct 
+	 * Generated subclasses implement to point to the correct
 	 * {@link SQLiteOpenHelper} for the entity.
-	 * 
+	 *
 	 * @param Context ctx
-	 * @return DatabaseHelper 
+	 * @return DatabaseHelper
 	 */
 	public abstract DatabaseHelper getDbHelper(Context ctx);
 	@SuppressWarnings("rawtypes")
@@ -61,45 +61,45 @@ public abstract class SQLiteDao<T extends Persistable> {
 		}
 		return 0;
 	}
-	
+
 	public int deleteAll() {
 		return db.delete(th.getTableName(), null, null);
 	}
-	
+
 	/**
 	 * Return an object to construct a filter with AND conditions.
-	 * 
+	 *
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public FilterBuilder filter() {
 		return new FilterBuilder((SQLiteDao<Persistable>) this);
 	}
-	
+
 	public T get(Long id) {
 		return asObject(filter().eq(th.getIdCol(), id).exec());
 	}
-	
+
 	public T getByExample(T exampleObj) {
 		return asObject(queryByExample(exampleObj));
 	}
-	
+
 	public SQLiteDatabase getDatabase() {
 		return db;
 	}
-	
+
 	public List<T> listAll() {
 		return asList(queryAll());
 	}
-	
+
 	public List<T> listByExample(T exampleObj) {
 		return asList(queryByExample(exampleObj));
 	}
-	
+
 	/**
 	 * Insert a row in the database. If the object's id is the
 	 * default long (0), the db will generate an id.
-	 * 
+	 *
 	 * @param obj
 	 * @return row ID of newly inserted or -1 if err
 	 */
@@ -116,7 +116,7 @@ public abstract class SQLiteDao<T extends Persistable> {
 
 	/**
 	 * Efficiently insert a collection of objects using {@link InsertHelper}.
-	 *  
+	 *
 	 * @param many Collection of objects
 	 * @return count of inserted objects or -1 immediately if any errors
 	 */
@@ -142,11 +142,11 @@ public abstract class SQLiteDao<T extends Persistable> {
 		}
 		return numInserted;
 	}
-	
+
 	/**
 	 * Insert or update, depending on whether the ID column is set to
 	 * a non-default value.
-	 * 
+	 *
 	 * @param obj
 	 * @return
 	 */
@@ -157,11 +157,11 @@ public abstract class SQLiteDao<T extends Persistable> {
 				+ "=?", new String[] { id.toString() });
 		return numRowsUpdated;
 	}
-	
+
 	public Cursor query(String where, String[] params) {
 		return db.query(th.getTableName(), null, where, params, null, null, null);
 	}
-	
+
 	public Cursor queryAll() {
 		return query(null, null);
 	}
@@ -169,7 +169,7 @@ public abstract class SQLiteDao<T extends Persistable> {
 	public Cursor queryByExample(T obj) {
 		return th.buildFilter(this.filter(), obj).exec();
 	}
-	
+
 	/**
 	 * @param c
 	 * @return
@@ -180,13 +180,15 @@ public abstract class SQLiteDao<T extends Persistable> {
 			T obj = th.newInstance(c);
 			resultList.add(obj);
 		}
+		// TODO MUST close cursor
+		// TODO beware leaky abstractions--who owns the cursor?
 		return resultList;
 	}
-	
+
 	/**
 	 * Converts a {@link Cursor} to an object. Throws an exception if there
 	 * was more than one row in the cursor.
-	 * 
+	 *
 	 * @param c Cursor
 	 * @return Object
 	 */
@@ -199,13 +201,13 @@ public abstract class SQLiteDao<T extends Persistable> {
 		}
 		return null;
 	}
-	
+
 	public Map<String,String> newQueryMap() {
 		return new HashMap<String,String>();
 	}
-	
+
 	/*
 	 * Methods to wrap Cursor get methods
 	 */
-	
+
 }

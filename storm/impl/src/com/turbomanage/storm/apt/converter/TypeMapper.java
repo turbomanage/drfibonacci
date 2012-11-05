@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 Google, Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,11 +59,11 @@ public class TypeMapper {
 		register(new ShortConverter());
 		register(new StringConverter());
 	}
-	
+
 	/**
 	 * For testing only. Run this class to see a list of all built-in
 	 * converters.
-	 * 
+	 *
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -80,8 +80,8 @@ public class TypeMapper {
 
 	/**
 	 * Register a built-in {@link TypeConverter}. Converters that are part of the API
-	 * jar must use normal reflection to access the annotation values. 
-	 * 
+	 * jar must use normal reflection to access the annotation values.
+	 *
 	 * @param converter
 	 */
 	private static void register(TypeConverter converter) {
@@ -91,20 +91,20 @@ public class TypeMapper {
 			map.put(clazz.getCanonicalName(), converter.getClass().getCanonicalName());
 		}
 	}
-	
+
 	/**
 	 * Register a custom {@link TypeConverter} for a given data (field) type.
 	 * This method is called at compile time by the annotation processor.
 	 * In order for the TypeConverter to be visible, it must be in a jar
 	 * on the client project's annotation factory classpath.
-	 * 
+	 *
 	 * @param String converterClass Fully-qualified classname
 	 * @param String type Fully-qualified classname
 	 */
-	public static boolean registerConverter(String converterClass, String type) {
-		if (map.containsKey(type) && !map.get(type).equals(converterClass))
+	public static boolean registerConverter(String converterClass, String forType) {
+		if (map.containsKey(forType) && !map.get(forType).equals(converterClass))
 			return false;
-		map.put(type, converterClass);
+		map.put(forType, converterClass);
 		return true;
 	}
 
@@ -115,7 +115,7 @@ public class TypeMapper {
 	 * instance methods so the TypeConverter interface can enforce type safety;
 	 * however, they could be made static in which case this method would simply
 	 * return a String class name instead of an instance.
-	 * 
+	 *
 	 * @param javaType
 	 * @return
 	 */
@@ -126,7 +126,7 @@ public class TypeMapper {
 		}
 		TypeConverter converter;
 		try {
-			
+
 			converter = (TypeConverter) Class.forName(cType).newInstance();
 			if (converter != null) {
 				return converter;
@@ -140,7 +140,7 @@ public class TypeMapper {
 		}
 		throw new TypeNotSupportedException("Fields of type " + javaType + " are not supported. Consider adding your own TypeConverter.");
 	}
-	
+
 	public static void dumpConverters() {
 		for (String type : map.keySet()) {
 			System.out.println(String.format("%s for %s", type, map.get(type)));
@@ -150,7 +150,7 @@ public class TypeMapper {
 	public static void writeToIndex(PrintWriter out) {
 		out.println(StormEnvironment.BEGIN_CONVERTERS);
 		for (String forType : map.keySet()) {
-			String converterClass = map.get(forType); 
+			String converterClass = map.get(forType);
 			out.format("%s,%s\n", forType, converterClass);
 		}
 		out.println(StormEnvironment.END_CONVERTERS);
@@ -165,5 +165,5 @@ public class TypeMapper {
 			registerConverter(converterMapping[0], converterMapping[1]);
 		}
 	}
-	
+
 }

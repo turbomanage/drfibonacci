@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 Google, Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,18 +33,18 @@ import com.turbomanage.storm.query.FilterBuilder;
  * that overrides one or more of these methods and modify
  * {@link DatabaseHelper#getTableHelpers()} to return an instance of you custom
  * TableHelper.
- * 
+ *
  * @author David M. Chandler
  */
 public abstract class TableHelper<T extends Persistable> {
 
 	/**
 	 * Marker interface for column enums
-	 * 
+	 *
 	 * @author David M. Chandler
 	 */
 	public interface Column{};
-	
+
 	private static final String TAG = TableHelper.class.getName();
 
 	/**
@@ -70,7 +70,7 @@ public abstract class TableHelper<T extends Persistable> {
 	/**
 	 * Return SQL statement to execute when upgrading the table,
 	 * probably ALTER TABLE
-	 * 
+	 *
 	 * @param oldVersion
 	 * @param newVersion
 	 * @return String SQL statement
@@ -81,7 +81,7 @@ public abstract class TableHelper<T extends Persistable> {
 	 * Extract from a cursor a map containing each column name and value as a
 	 * String. This is used by the CsvWriter and is necessary mainly because
 	 * Cursor.getString truncates doubles and blobs need to be Base64 encoded.
-	 * 
+	 *
 	 * @param c Cursor
 	 * @return Map<String colName, String colValue>
 	 */
@@ -90,17 +90,17 @@ public abstract class TableHelper<T extends Persistable> {
 	/**
 	 * Convert the String values for each column into their appropriate SQL
 	 * types and bind to the insert statement using {@link InsertHelper}.
-	 * 
+	 *
 	 * @param insHelper
 	 * @param rowValues
 	 */
 	public abstract void bindRowValues(InsertHelper insHelper, String[] rowValues);
-	
+
 	/**
 	 * Populate an array with the entity's default values for each field obtained
 	 * by creating a new instance of the entity. These values are used to fill in
 	 * any missing columns when importing from CSV.
-	 *  
+	 *
 	 * @return
 	 */
 	public abstract String[] getDefaultValues();
@@ -108,7 +108,7 @@ public abstract class TableHelper<T extends Persistable> {
 	/**
 	 * Populate a {@link ContentValues} object with the values of the supplied
 	 * POJO by calling the appropriate getters and converters.
-	 * 
+	 *
 	 * @param obj
 	 * @return ContentValues
 	 */
@@ -122,7 +122,7 @@ public abstract class TableHelper<T extends Persistable> {
 	/**
 	 * Create a new instance of a POJO by calling its setters with the values
 	 * obtained from a {@link Cursor}.
-	 * 
+	 *
 	 * @param c
 	 * @return a new instance
 	 */
@@ -131,7 +131,7 @@ public abstract class TableHelper<T extends Persistable> {
 	/**
 	 * Add conditions to a filter for each property of the example object
 	 * which does not have its default value.
-	 * 
+	 *
 	 * @param builder
 	 * @param exampleObj
 	 * @return FilterBuilder ready to execute
@@ -140,7 +140,7 @@ public abstract class TableHelper<T extends Persistable> {
 
 	/**
 	 * Create the table that represents the associated entity.
-	 * 
+	 *
 	 * @param db
 	 */
 	protected void onCreate(SQLiteDatabase db) {
@@ -149,7 +149,7 @@ public abstract class TableHelper<T extends Persistable> {
 
 	/**
 	 * Drop the table that represents the associated entity.
-	 * 
+	 *
 	 * @param db
 	 */
 	protected void onDrop(SQLiteDatabase db) {
@@ -159,7 +159,7 @@ public abstract class TableHelper<T extends Persistable> {
 	/**
 	 * Upgrade the table that represents the associated entity. This will
 	 * typically be an ALTER TABLE statement.
-	 * 
+	 *
 	 * @param db
 	 * @param oldVersion
 	 * @param newVersion
@@ -171,7 +171,7 @@ public abstract class TableHelper<T extends Persistable> {
 
 	/**
 	 * Backup the current table and restore into the new schema.
-	 *  
+	 *
 	 * @param dbHelper
 	 */
 	public void backupAndRestore(DatabaseHelper dbHelper) {
@@ -182,7 +182,7 @@ public abstract class TableHelper<T extends Persistable> {
 
 	/**
 	 * Back up the current table to a text file.
-	 * 
+	 *
 	 * @param dbHelper
 	 */
 	public void backup(DatabaseHelper dbHelper) {
@@ -191,7 +191,7 @@ public abstract class TableHelper<T extends Persistable> {
 
 	/**
 	 * Restore table from a text file.
-	 *  
+	 *
 	 * @param dbHelper
 	 */
 	public void restore(DatabaseHelper dbHelper) {
@@ -200,7 +200,7 @@ public abstract class TableHelper<T extends Persistable> {
 
 	/**
 	 * Drop table and recreate it.
-	 * 
+	 *
 	 * @param dbHelper
 	 */
 	protected void dropAndCreate(DatabaseHelper dbHelper) {
@@ -208,10 +208,10 @@ public abstract class TableHelper<T extends Persistable> {
 		this.onDrop(db);
 		this.onCreate(db);
 	}
-	
+
 	/*
 	 * Cursor wrapper methods which bind to primitive type columns
-	 * and return the corresponding wrapper type which may be null 
+	 * and return the corresponding wrapper type which may be null
 	 */
 
 	protected byte[] getBlobOrNull(Cursor c, int col) {

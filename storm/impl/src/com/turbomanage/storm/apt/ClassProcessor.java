@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 Google, Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,19 +30,19 @@ import javax.lang.model.type.TypeMirror;
 /**
  * Base class that introspects an annotated class using the Mirror API and
  * populates a model for use by a code generation template.
- * 
+ *
  * @author David M. Chandler
  */
 public abstract class ClassProcessor {
 
 	protected TypeElement typeElement;
 	protected StormEnvironment stormEnv;
-	
+
 	protected abstract ClassModel getModel();
 
 	/**
 	 * Constructor intended to be overridden by subclasses.
-	 * 
+	 *
 	 * @param el
 	 * @param logger
 	 */
@@ -50,7 +50,7 @@ public abstract class ClassProcessor {
 		this.typeElement = (TypeElement) el;
 		this.stormEnv = stormEnv;
 	}
-	
+
 	/**
 	 * Subclasses override to populate the model.
 	 * Invoked by main annotation processor.
@@ -83,13 +83,13 @@ public abstract class ClassProcessor {
 		this.getModel().setPackageName(getPackageName());
 		this.getModel().setClassName(getClassName());
 	}
-	
+
 	/**
 	 * Subclasses override to inspect each field and possibly add it
 	 * to the model. Invoked by main annotation processor.
 	 * Default impl does nothing, just serves to make implementation
 	 * optional for subclasses.
-	 * 
+	 *
 	 * @param field VariableElement that represents a class field
 	 */
 	protected void inspectField(VariableElement field) {
@@ -101,12 +101,12 @@ public abstract class ClassProcessor {
 			throw new IllegalArgumentException("The default package is not allowed for type " + getClassName());
 		return getPackageName() + "." + getClassName();
 	}
-	
+
 	protected String getPackageName() {
 		PackageElement pkgEl = (PackageElement) this.typeElement.getEnclosingElement();
-		return pkgEl.getQualifiedName().toString(); 
+		return pkgEl.getQualifiedName().toString();
 	}
-	
+
 	protected String getClassName() {
 		return this.typeElement.getSimpleName().toString();
 	}
