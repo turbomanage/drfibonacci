@@ -13,13 +13,13 @@ import ${import};
 
 /**
  * GENERATED CODE
- * 
+ *
  * This class contains the SQL DDL for the named entity / table.
  * These methods are not included in the EntityDao class because
  * they must be executed before the Dao can be instantiated, and
- * they are instance methods vs. static so that they can be 
+ * they are instance methods vs. static so that they can be
  * overridden in a typesafe manner.
- * 
+ *
  * @author David M. Chandler
  */
 public class ${tableHelperName} extends TableHelper<${entityName}> {
@@ -29,18 +29,18 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 		${field.colName}<#if field_has_next>,</#if>
 		</#list>
 	}
-	
+
 	@Override
 	public String getTableName() {
 		return "${tableName}";
 	}
-	
+
 	@Override
 	public Column[] getColumns() {
 		return Columns.values();
 	}
 
-	@Override	
+	@Override
 	public Column getIdCol() {
 		return Columns._ID;
 	}
@@ -59,7 +59,7 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 	public String dropSql() {
 		return "DROP TABLE IF EXISTS ${tableName}";
 	}
-	
+
 	@Override
 	public String upgradeSql(int oldVersion, int newVersion) {
 		return null;
@@ -69,7 +69,11 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 	public String[] getRowValues(Cursor c) {
 		String[] values = new String[c.getColumnCount()];
 		<#list fields as field>
+		<#if field.enum>
+		values[${field_index}] = c.isNull(${field_index}) ? null : c.getString(${field_index});
+		<#else>
 		values[${field_index}] = ${field.converterName}.GET.toString(get${field.bindType}OrNull(c, ${field_index}));
+		</#if>
 		</#list>
 		return values;
 	}
@@ -77,7 +81,11 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 	@Override
 	public void bindRowValues(InsertHelper insHelper, String[] rowValues) {
 		<#list fields as field>
+		<#if field.enum>
+		if (rowValues[${field_index}] == null) insHelper.bindNull(${field_index+1}); else insHelper.bind(${field_index+1}, rowValues[${field_index}]);
+		<#else>
 		if (rowValues[${field_index}] == null) insHelper.bindNull(${field_index+1}); else insHelper.bind(${field_index+1}, ${field.converterName}.GET.fromString(rowValues[${field_index}]));
+		</#if>
 		</#list>
 	}
 
@@ -86,7 +94,11 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 		String[] values = new String[getColumns().length];
 		${entityName} defaultObj = new ${entityName}();
 		<#list fields as field>
+		<#if field.enum>
+		values[${field_index}] = (defaultObj.${field.getter}() == null) ? null : defaultObj.${field.getter}().name();
+		<#else>
 		values[${field_index}] = ${field.converterName}.GET.toString(${field.converterName}.GET.toSql(defaultObj.${field.getter}()));
+		</#if>
 		</#list>
 		return values;
 	}
@@ -95,29 +107,41 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 	public ${entityName} newInstance(Cursor c) {
 		${entityName} obj = new ${entityName}();
 		<#list fields as field>
+		<#if field.enum>
+		obj.${field.setter}(c.isNull(${field_index}) ? null : ${field.javaType}.valueOf(c.getString(${field_index})));
+		<#else>
 		obj.${field.setter}(${field.converterName}.GET.fromSql(get${field.bindType}OrNull(c, ${field_index})));
+		</#if>
 		</#list>
 		return obj;
 	}
-	
+
 	@Override
 	public ContentValues getEditableValues(${entityName} obj) {
 		ContentValues cv = new ContentValues();
 		<#list fields as field>
+		<#if field.enum>
+		cv.put("${field.colName}", obj.${field.getter}() == null ? null : obj.${field.getter}().name());
+		<#else>
 		cv.put("${field.colName}", ${field.converterName}.GET.toSql(obj.${field.getter}()));
-		</#list>	
+		</#if>
+		</#list>
 		return cv;
 	}
-	
+
 	@Override
 	public FilterBuilder buildFilter(FilterBuilder filter, ${entityName} obj) {
 		${entityName} defaultObj = new ${entityName}();
 		// Include fields in query if they differ from the default object
 		<#list fields as field>
 		if (obj.${field.getter}() != defaultObj.${field.getter}())
+		<#if field.enum>
+			filter = filter.eq(Columns.${field.colName}, obj.${field.getter}() == null ? null : obj.${field.getter}().name());
+		<#else>
 			filter = filter.eq(Columns.${field.colName}, ${field.converterName}.GET.toSql(obj.${field.getter}()));
+		</#if>
 		</#list>
-		return filter;	
+		return filter;
 	}
 
 }

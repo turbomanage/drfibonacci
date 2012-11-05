@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 Google, Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,6 +33,7 @@ package com.turbomanage.storm.apt.entity;
 import com.turbomanage.storm.apt.converter.TypeMapper;
 import com.turbomanage.storm.exception.TypeNotSupportedException;
 import com.turbomanage.storm.types.TypeConverter;
+import com.turbomanage.storm.types.TypeConverter.SqlType;
 
 /**
  * Model of a persisted field
@@ -42,10 +43,12 @@ import com.turbomanage.storm.types.TypeConverter;
 public class FieldModel {
 
 	private String fieldName, colName, javaType;
+	private boolean isEnum;
 
-	public FieldModel(String fieldName, String javaType) {
+	public FieldModel(String fieldName, String javaType, boolean isEnum) {
 		this.fieldName = fieldName;
 		this.javaType = javaType;
+		this.isEnum = isEnum;
 		// TODO Use @Id or @ColumnName annotation instead
 		if ("id".equals(fieldName)) {
 			this.colName = "_id";
@@ -104,6 +107,9 @@ public class FieldModel {
 		// TODO Hack. Add @Id annotation instead.
 		if ("id".equals(fieldName))
 			return "INTEGER PRIMARY KEY AUTOINCREMENT";
+		else if (isEnum) {
+			return SqlType.TEXT.name();
+		}
 		try {
 			return TypeMapper.getSqlType(javaType);
 		} catch (TypeNotSupportedException e) {
@@ -141,6 +147,10 @@ public class FieldModel {
 
 	public boolean isNullable() {
 		return javaType.contains(".") || javaType.contains("[]");
+	}
+
+	public boolean isEnum() {
+		return isEnum;
 	}
 
 }

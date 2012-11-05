@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 Google, Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,9 @@ import com.turbomanage.storm.api.Persistable;
 
 @Entity
 public class SimpleEntity implements Persistable {
-	
+
+	public enum EnumType {VALUE1, VALUE2};
+
 	private int privateField;
 	transient int transientField;
 	long id;
@@ -39,13 +41,14 @@ public class SimpleEntity implements Persistable {
 	Byte wByteField;
 	Character wCharacterField;
 	Date wDateField;
+	EnumType enumField;
 	Short wShortField;
 	Integer wIntegerField;
 	Long wLongField;
 	Float wFloatField;
 	Double wDoubleField;
 	String wStringField;
-	
+
 	@Override
 	public long getId() {
 		return id;
@@ -144,6 +147,12 @@ public class SimpleEntity implements Persistable {
 	public void setwDateField(Date wDateField) {
 		this.wDateField = wDateField;
 	}
+	public EnumType getEnumField() {
+		return enumField;
+	}
+	public void setEnumField(EnumType enumField) {
+		this.enumField = enumField;
+	}
 	public Short getwShortField() {
 		return wShortField;
 	}
@@ -180,5 +189,5 @@ public class SimpleEntity implements Persistable {
 	public void setwStringField(String wStringField) {
 		this.wStringField = wStringField;
 	}
-	
+
 }

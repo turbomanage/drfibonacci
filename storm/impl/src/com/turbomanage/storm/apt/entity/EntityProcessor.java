@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 Google, Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,8 +19,13 @@ import java.util.List;
 import java.util.Set;
 
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 
 import com.turbomanage.storm.SQLiteDao;
 import com.turbomanage.storm.api.Entity;
@@ -35,16 +40,16 @@ public class EntityProcessor extends ClassProcessor {
 
 	private static final String TAG = EntityProcessor.class.getName();
 	private EntityModel entityModel;
-	
+
 	public EntityProcessor(Element el, StormEnvironment stormEnv) {
 		super(el, stormEnv);
 	}
-	
+
 	@Override
 	public EntityModel getModel() {
 		return this.entityModel;
 	}
-	
+
 	@Override
 	public void populateModel() {
 		this.entityModel = new EntityModel();
@@ -83,21 +88,33 @@ public class EntityProcessor extends ClassProcessor {
 			stormEnv.getLogger().error(TAG + ": You must define at least one @Database", this.typeElement);
 		}
 	}
-	
+
 	@Override
 	protected void inspectField(VariableElement field) {
 		Set<Modifier> modifiers = field.getModifiers();
 		if (!modifiers.contains(Modifier.TRANSIENT)) {
 			String javaType = getFieldType(field);
+			if (TypeKind.DECLARED.equals(field.asType().getKind())) {
+				DeclaredType type = (DeclaredType) field.asType();
+				TypeElement typeElement = (TypeElement) type.asElement();
+				TypeMirror superclass = typeElement.getSuperclass();
+				stormEnv.getLogger().info("found type " + superclass.toString());
+				if (ElementKind.ENUM.equals(typeElement.getKind())) {
+					stormEnv.getLogger().info("Found enum");
+					entityModel.addField(field.getSimpleName().toString(), javaType, true);
+					return;
+				}
+			}
+			// Verify supported type
 			try {
 				String sqlType = TypeMapper.getSqlType(javaType);
-				// TODO verify getter + setter
-				entityModel.addField(field.getSimpleName().toString(), javaType);
+				entityModel.addField(field.getSimpleName().toString(), javaType, false);
 			} catch (TypeNotSupportedException e) {
-				stormEnv.getLogger().error(TAG, e, field);
+				stormEnv.getLogger().error(TAG + "inspectField", e, field);
 			} catch (Exception e) {
 				stormEnv.getLogger().error(TAG, e, field);
 			}
+			// TODO verify getter + setter
 		}
 	}
 

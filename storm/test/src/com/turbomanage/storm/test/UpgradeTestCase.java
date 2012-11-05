@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 Google, Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,6 +34,7 @@ import com.turbomanage.storm.TestDatabaseHelper;
 import com.turbomanage.storm.TestDbFactory;
 import com.turbomanage.storm.csv.CsvTableReader;
 import com.turbomanage.storm.entity.SimpleEntity;
+import com.turbomanage.storm.entity.SimpleEntity.EnumType;
 import com.turbomanage.storm.entity.dao.SimpleEntityDao;
 import com.turbomanage.storm.entity.dao.SimpleEntityTable;
 
@@ -82,10 +83,10 @@ public class UpgradeTestCase extends AndroidTestCase {
 			DaoTestCase.assertAllFieldsMatch(before.get(i), after.get(i));
 		}
 	}
-	
+
 	/**
 	 * Verify that all columns are correctly escaped and converted to Strings.
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	public void testWriteToCsv() throws IOException {
@@ -99,17 +100,17 @@ public class UpgradeTestCase extends AndroidTestCase {
 		BufferedReader reader = new BufferedReader(isr);
 		reader.readLine(); // header row
 		String row1 = reader.readLine();
-		String expected = "Q0FGRUJBQkU=,1,0,122,3ff9e3779b97f4a8,1.618034,1,75025,12586269025,0,28657,1,89,88,18000000,-401c3910c8d016b0,-0.618034,1836311903,86267571272,17711,\"Hello, world!\"";
+		String expected = "Q0FGRUJBQkU=,1,0,122,3ff9e3779b97f4a8,VALUE1,1.618034,1,75025,12586269025,0,28657,1,89,88,18000000,-401c3910c8d016b0,-0.618034,1836311903,86267571272,17711,\"Hello, world!\"";
 		assertEquals(expected, row1);
 		String row2 = reader.readLine();
-		expected = ",0,0,0,0,0.0,2,0,0,0,0,,,,,,,,,,";
+		expected = ",0,0,0,0,,0.0,2,0,0,0,0,,,,,,,,,,";
 		assertEquals(expected, row2);
 	}
-	
+
 	/**
 	 * Read in a CSV file from the prior db version with columns added and dropped.
 	 * Ensure that the unchanged columns are matched by name and that new columns
-	 * have the expected default values.  
+	 * have the expected default values.
 	 */
 	public void testReadFromCsv() {
 		dbHelper.dropAndCreate();
@@ -126,7 +127,7 @@ public class UpgradeTestCase extends AndroidTestCase {
 		newEntity.setId(2);
 		DaoTestCase.assertAllFieldsMatch(newEntity, listAll.get(1));
 	}
-	
+
 	public void testRestoreWithDefaultValuesForNewFields() {
 		dbHelper.dropAndCreate();
 		SimpleEntityTable th = new SimpleEntityTable();
@@ -138,7 +139,7 @@ public class UpgradeTestCase extends AndroidTestCase {
 		newEntity.setId(1);
 		DaoTestCase.assertAllFieldsMatch(newEntity, listAll.get(0));
 	}
-	
+
 	private SimpleEntity newTestEntity() {
 		SimpleEntity e = new SimpleEntity();
 		e.setBlobField("CAFEBABE".getBytes());
@@ -152,7 +153,8 @@ public class UpgradeTestCase extends AndroidTestCase {
 		e.setwBooleanField(Boolean.TRUE);
 		e.setwByteField(new Byte((byte) 89));
 		e.setwCharacterField('X');
-		e.setwDateField(new Date("Jan 1, 1970"));
+		e.setwDateField(new Date("Jan 1, 1970 EST"));
+		e.setEnumField(EnumType.VALUE1);
 		e.setwDoubleField((1 - Math.sqrt(5)) / 2);
 		e.setwFloatField((float) ((1 - Math.sqrt(5)) / 2));
 		e.setwIntegerField(1836311903);
