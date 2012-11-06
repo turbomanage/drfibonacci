@@ -107,7 +107,27 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 	public ${entityName} newInstance(Cursor c) {
 		${entityName} obj = new ${entityName}();
 		<#list fields as field>
-		<#if field.enum>
+		<#if field.javaType == "byte[]">
+		obj.${field.setter}(c.getBlob(${field_index}));
+		<#elseif field.javaType == "boolean">
+		obj.${field.setter}(c.getInt(${field_index}) == 1 ? true : false);
+		<#elseif field.javaType == "byte">
+		obj.${field.setter}((byte) c.getShort(${field_index}));
+		<#elseif field.javaType == "char">
+		obj.${field.setter}((char) c.getInt(${field_index}));
+		<#elseif field.javaType == "double">
+		obj.${field.setter}(c.getDouble(${field_index}));
+		<#elseif field.javaType == "float">
+		obj.${field.setter}(c.getFloat(${field_index}));
+		<#elseif field.javaType == "int">
+		obj.${field.setter}(c.getInt(${field_index}));
+		<#elseif field.javaType == "long">
+		obj.${field.setter}(c.getLong(${field_index}));
+		<#elseif field.javaType == "short">
+		obj.${field.setter}(c.getShort(${field_index}));
+		<#elseif field.javaType == "java.lang.String">
+		obj.${field.setter}(c.getString(${field_index}));
+		<#elseif field.enum>
 		obj.${field.setter}(c.isNull(${field_index}) ? null : ${field.javaType}.valueOf(c.getString(${field_index})));
 		<#else>
 		obj.${field.setter}(${field.converterName}.GET.fromSql(get${field.bindType}OrNull(c, ${field_index})));
@@ -120,7 +140,27 @@ public class ${tableHelperName} extends TableHelper<${entityName}> {
 	public ContentValues getEditableValues(${entityName} obj) {
 		ContentValues cv = new ContentValues();
 		<#list fields as field>
-		<#if field.enum>
+		<#if field.javaType == "byte[]">
+		cv.put("${field.colName}", obj.${field.getter}());
+		<#elseif field.javaType == "boolean">
+		cv.put("${field.colName}", obj.${field.getter}() ? 1 : 0);
+		<#elseif field.javaType == "byte">
+		cv.put("${field.colName}", (short) obj.${field.getter}());
+		<#elseif field.javaType == "char">
+		cv.put("${field.colName}", (int) obj.${field.getter}());
+		<#elseif field.javaType == "double">
+		cv.put("${field.colName}", obj.${field.getter}());
+		<#elseif field.javaType == "float">
+		cv.put("${field.colName}", obj.${field.getter}());
+		<#elseif field.javaType == "int">
+		cv.put("${field.colName}", obj.${field.getter}());
+		<#elseif field.javaType == "long">
+		cv.put("${field.colName}", obj.${field.getter}());
+		<#elseif field.javaType == "short">
+		cv.put("${field.colName}", obj.${field.getter}());
+		<#elseif field.javaType == "java.lang.String">
+		cv.put("${field.colName}", obj.${field.getter}());
+		<#elseif field.enum>
 		cv.put("${field.colName}", obj.${field.getter}() == null ? null : obj.${field.getter}().name());
 		<#else>
 		cv.put("${field.colName}", ${field.converterName}.GET.toSql(obj.${field.getter}()));

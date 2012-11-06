@@ -164,6 +164,7 @@ public class DaoTestCase extends AndroidTestCase {
 		assertTrue(Arrays.equals(a.getBlobField(), b.getBlobField()));
 		assertEquals(a.getCharField(), b.getCharField());
 		assertEquals(a.getDoubleField(), b.getDoubleField());
+		assertEquals(a.getEnumField(), b.getEnumField());
 		assertEquals(a.getFloatField(), b.getFloatField());
 		assertEquals(a.getIntField(), b.getIntField());
 		assertEquals(a.getLongField(), b.getLongField());
