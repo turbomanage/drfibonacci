@@ -16,9 +16,7 @@
 package com.turbomanage.storm;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -158,31 +156,49 @@ public abstract class SQLiteDao<T extends Persistable> {
 		return numRowsUpdated;
 	}
 
+	// TODO beware leaky abstractions--who owns the cursor?
 	public Cursor query(String where, String[] params) {
 		return db.query(th.getTableName(), null, where, params, null, null, null);
 	}
 
-	public Cursor queryAll() {
+	/**
+	 * Execute a query which returns all rows in the table.
+	 * Calling method MUST close the {@link Cursor}.
+	 *
+	 * @return Cursor
+	 */
+	protected Cursor queryAll() {
 		return query(null, null);
 	}
 
-	public Cursor queryByExample(T obj) {
+	/**
+	 * Execute a query which returns all rows in the table.
+	 * Calling method MUST close the {@link Cursor}.
+	 *
+	 * @return Cursor
+	 */
+	protected Cursor queryByExample(T obj) {
 		return th.buildFilter(this.filter(), obj).exec();
 	}
 
 	/**
-	 * @param c
+	 * Converts all rows in a {@link Cursor} to a List of objects.
+	 *
+	 * @param c Cursor
 	 * @return
 	 */
 	public List<T> asList(Cursor c) {
-		ArrayList<T> resultList = new ArrayList<T>();
-		for (boolean hasItem = c.moveToFirst(); hasItem; hasItem = c.moveToNext()) {
-			T obj = th.newInstance(c);
-			resultList.add(obj);
+		// TODO consider returning Iterable<T> instead
+		try {
+			ArrayList<T> resultList = new ArrayList<T>();
+			for (boolean hasItem = c.moveToFirst(); hasItem; hasItem = c.moveToNext()) {
+				T obj = th.newInstance(c);
+				resultList.add(obj);
+			}
+			return resultList;
+		} finally {
+			c.close();
 		}
-		// TODO MUST close cursor
-		// TODO beware leaky abstractions--who owns the cursor?
-		return resultList;
 	}
 
 	/**
@@ -193,21 +209,17 @@ public abstract class SQLiteDao<T extends Persistable> {
 	 * @return Object
 	 */
 	public T asObject(Cursor c) {
-		if (c.getCount() == 1) {
-			c.moveToFirst();
-			return th.newInstance(c);
-		} else if (c.getCount() > 1) {
-			throw new TooManyResultsException("Cursor returned " + c.getCount() + " rows");
+		try {
+			if (c.getCount() == 1) {
+				c.moveToFirst();
+				return th.newInstance(c);
+			} else if (c.getCount() > 1) {
+				throw new TooManyResultsException("Cursor returned " + c.getCount() + " rows");
+			}
+			return null;
+		} finally {
+			c.close();
 		}
-		return null;
 	}
-
-	public Map<String,String> newQueryMap() {
-		return new HashMap<String,String>();
-	}
-
-	/*
-	 * Methods to wrap Cursor get methods
-	 */
 
 }
