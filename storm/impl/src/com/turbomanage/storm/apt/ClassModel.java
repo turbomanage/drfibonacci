@@ -18,6 +18,7 @@ package com.turbomanage.storm.apt;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.turbomanage.storm.apt.converter.ConverterModel;
 import com.turbomanage.storm.apt.entity.FieldModel;
 
 public abstract class ClassModel {
@@ -35,8 +36,8 @@ public abstract class ClassModel {
 		return fields;
 	}
 
-	public void addField(String fieldName, String javaType, boolean isEnum) {
-		FieldModel field = new FieldModel(fieldName, javaType, isEnum);
+	public void addField(String fieldName, String javaType, boolean isEnum, ConverterModel converter) {
+		FieldModel field = new FieldModel(fieldName, javaType, isEnum, converter);
 		fields.add(field);
 		if (isEnum) {
 			return;

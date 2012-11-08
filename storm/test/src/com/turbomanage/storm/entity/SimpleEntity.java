@@ -19,6 +19,7 @@ import java.util.Date;
 
 import com.turbomanage.storm.api.Entity;
 import com.turbomanage.storm.api.Persistable;
+import com.turbomanage.storm.converter.Latitude;
 
 @Entity
 public class SimpleEntity implements Persistable {
@@ -48,6 +49,7 @@ public class SimpleEntity implements Persistable {
 	Float wFloatField;
 	Double wDoubleField;
 	String wStringField;
+	Latitude wLatitudeField; // test custom converter
 
 	@Override
 	public long getId() {
@@ -188,6 +190,12 @@ public class SimpleEntity implements Persistable {
 	}
 	public void setwStringField(String wStringField) {
 		this.wStringField = wStringField;
+	}
+	public Latitude getwLatitudeField() {
+		return wLatitudeField;
+	}
+	public void setwLatitudeField(Latitude wLatitudeField) {
+		this.wLatitudeField = wLatitudeField;
 	}
 
 }

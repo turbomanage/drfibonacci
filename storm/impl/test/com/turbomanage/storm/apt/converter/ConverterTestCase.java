@@ -1,14 +1,12 @@
 package com.turbomanage.storm.apt.converter;
 
-import com.turbomanage.storm.apt.converter.TypeMapper;
-import com.turbomanage.storm.types.BooleanConverter;
-import com.turbomanage.storm.types.DoubleConverter;
-import com.turbomanage.storm.types.IntegerConverter;
-
 import junit.framework.TestCase;
 
+import com.turbomanage.storm.types.BooleanConverter;
+import com.turbomanage.storm.types.DoubleConverter;
+
 public class ConverterTestCase extends TestCase {
-	
+
 	public void testBooleanConversions() {
 		BooleanConverter conv = new BooleanConverter();
 		assertEquals(0, conv.toSql(false).intValue());
@@ -16,7 +14,7 @@ public class ConverterTestCase extends TestCase {
 		assertFalse(conv.fromSql(0));
 		assertTrue(conv.fromSql(1));
 	}
-	
+
 	public void testDoubleConversions() {
 		DoubleConverter dc = new DoubleConverter();
 		double d1 = (1 - Math.sqrt(5))/2.;
@@ -25,7 +23,4 @@ public class ConverterTestCase extends TestCase {
 		assertEquals(d1, d2, 0);
 	}
 
-	public void testSupportedTypes() {
-		assertTrue(TypeMapper.getConverter("int") instanceof IntegerConverter);
-	}
 }

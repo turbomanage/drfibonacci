@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 Google, Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,11 +36,11 @@ public class CsvUtils {
 	/**
 	 * Returns a {@link String} for a CSV column enclosed in double
 	 * quotes, if required.
-	 * 
+	 *
 	 * see <a
 	 * href="http://en.wikipedia.org/wiki/Comma-separated_values">Wikipedia</a>
 	 * and <a href="http://tools.ietf.org/html/rfc4180">RFC 4180</a>.
-	 * 
+	 *
 	 * @param str the input String, may be null
 	 * @return the input String enclosed in double quotes if required, or null
 	 */
@@ -82,7 +82,7 @@ public class CsvUtils {
 
 	/**
 	 * Return values from a CSV String.
-	 * 
+	 *
 	 * @param csvRow
 	 * @return
 	 */
@@ -148,7 +148,7 @@ public class CsvUtils {
 
 	/**
 	 * Parse a CSV row containing name=value pairs.
-	 * 
+	 *
 	 * @param csvPairs
 	 * @return Map<name,value>
 	 */
@@ -161,11 +161,11 @@ public class CsvUtils {
 		}
 		return map;
 	}
-	
+
 	/**
 	 * Return a String containing a comma-separated list
 	 * of name=value pairs from a map.
-	 * 
+	 *
 	 * @param map
 	 * @return String csv
 	 */
@@ -178,5 +178,5 @@ public class CsvUtils {
 		}
 		return sb.toString().substring(1);
 	}
-	
+
 }

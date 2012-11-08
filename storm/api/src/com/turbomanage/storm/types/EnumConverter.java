@@ -19,30 +19,30 @@ import com.turbomanage.storm.api.Converter;
 import com.turbomanage.storm.types.TypeConverter.BindType;
 import com.turbomanage.storm.types.TypeConverter.SqlType;
 
-@Converter(forTypes = { char.class, Character.class }, bindType = BindType.INT, sqlType = SqlType.INTEGER)
-public class CharConverter extends TypeConverter<Character,Integer> {
+/**
+ * Only the annotations in this converter are actually used. All other methods
+ * are inlined.
+ *
+ * @author David M. Chandler
+ */
+@Converter(forTypes = { Enum.class }, bindType = BindType.STRING, sqlType = SqlType.TEXT)
+public class EnumConverter extends TypeConverter<Enum, String> {
 
-	public static final CharConverter GET = new CharConverter();
+	public static final EnumConverter GET = new EnumConverter();
 
 	@Override
-	public Integer toSql(Character javaValue) {
-		if (javaValue == null)
-			return null;
-		return (int) javaValue.charValue();
+	public String toSql(Enum javaValue) {
+		return null;
 	}
 
 	@Override
-	public Character fromSql(Integer sqlValue) {
-		if (sqlValue == null)
-			return null;
-		return (char) sqlValue.intValue();
+	public Enum fromSql(String sqlValue) {
+		return null;
 	}
 
 	@Override
-	public Integer fromString(String strValue) {
-		if (strValue == null)
-			return null;
-		return Integer.valueOf(strValue);
+	public String fromString(String strValue) {
+		return null;
 	}
 
 }

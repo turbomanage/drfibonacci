@@ -18,17 +18,25 @@ package com.turbomanage.storm.converter;
 import com.turbomanage.storm.api.Converter;
 import com.turbomanage.storm.types.DoubleConverter;
 import com.turbomanage.storm.types.TypeConverter;
+import com.turbomanage.storm.types.TypeConverter.BindType;
+import com.turbomanage.storm.types.TypeConverter.SqlType;
 
-@Converter(forTypes = { Latitude.class })
+@Converter(forTypes = { Latitude.class }, bindType = BindType.DOUBLE, sqlType = SqlType.REAL)
 public class LatitudeConverter extends TypeConverter<Latitude, Double> {
+
+	public static final LatitudeConverter GET = new LatitudeConverter();
 
 	@Override
 	public Double toSql(Latitude javaValue) {
+		if (javaValue == null)
+			return null;
 		return javaValue.getDegLat();
 	}
 
 	@Override
 	public Latitude fromSql(Double sqlValue) {
+		if (sqlValue == null)
+			return null;
 		return new Latitude(sqlValue);
 	}
 
@@ -40,16 +48,6 @@ public class LatitudeConverter extends TypeConverter<Latitude, Double> {
 	@Override
 	public String toString(Double sqlValue) {
 		return DoubleConverter.GET.toString(sqlValue);
-	}
-
-	@Override
-	public com.turbomanage.storm.types.TypeConverter.SqlType getSqlType() {
-		return SqlType.REAL;
-	}
-
-	@Override
-	public com.turbomanage.storm.types.TypeConverter.BindType getBindType() {
-		return BindType.DOUBLE;
 	}
 
 }

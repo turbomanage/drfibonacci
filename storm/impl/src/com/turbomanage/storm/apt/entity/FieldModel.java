@@ -30,9 +30,7 @@
  */
 package com.turbomanage.storm.apt.entity;
 
-import com.turbomanage.storm.apt.converter.TypeMapper;
-import com.turbomanage.storm.exception.TypeNotSupportedException;
-import com.turbomanage.storm.types.TypeConverter;
+import com.turbomanage.storm.apt.converter.ConverterModel;
 import com.turbomanage.storm.types.TypeConverter.SqlType;
 
 /**
@@ -44,11 +42,13 @@ public class FieldModel {
 
 	private String fieldName, colName, javaType;
 	private boolean isEnum;
+	private ConverterModel converter;
 
-	public FieldModel(String fieldName, String javaType, boolean isEnum) {
+	public FieldModel(String fieldName, String javaType, boolean isEnum, ConverterModel converter) {
 		this.fieldName = fieldName;
 		this.javaType = javaType;
 		this.isEnum = isEnum;
+		this.converter = converter;
 		// TODO Use @Id or @ColumnName annotation instead
 		if ("id".equals(fieldName)) {
 			this.colName = "_id";
@@ -69,8 +69,8 @@ public class FieldModel {
 		return javaType;
 	}
 
-	private TypeConverter getConverter() {
-		return TypeMapper.getConverter(javaType);
+	private ConverterModel getConverter() {
+		return this.converter;
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class FieldModel {
 	 * @return
 	 */
 	public String getConverterName() {
-		return getConverter().getClass().getSimpleName();
+		return getConverter().getClassName();
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class FieldModel {
 	 * @return String classname
 	 */
 	public String getQualifiedConverterClass() {
-		return getConverter().getClass().getName();
+		return getConverter().getQualifiedClassName();
 	}
 
 	/**
@@ -110,12 +110,7 @@ public class FieldModel {
 		else if (isEnum) {
 			return SqlType.TEXT.name();
 		}
-		try {
-			return TypeMapper.getSqlType(javaType);
-		} catch (TypeNotSupportedException e) {
-			// swallow as its already been reported
-			return null;
-		}
+		return this.converter.getSqlType().name();
 	}
 
 	public String getSetter() {

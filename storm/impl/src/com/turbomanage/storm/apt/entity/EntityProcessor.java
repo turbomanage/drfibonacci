@@ -32,7 +32,7 @@ import com.turbomanage.storm.api.Entity;
 import com.turbomanage.storm.api.Persistable;
 import com.turbomanage.storm.apt.ClassProcessor;
 import com.turbomanage.storm.apt.StormEnvironment;
-import com.turbomanage.storm.apt.converter.TypeMapper;
+import com.turbomanage.storm.apt.converter.ConverterModel;
 import com.turbomanage.storm.apt.database.DatabaseModel;
 import com.turbomanage.storm.exception.TypeNotSupportedException;
 
@@ -98,17 +98,15 @@ public class EntityProcessor extends ClassProcessor {
 				DeclaredType type = (DeclaredType) field.asType();
 				TypeElement typeElement = (TypeElement) type.asElement();
 				TypeMirror superclass = typeElement.getSuperclass();
-				stormEnv.getLogger().info("found type " + superclass.toString());
 				if (ElementKind.ENUM.equals(typeElement.getKind())) {
-					stormEnv.getLogger().info("Found enum");
-					entityModel.addField(field.getSimpleName().toString(), javaType, true);
+					entityModel.addField(field.getSimpleName().toString(), javaType, true, stormEnv.getConverterForType("java.lang.Enum"));
 					return;
 				}
 			}
 			// Verify supported type
 			try {
-				String sqlType = TypeMapper.getSqlType(javaType);
-				entityModel.addField(field.getSimpleName().toString(), javaType, false);
+				ConverterModel converter = stormEnv.getConverterForType(javaType);
+				entityModel.addField(field.getSimpleName().toString(), javaType, false, converter);
 			} catch (TypeNotSupportedException e) {
 				stormEnv.getLogger().error(TAG + "inspectField", e, field);
 			} catch (Exception e) {

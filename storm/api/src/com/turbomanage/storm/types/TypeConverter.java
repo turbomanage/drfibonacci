@@ -82,19 +82,4 @@ public abstract class TypeConverter<J extends Object, S extends Object> {
 		return (sqlValue == null) ? null : sqlValue.toString();
 	}
 	
-	/**
-	 * SQLite column type that represents this Java type. 
-	 * 
-	 * @return SqlType
-	 */
-	public abstract SqlType getSqlType();
-
-	/**
-	 * Used to generate the name of the appropriate cursor method.
-	 * Used by code generation templates only.
-	 * 
-	 * @return BindType
-	 */
-	public abstract BindType getBindType();
-	
 }

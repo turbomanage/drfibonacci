@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 Google, Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.turbomanage.storm.apt.ClassModel;
+import com.turbomanage.storm.apt.ProcessorLogger;
 import com.turbomanage.storm.apt.StormEnvironment;
 import com.turbomanage.storm.apt.entity.EntityModel;
 import com.turbomanage.storm.csv.CsvUtils;
@@ -49,15 +50,15 @@ public class DatabaseModel extends ClassModel {
 	public int getDbVersion() {
 		return dbVersion;
 	}
-	
+
 	public String getDbHelperClass() {
 		return getQualifiedClassName();
 	}
-	
+
 	public String getFactoryName() {
 		return capFirst(this.getDbName()) + "Factory";
 	}
-	
+
 	public String getFactoryClass() {
 		String pkg = this.getPackage();
 		if (pkg == null || pkg.length() < 1)
@@ -78,7 +79,7 @@ public class DatabaseModel extends ClassModel {
 		// Duplicate TableHelper info for use by index writer
 		this.tableHelpers.add(daoModel.getTableHelperClass());
 	}
-	
+
 	public String[] getTableHelpers() {
 		return tableHelpers.toArray(new String[]{});
 	}
@@ -86,13 +87,15 @@ public class DatabaseModel extends ClassModel {
 	/**
 	 * Populate the model of a database and its associated tables from
 	 * a file in support of incremental compilation.
-	 * 
+	 *
 	 * @param reader
+	 * @param logger
 	 * @return DatabaseModel
 	 * @throws IOException
 	 */
-	public static DatabaseModel readFromIndex(BufferedReader reader) throws IOException {
+	public static DatabaseModel readFromIndex(BufferedReader reader, ProcessorLogger logger) throws IOException {
 		String dbInfo = reader.readLine();
+		logger.info(dbInfo);
 		Map<String, String> props = CsvUtils.getAsMap(dbInfo);
 		String dbName = props.get("dbName");
 		int dbVersion = Integer.parseInt(props.get("dbVersion"));
@@ -108,12 +111,12 @@ public class DatabaseModel extends ClassModel {
 		dbModel.tableHelpers = tables;
 		return dbModel;
 	}
-	
+
 	/**
 	 * Write the database info and associated tables to a file
 	 * in support of incremental compilation.
-	 * 
-	 * @param out PrintWriter 
+	 *
+	 * @param out PrintWriter
 	 */
 	public void writeToIndex(PrintWriter out) {
 		out.println(StormEnvironment.BEGIN_DATABASE);

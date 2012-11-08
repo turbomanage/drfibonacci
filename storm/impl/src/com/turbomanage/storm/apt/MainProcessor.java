@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 Google, Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,8 @@
  ******************************************************************************/
 package com.turbomanage.storm.apt;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Set;
 
@@ -53,22 +55,22 @@ public class MainProcessor extends AbstractProcessor {
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations,
 			RoundEnvironment roundEnv) {
-		
+
 		cfg.setTemplateLoader(new ClassTemplateLoader(this.getClass(), "/res"));
 		this.logger = new ProcessorLogger(processingEnv.getMessager());
 		logger.info("Running MainProcessor...");
-		
+
 		// Exit early if no annotations in this round so we don't overwrite the
 		// env file
 		if (annotations.size() < 1) {
 			return true;
 		}
-		
+
 		for (TypeElement annotationType : annotations) {
 			logger.info("Processing elements with @" + annotationType.getQualifiedName());
 		}
 
-		StormEnvironment stormEnv = new StormEnvironment(logger);	
+		StormEnvironment stormEnv = new StormEnvironment(logger);
 		// Read in previously processed classes to support incremental compilation
 		stormEnv.readIndex(processingEnv.getFiler());
 
@@ -77,11 +79,14 @@ public class MainProcessor extends AbstractProcessor {
 				ConverterProcessor cproc = new ConverterProcessor(element, stormEnv);
 				cproc.populateModel();
 			} catch (Exception e) {
-				logger.error(ERR_MSG, e, element);
+				StringWriter sw = new StringWriter();
+				PrintWriter out = new PrintWriter(sw);
+				e.printStackTrace(out);
+				logger.error(ERR_MSG + sw.toString(), e, element);
 				return true;
 			}
 		}
-		
+
 		// First pass on @Database annotations to get all db names
 		for (Element element : roundEnv.getElementsAnnotatedWith(Database.class)) {
 			try {
@@ -93,7 +98,7 @@ public class MainProcessor extends AbstractProcessor {
 				return true;
 			}
 		}
-		
+
 		for (Element element : roundEnv.getElementsAnnotatedWith(Entity.class)) {
 			try {
 				EntityProcessor eproc = new EntityProcessor(element, stormEnv);
@@ -109,17 +114,17 @@ public class MainProcessor extends AbstractProcessor {
 				return true;
 			}
 		}
-		
+
 		// Second pass to generate DatabaseFactory templates now that
 		// all entities have been associated with a db
 		for (DatabaseModel dbModel : stormEnv.getDbModels()) {
 			DatabaseFactoryTemplate dbFactoryTemplate = new DatabaseFactoryTemplate(dbModel);
 			processTemplate(processingEnv, cfg, dbFactoryTemplate);
 		}
-		
+
 		// Write all processed dbs to index to support incremental compilation
 		stormEnv.writeIndex(processingEnv.getFiler());
-		
+
 		return true;
 	}
 
