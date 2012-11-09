@@ -34,12 +34,12 @@ public abstract class SQLiteDao<T extends Persistable> {
 
 	private static final String TAG = SQLiteDao.class.getName();
 
-	protected SQLiteDatabase db;
-	protected TableHelper<T> th;
+	private final Context mContext;
+	protected final TableHelper<T> th;
 
 	@SuppressWarnings("unchecked")
 	public SQLiteDao(Context ctx) {
-		this.db = getDbHelper(ctx).getWritableDatabase();
+		this.mContext = ctx;
 		this.th = getTableHelper();
 	}
 
@@ -51,17 +51,19 @@ public abstract class SQLiteDao<T extends Persistable> {
 	 * @return DatabaseHelper
 	 */
 	public abstract DatabaseHelper getDbHelper(Context ctx);
+
 	@SuppressWarnings("rawtypes")
 	public abstract TableHelper getTableHelper();
+
 	public int delete(Long id) {
 		if (id != null) {
-			return db.delete(th.getTableName(), th.getIdCol() + "=?", new String[]{id.toString()});
+			return getWritableDb().delete(th.getTableName(), th.getIdCol() + "=?", new String[]{id.toString()});
 		}
 		return 0;
 	}
 
 	public int deleteAll() {
-		return db.delete(th.getTableName(), null, null);
+		return getWritableDb().delete(th.getTableName(), null, null);
 	}
 
 	/**
@@ -80,10 +82,6 @@ public abstract class SQLiteDao<T extends Persistable> {
 
 	public T getByExample(T exampleObj) {
 		return asObject(queryByExample(exampleObj));
-	}
-
-	public SQLiteDatabase getDatabase() {
-		return db;
 	}
 
 	public List<T> listAll() {
@@ -107,7 +105,7 @@ public abstract class SQLiteDao<T extends Persistable> {
 			// the default, remove from ContentValues to allow autoincrement
 			cv.remove(th.getIdCol().toString());
 		}
-		long id = db.insertOrThrow(th.getTableName(), null, cv);
+		long id = getWritableDb().insertOrThrow(th.getTableName(), null, cv);
 		obj.setId(id);
 		return id;
 	}
@@ -120,8 +118,8 @@ public abstract class SQLiteDao<T extends Persistable> {
 	 */
 	public long insertMany(Iterable<T> many) {
 		long numInserted = 0;
-		InsertHelper insertHelper = new DatabaseUtils.InsertHelper(db, th.getTableName());
-		db.beginTransaction();
+		InsertHelper insertHelper = new DatabaseUtils.InsertHelper(getWritableDb(), th.getTableName());
+		getWritableDb().beginTransaction();
 		try {
 			for (T obj : many) {
 				ContentValues cv = th.getEditableValues(obj);
@@ -134,9 +132,9 @@ public abstract class SQLiteDao<T extends Persistable> {
 					return -1;
 				numInserted++;
 			}
-			db.setTransactionSuccessful();
+			getWritableDb().setTransactionSuccessful();
 		} finally {
-			db.endTransaction();
+			getWritableDb().endTransaction();
 		}
 		return numInserted;
 	}
@@ -151,14 +149,14 @@ public abstract class SQLiteDao<T extends Persistable> {
 	public long update(T obj) {
 		ContentValues cv = th.getEditableValues(obj);
 		Long id = obj.getId();
-		int numRowsUpdated = db.update(th.getTableName(), cv, th.getIdCol()
+		int numRowsUpdated = getWritableDb().update(th.getTableName(), cv, th.getIdCol()
 				+ "=?", new String[] { id.toString() });
 		return numRowsUpdated;
 	}
 
 	// TODO beware leaky abstractions--who owns the cursor?
 	public Cursor query(String where, String[] params) {
-		return db.query(th.getTableName(), null, where, params, null, null, null);
+		return getReadableDb().query(th.getTableName(), null, where, params, null, null, null);
 	}
 
 	/**
@@ -220,6 +218,14 @@ public abstract class SQLiteDao<T extends Persistable> {
 		} finally {
 			c.close();
 		}
+	}
+
+	protected SQLiteDatabase getWritableDb() {
+		return getDbHelper(mContext).getWritableDatabase();
+	}
+
+	protected SQLiteDatabase getReadableDb() {
+		return getDbHelper(mContext).getReadableDatabase();
 	}
 
 }

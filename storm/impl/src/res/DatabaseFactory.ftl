@@ -1,16 +1,17 @@
 package ${package};
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.turbomanage.storm.DatabaseHelper;
-import com.turbomanage.storm.api.DatabaseFactory;
 import com.turbomanage.storm.TableHelper;
+import com.turbomanage.storm.api.DatabaseFactory;
 
 /**
  * GENERATED CODE
  *
- * Singleton provides an instance of the {@link DatabaseHelper}.
+ * Provides a singleton instance of the {@link DatabaseHelper} and
+ * holds the properties obtained from @Database and @Entity annotations
+ * (name, version, and associated tables).
  *
  * @author David M. Chandler
  */
@@ -26,26 +27,24 @@ public class ${factoryName} implements DatabaseFactory {
 	private static DatabaseHelper mInstance;
 
 	/**
-	 * Provides an instance of the DatabaseHelper.
+	 * Provides a singleton instance of the DatabaseHelper per application
+	 * to prevent threading issues. See
+	 * https://github.com/commonsguy/cwac-loaderex#notes-on-threading
 	 *
 	 * @param ctx Application context
 	 * @return {@link SQLiteOpenHelper} instance
 	 */
 	public static DatabaseHelper getDatabaseHelper(Context ctx) {
 		if (mInstance==null) {
-			newInstance(ctx);
+			// in case this is called from an AsyncTask or other thread
+		    synchronized(${factoryName}.class) {
+		    		if (mInstance == null)
+					mInstance = new ${dbHelperClass}(
+									ctx.getApplicationContext(),
+									new ${factoryName}());
+			}
 		}
 		return mInstance;
-	}
-
-	/**
-	 * Create a new instance of the user's {$link DatabaseHelper} class.
-	 *
-	 * @param ctx Application context
-	 * @return DatabaseHelper instance
-	 */
-	private static void newInstance(Context ctx) {
-		mInstance = new ${dbHelperClass}(ctx, new ${factoryName}());
 	}
 
 	public String getName() {
