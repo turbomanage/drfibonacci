@@ -75,20 +75,17 @@ public class FilterTestCase extends AndroidTestCase {
 	}
 
 	public void testQueryByBoolean() {
-		FilterBuilder filter = dao.filter().eq(Columns.BOOLEANFIELD, BOOLEAN_VALUE);
-		SimpleEntity result = dao.asObject(filter.exec());
+		SimpleEntity result = dao.filter().eq(Columns.BOOLEANFIELD, BOOLEAN_VALUE).get();
 		assertEquals(BOOLEAN_VALUE, result.isBooleanField());
 	}
 
 	public void testQueryByByte() {
-		FilterBuilder filter = dao.filter().eq(Columns.BYTEFIELD, BYTE_VALUE);
-		SimpleEntity result = dao.asObject(filter.exec());
+		SimpleEntity result = dao.filter().eq(Columns.BYTEFIELD, BYTE_VALUE).get();
 		assertEquals(BYTE_VALUE, result.getByteField());
 	}
 
 	public void testQueryByChar() {
-		FilterBuilder filter = dao.filter().eq(Columns.CHARFIELD, CHAR_VALUE);
-		SimpleEntity result = dao.asObject(filter.exec());
+		SimpleEntity result = dao.filter().eq(Columns.CHARFIELD, CHAR_VALUE).get();
 		assertEquals(CHAR_VALUE, result.getCharField());
 	}
 
@@ -111,20 +108,17 @@ public class FilterTestCase extends AndroidTestCase {
 	}
 
 	public void testQueryByInt() {
-		FilterBuilder filter = dao.filter().eq(Columns.INTFIELD, INT_VALUE);
-		SimpleEntity result = dao.asObject(filter.exec());
+		SimpleEntity result = dao.filter().eq(Columns.INTFIELD, INT_VALUE).get();
 		assertEquals(INT_VALUE, result.getIntField());
 	}
 
 	public void testQueryByLong() {
-		FilterBuilder filter = dao.filter().eq(Columns.LONGFIELD, LONG_VALUE);
-		SimpleEntity result = dao.asObject(filter.exec());
+		SimpleEntity result = dao.filter().eq(Columns.LONGFIELD, LONG_VALUE).get();
 		assertEquals(LONG_VALUE, result.getLongField());
 	}
 
 	public void testQueryByShort() {
-		FilterBuilder filter = dao.filter().eq(Columns.SHORTFIELD, (short) SHORT_VALUE);
-		SimpleEntity result = dao.asObject(filter.exec());
+		SimpleEntity result = dao.filter().eq(Columns.SHORTFIELD, (short) SHORT_VALUE).get();
 		assertEquals(SHORT_VALUE, result.getShortField());
 	}
 

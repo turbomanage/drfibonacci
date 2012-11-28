@@ -72,12 +72,12 @@ public abstract class SQLiteDao<T extends Persistable> {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public FilterBuilder filter() {
-		return new FilterBuilder((SQLiteDao<Persistable>) this);
+	public FilterBuilder<T> filter() {
+		return new FilterBuilder<T>((SQLiteDao<T>) this);
 	}
 
 	public T get(Long id) {
-		return asObject(filter().eq(th.getIdCol(), id).exec());
+		return filter().eq(th.getIdCol(), id).get();
 	}
 
 	public T getByExample(T exampleObj) {

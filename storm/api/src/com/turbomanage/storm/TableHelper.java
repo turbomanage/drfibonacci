@@ -136,7 +136,7 @@ public abstract class TableHelper<T extends Persistable> {
 	 * @param exampleObj
 	 * @return FilterBuilder ready to execute
 	 */
-	public abstract FilterBuilder buildFilter(FilterBuilder builder, T exampleObj);
+	public abstract FilterBuilder<T> buildFilter(FilterBuilder<T> builder, T exampleObj);
 
 	/**
 	 * Create the table that represents the associated entity.
