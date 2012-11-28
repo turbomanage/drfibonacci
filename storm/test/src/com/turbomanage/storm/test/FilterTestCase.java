@@ -19,9 +19,9 @@ import android.content.Context;
 import android.test.AndroidTestCase;
 
 import com.turbomanage.storm.entity.SimpleEntity;
+import com.turbomanage.storm.entity.SimpleEntity.EnumType;
 import com.turbomanage.storm.entity.dao.SimpleEntityDao;
 import com.turbomanage.storm.entity.dao.SimpleEntityTable.Columns;
-import com.turbomanage.storm.query.FilterBuilder;
 
 public class FilterTestCase extends AndroidTestCase {
 
@@ -30,6 +30,7 @@ public class FilterTestCase extends AndroidTestCase {
 	private static final boolean BOOLEAN_VALUE = true;
 	private static final char CHAR_VALUE = 'q';
 	private static final double DOUBLE_VALUE = Math.PI;
+	private static final EnumType ENUM_VALUE = EnumType.VALUE2;
 	private static final float FLOAT_VALUE = (float) Math.PI;
 	private static final int INT_VALUE = 121393;
 	private static final long LONG_VALUE = 2971215073L;
@@ -58,6 +59,7 @@ public class FilterTestCase extends AndroidTestCase {
 		e.setByteField(BYTE_VALUE);
 		e.setCharField(CHAR_VALUE);
 		e.setDoubleField(DOUBLE_VALUE);
+		e.setEnumField(ENUM_VALUE);
 		e.setFloatField((float) FLOAT_VALUE);
 		e.setIntField(INT_VALUE);
 		e.setLongField(LONG_VALUE);
@@ -96,6 +98,11 @@ public class FilterTestCase extends AndroidTestCase {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+	}
+
+	public void testQueryByEnum() {
+		SimpleEntity result = dao.filter().eq(Columns.ENUMFIELD, ENUM_VALUE).get();
+		assertEquals(ENUM_VALUE, result.getEnumField());
 	}
 
 	public void testQueryByFloat() {

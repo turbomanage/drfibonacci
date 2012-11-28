@@ -16,12 +16,15 @@
 package com.turbomanage.storm.types;
 
 import com.turbomanage.storm.api.Converter;
+import com.turbomanage.storm.query.FilterBuilder;
 import com.turbomanage.storm.types.TypeConverter.BindType;
 import com.turbomanage.storm.types.TypeConverter.SqlType;
 
 /**
- * Only the annotations in this converter are actually used. All other methods
- * are inlined.
+ * The annotations in this converter are used to generate
+ * inline enum conversion code in the TableHelper. The toSql() method
+ * is used by {@link FilterBuilder}. Otherwise, the methods in this
+ * class are not actually used.
  *
  * @author David M. Chandler
  */
@@ -32,7 +35,7 @@ public class EnumConverter extends TypeConverter<Enum, String> {
 
 	@Override
 	public String toSql(Enum javaValue) {
-		return null;
+		return javaValue.name();
 	}
 
 	@Override
@@ -42,7 +45,7 @@ public class EnumConverter extends TypeConverter<Enum, String> {
 
 	@Override
 	public String fromString(String strValue) {
-		return null;
+		return strValue;
 	}
 
 }

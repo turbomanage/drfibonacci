@@ -26,6 +26,7 @@ import com.turbomanage.storm.api.Persistable;
 import com.turbomanage.storm.types.BooleanConverter;
 import com.turbomanage.storm.types.ByteConverter;
 import com.turbomanage.storm.types.CharConverter;
+import com.turbomanage.storm.types.EnumConverter;
 import com.turbomanage.storm.types.IntegerConverter;
 import com.turbomanage.storm.types.LongConverter;
 import com.turbomanage.storm.types.ShortConverter;
@@ -68,6 +69,12 @@ public class FilterBuilder<T extends Persistable> {
 
 	public FilterBuilder<T> eq(Column colName, Double param) {
 		throw new IllegalArgumentException("Exact match on type double is not supported");
+	}
+
+	public FilterBuilder<T> eq(Column colName, Enum param) {
+		String sqlValue = EnumConverter.GET.toSql(param);
+		where.add(new Equality(colName, sqlValue));
+		return this;
 	}
 
 	public FilterBuilder<T> eq(Column colName, Float param) {
