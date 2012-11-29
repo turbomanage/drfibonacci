@@ -6,6 +6,7 @@
               as the first entry and export the buildfile again. -->
 <project basedir="." default="build" name="storm-api">
     <property environment="env"/>
+    <property file="../build.properties"/>
     <property name="storm-impl.location" value="../impl"/>
     <property name="storm-test.location" value="../test"/>
     <property name="ECLIPSE_HOME" value="../../../../../../Applications/eclipse-indigo-java-sr2"/>
@@ -52,6 +53,7 @@
             <classpath refid="storm-api.classpath"/>
         </javac>
         <jar destfile="storm-api.jar" basedir="bin/classes"></jar>
+        <copy file="storm-api.jar" toFile="../../../storm-api-${storm.version}.jar"/>
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects">
         <ant antfile="build.xml" dir="${storm-impl.location}" inheritAll="false" target="clean"/>

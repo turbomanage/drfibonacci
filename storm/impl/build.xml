@@ -6,6 +6,7 @@
               as the first entry and export the buildfile again. -->
 <project basedir="." default="build" name="istorm-impl">
     <property environment="env"/>
+    <property file="../build.properties"/>
     <property name="istorm-api.location" value="../api"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
@@ -51,6 +52,7 @@
             <fileset dir="../api/bin/classes"></fileset>
             <zipfileset src="lib/freemarker-2.3.6.jar"></zipfileset>
         </jar>
+        <copy file="storm-apt.jar" toFile="../../../storm-apt-${storm.version}.jar"/>
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
     <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
