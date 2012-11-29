@@ -17,6 +17,7 @@ package com.turbomanage.storm.apt;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
@@ -134,8 +135,9 @@ public class StormEnvironment {
 		try {
 			indexFile = filer.getResource(location, "com.turbomanage.storm",
 					ENV_FILE);
-			logger.info("Reading index " + indexFile.getName());
-			Reader fileReader = indexFile.openReader(true);
+			logger.info("Reading index " + indexFile.toUri());
+			// indexFile.openReader() not implemented on all platforms
+			Reader fileReader = new InputStreamReader(indexFile.openInputStream());
 			BufferedReader reader = new BufferedReader(fileReader);
 			String line = reader.readLine(); // BEGIN_CONVERTERS
 			line = reader.readLine();
